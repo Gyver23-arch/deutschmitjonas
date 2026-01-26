@@ -55,9 +55,10 @@
             display: inline-block;
         }
 
-        .video-container {
+        /* Video Container */
+        .media-container {
             position: relative;
-            padding-bottom: 56.25%;
+            padding-bottom: 56.25%; /* 16:9 Format */
             height: 0;
             overflow: hidden;
             border-radius: 16px;
@@ -66,8 +67,32 @@
             background: #000;
         }
 
-        .video-container iframe {
+        .media-container iframe {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;
+        }
+
+        /* Neuer Style für das Buchungs-Tool */
+        .booking-wrapper {
+            background: white;
+            border-radius: 20px;
+            padding: 20px 10px; /* Weniger Padding an der Seite für Mobile */
+            margin-bottom: 25px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        .booking-title {
+            margin-top: 0;
+            margin-bottom: 15px;
+            color: var(--text-main);
+            font-size: 1.2rem;
+        }
+
+        /* Iframe für Google Script/Kalender */
+        .booking-frame {
+            width: 100%;
+            height: 500px; /* Feste Höhe, damit man scrollen kann */
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
         }
 
         .link-card {
@@ -97,6 +122,15 @@
         
         .social-icons a { text-decoration: none; font-size: 24px; color: #333; }
         .social-icons a:hover { color: white; }
+
+        /* Dezentres Impressum */
+        .legal-footer {
+            margin-top: 40px;
+            font-size: 0.75rem;
+            color: #4b5563;
+            opacity: 0.8;
+        }
+        .legal-footer a { color: #4b5563; text-decoration: underline; }
     </style>
 </head>
 <body>
@@ -108,8 +142,13 @@
         
         <p class="bio" id="txt-bio">Deutsch mit mehr Selbstvertrauen sprechen & realistisch trainieren! 🇩🇪</p>
 
-        <div class="video-container">
+        <div class="media-container">
             <iframe src="https://www.youtube-nocookie.com/embed/fHV_RicUkXo" title="YouTube video player" allowfullscreen></iframe>
+        </div>
+
+        <div class="booking-wrapper">
+            <h3 class="booking-title" id="txt-booking-title">📅 Jetzt Termin vereinbaren</h3>
+            <iframe class="booking-frame" src="https://script.google.com/macros/s/AKfycbx0eBvkO7-PgsBlMn_m8HmHOZtljRoPt5xmFULyU0z9iXzNIRY0PbWnUHdGr5ohwBXn/exec"></iframe>
         </div>
         
         <a href="https://preply.in/JONAS6DE19204618" target="_blank" class="link-card btn-highlight" id="btn-book">
@@ -137,51 +176,53 @@
             <a href="https://www.linkedin.com/in/jonas-richter-web" target="_blank">LinkedIn</a>
         </div>
 
-        <p style="font-size: 0.8rem; margin-top: 2rem; opacity: 0.7;">&copy; 2026 Jonas Richter</p>
+        <div class="legal-footer">
+            &copy; 2026 Jonas Richter • 
+            <a href="/impressum.html" id="lnk-legal">Impressum</a>
+        </div>
     </div>
 
     <script>
-        // 1. Das Wörterbuch
+        // 1. Das Wörterbuch (Jetzt mit Buchung & Impressum)
         const translations = {
-            // Deutsch (Standard)
             'de': {
                 bio: "Deutsch mit mehr Selbstvertrauen sprechen & realistisch trainieren! 🇩🇪",
+                bookingTitle: "📅 Jetzt Termin vereinbaren",
                 book: "🎓 Deutschunterricht auf Preply buchen",
                 discount: "🎁 Erhalte 30% Rabatt auf die Probestunde",
-                mail: "✉️ E-Mail schreiben"
+                mail: "✉️ E-Mail schreiben",
+                legal: "Impressum"
             },
-            // Englisch
             'en': {
                 bio: "Speak German with more confidence & train realistically! 🇩🇪",
+                bookingTitle: "📅 Book an appointment now",
                 book: "🎓 Book German lessons on Preply",
                 discount: "🎁 Get 30% off your first trial lesson",
-                mail: "✉️ Send an E-Mail"
+                mail: "✉️ Send an E-Mail",
+                legal: "Legal Notice"
             },
-            // Spanisch
             'es': {
                 bio: "¡Habla alemán con más confianza y entrena de forma realista! 🇩🇪",
+                bookingTitle: "📅 Reserva tu cita ahora",
                 book: "🎓 Reserva clases de alemán en Preply",
                 discount: "🎁 Obtén 30% de descuento en tu primera clase",
-                mail: "✉️ Enviar un correo"
+                mail: "✉️ Enviar un correo",
+                legal: "Aviso Legal"
             }
-            // Hier könntest du weitere Sprachen hinzufügen (z.B. 'fr' für Französisch)
         };
 
-        // 2. Sprache des Nutzers erkennen
-        // Wir nehmen die ersten 2 Buchstaben (z.B. aus "es-MX" wird "es")
+        // 2. Sprache erkennen
         const userLang = navigator.language.slice(0, 2); 
-
-        // 3. Welche Sprache sollen wir nutzen? 
-        // Wenn wir die Sprache im Wörterbuch haben, nimm sie. Sonst nimm Englisch ('en').
         const currentLang = translations[userLang] ? userLang : 'en';
 
-        // Wenn der Nutzer Deutsch ist, müssen wir nichts ändern (steht ja schon im HTML).
-        // Wenn er NICHT Deutsch ist, tauschen wir die Texte aus.
+        // 3. Texte austauschen
         if (currentLang !== 'de') {
             document.getElementById('txt-bio').innerText = translations[currentLang].bio;
+            document.getElementById('txt-booking-title').innerText = translations[currentLang].bookingTitle; // Neu
             document.getElementById('btn-book').innerText = translations[currentLang].book;
             document.getElementById('btn-discount').innerText = translations[currentLang].discount;
             document.getElementById('btn-mail').innerText = translations[currentLang].mail;
+            document.getElementById('lnk-legal').innerText = translations[currentLang].legal; // Neu
         }
     </script>
 
