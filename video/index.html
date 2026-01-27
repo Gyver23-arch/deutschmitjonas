@@ -12,6 +12,7 @@
             height: 100%;
             width: 100%;
             overflow: hidden; /* Verhindert doppeltes Scrollen */
+            font-family: sans-serif;
         }
 
         /* Das Iframe auf die volle Größe strecken */
@@ -22,10 +23,51 @@
             width: 100%;
             height: 100%;
             border: none;
+            z-index: 1; /* Iframe liegt unten */
+        }
+
+        /* Stil für den Zurück-Pfeil */
+        .back-arrow {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 1000; /* Sicherstellen, dass der Pfeil ÜBER dem Iframe liegt */
+            
+            width: 40px;
+            height: 40px;
+            background-color: rgba(255, 255, 255, 0.9); /* Leicht transparentes Weiß */
+            border-radius: 50%; /* Macht den Hintergrund rund */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2); /* Kleiner Schatten für bessere Sichtbarkeit */
+            transition: transform 0.2s ease, background-color 0.2s ease;
+        }
+
+        .back-arrow:hover {
+            transform: scale(1.1); /* Leichter Zoom beim Drüberfahren */
+            background-color: #ffffff;
+        }
+
+        .back-arrow svg {
+            width: 20px;
+            height: 20px;
+            stroke: #333; /* Dunkelgraue Farbe für den Pfeil */
+            stroke-width: 2.5;
         }
     </style>
 </head>
 <body>
+
+    <!-- Der Link mit dem Pfeil -->
+    <a href="https://deutschmitjonas.de/" class="back-arrow" title="Zurück zu deutschmitjonas.de">
+        <!-- SVG Icon für einen Pfeil nach links -->
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+    </a>
 
     <iframe 
         src="https://script.google.com/macros/s/AKfycbx0eBvkO7-PgsBlMn_m8HmHOZtljRoPt5xmFULyU0z9iXzNIRY0PbWnUHdGr5ohwBXn/exec" 
