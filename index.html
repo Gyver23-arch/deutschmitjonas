@@ -1,284 +1,406 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="de" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jonas | Deutsch mit Selbstvertrauen</title>
+    <title>Deutsch mit Jonas - Technisches Deutsch & Konversation</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Merriweather:ital,wght@0,300;0,700;1,300&display=swap" rel="stylesheet">
+    
+    <link href="https://calendar.google.com/calendar/scheduling-button-script.css" rel="stylesheet">
+
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-analytics-compat.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                        serif: ['Merriweather', 'serif'],
+                    },
+                    colors: {
+                        brand: {
+                            yellow: '#FCD34D',
+                            dark: '#1F2937',
+                        },
+                        de: {
+                            black: '#1a1a1a',
+                            red: '#DD0000',
+                            gold: '#FFCC00',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
     <style>
-        :root {
-            --primary: #fbbf24; 
-            --bg: #f3f4f6;
-            --text-main: #1f2937;
-            --card-bg: #ffffff;
+        .page-section {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
         }
-
-        body {
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--primary);
-            color: var(--text-main);
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
+        .page-section.active {
+            display: block;
+            opacity: 1;
         }
-
-        .container {
-            max-width: 600px;
-            width: 100%;
-            text-align: center;
-        }
-
-        .profile-img {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 4px solid white;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            margin-top: 20px;
-            margin-bottom: 15px;
-        }
-
-        h1 { margin: 10px 0 5px 0; font-size: 1.5rem; color: #000; }
         
-        .bio {
-            margin-bottom: 20px;
-            font-size: 1rem;
-            line-height: 1.5;
-            color: #333;
-            font-weight: 500;
-            background: rgba(255,255,255,0.4);
-            padding: 10px;
-            border-radius: 12px;
-            display: inline-block;
-        }
-
-        /* Video Container */
-        .media-container {
-            position: relative;
-            padding-bottom: 56.25%; /* 16:9 Format */
-            height: 0;
-            overflow: hidden;
-            border-radius: 16px;
-            margin-bottom: 25px;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-            background: #000;
-        }
-
-        .media-container iframe {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;
-        }
-
-        /* Aufklapp-Kalender Styles */
-        details {
-            margin-bottom: 12px;
-            width: 100%;
-        }
-
-        summary {
-            list-style: none; /* Dreieck entfernen (Standard) */
-            background: white; /* Hebt sich ab */
-            padding: 16px 20px;
-            border-radius: 50px;
-            font-weight: 700;
-            cursor: pointer;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-            display: flex;
-            align-items: center;
+        /* Modal Styles für Login & Booking */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 1000;
             justify-content: center;
-            transition: transform 0.2s;
-            position: relative;
-            color: var(--text-main);
-        }
-
-        /* Entfernt das Standard-Dreieck in Safari/Chrome */
-        summary::-webkit-details-marker { display: none; }
-
-        summary:hover {
-            transform: translateY(-2px);
-            background: #fffbef; /* Leicht gelblich beim Hover */
-        }
-
-        /* Kleiner Pfeil nach unten im Button */
-        summary::after {
-            content: "▼";
-            font-size: 0.8rem;
-            margin-left: 10px;
-            transition: transform 0.3s;
-        }
-
-        /* Pfeil drehen wenn offen */
-        details[open] summary::after {
-            transform: rotate(180deg);
-        }
-
-        /* Der Container für den Kalender wenn er offen ist */
-        .calendar-wrapper {
-            background: white;
-            margin-top: 10px;
-            border-radius: 15px;
-            padding: 10px;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-            animation: slideDown 0.3s ease-out;
-        }
-
-        @keyframes slideDown {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .link-card {
-            display: flex;
             align-items: center;
-            justify-content: center;
-            background: var(--card-bg);
-            padding: 16px 20px;
-            margin-bottom: 12px;
-            border-radius: 50px;
-            text-decoration: none;
-            color: var(--text-main);
-            font-weight: 600;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-            transition: transform 0.2s;
+            backdrop-filter: blur(5px);
         }
-
-        .link-card:hover { transform: translateY(-3px); }
-        .btn-highlight { border: 2px solid var(--text-main); }
-
-        /* Dezentres Impressum */
-        .legal-footer {
-            margin-top: 40px;
-            font-size: 0.75rem;
-            color: #4b5563;
-            opacity: 0.8;
+        .modal-overlay.flex { display: flex; }
+        
+        /* Iframe Container */
+        .iframe-container {
+            width: 95%; height: 90%; max-width: 1000px;
+            background: white; border-radius: 12px;
+            overflow: hidden; position: relative;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
         }
-        .legal-footer a { color: #4b5563; text-decoration: underline; }
     </style>
 </head>
-<body>
+<body class="font-sans text-gray-700 bg-white antialiased flex flex-col min-h-screen">
 
-    <div class="container">
-        <!-- Profilbild -->
-        <img src="joniavatar.jpg" alt="Jonas Profilbild" class="profile-img">
-
-        <h1>Jonas</h1>
-        
-        <p class="bio" id="txt-bio">Deutsch mit mehr Selbstvertrauen sprechen & realistisch trainieren! 🇩🇪</p>
-
-        <!-- YouTube Video -->
-        <div class="media-container">
-            <iframe src="https://www.youtube-nocookie.com/embed/fHV_RicUkXo" title="YouTube video player" allowfullscreen></iframe>
-        </div>
-
-        <!-- NEU: Aufklappbarer Kalender -->
-        <details>
-            <summary id="btn-calendar">📅 Termin direkt hier buchen</summary>
-            <div class="calendar-wrapper">
-                <!-- Dein Google Calendar Code -->
-                <iframe src="https://calendar.google.com/calendar/appointments/schedules/AcZssZ1_fZHZqgiGrYrvgdrr7NVBEofebZ_6G2V7WeN9Km3qdyUlj3UGnWuz05W8esbCq_-z1YVPpf5U?gv=true" style="border: 0" width="100%" height="600" frameborder="0"></iframe>
+    <div id="top-bar" class="bg-gray-900 text-gray-400 text-xs py-2 px-4 border-b border-gray-800">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <button onclick="openLoginModal()" class="hover:text-white transition flex items-center gap-2 font-bold uppercase tracking-wider">
+                <i class="fas fa-lock"></i> Schüler Login
+            </button>
+            
+            <div class="hidden sm:block">
+                <span>Technisches Deutsch & Konversation</span>
             </div>
-        </details>
-        
-        <a href="https://preply.in/JONAS6DE19204618" target="_blank" class="link-card btn-highlight" id="btn-book">
-            🎓 Deutschunterricht auf Preply buchen
-        </a>
-
-        <a href="https://preply.com/de/?pref=MTQxNzIwODA=&id=17582203" target="_blank" class="link-card" id="btn-discount">
-            🎁 Erhalte 30% Rabatt auf die Probestunde
-        </a>
-
-        <a href="https://www.linkedin.com/in/jonas-richter-web" target="_blank" class="link-card">
-            💼 LinkedIn
-        </a>
-
-        <a href="https://www.instagram.com/joni2east/" target="_blank" class="link-card">
-            📸 Instagram
-        </a>
-
-        <a href="mailto:jonas.richter.web+preply@gmail.com" class="link-card" id="btn-mail">
-            ✉️ E-Mail schreiben
-        </a>
-
-        <!-- Footer mit Impressum (Social Icons hier entfernt, da doppelt) -->
-        <div class="legal-footer">
-            &copy; 2026 Jonas Richter • 
-            <a href="/impressum.html" id="lnk-legal">Impressum</a>
         </div>
     </div>
 
+    <nav class="fixed top-8 w-full z-50 bg-white/95 backdrop-blur-md shadow-sm transition-all duration-300" id="navbar">
+        <div class="h-1 w-full bg-gradient-to-r from-de-black via-de-red to-de-gold"></div>
+        
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-20 items-center">
+                <div class="flex-shrink-0 flex items-center cursor-pointer" onclick="navigateTo('home')">
+                    <div class="flex items-center gap-2 group">
+                        <div class="w-10 h-10 bg-brand-yellow rounded-full flex items-center justify-center text-gray-900 shadow-sm group-hover:scale-110 transition">
+                            <span class="font-bold font-serif">J</span>
+                        </div>
+                        <span class="text-xl font-bold text-gray-900 tracking-tight">Deutsch mit Jonas</span>
+                    </div>
+                </div>
+                
+                <div class="hidden md:flex space-x-8 items-center">
+                    <button onclick="navigateTo('home')" class="nav-link text-gray-600 hover:text-black font-medium text-sm uppercase">Start</button>
+                    <button onclick="navigateTo('konversation')" class="nav-link text-gray-600 hover:text-black font-medium text-sm uppercase">Konversation</button>
+                    <button onclick="navigateTo('business')" class="nav-link text-gray-600 hover:text-black font-medium text-sm uppercase">Business</button>
+                    <button onclick="navigateTo('preise')" class="nav-link text-brand-dark font-bold text-sm uppercase border-b-2 border-transparent hover:border-brand-yellow">Preise</button>
+                    <button onclick="navigateTo('about')" class="nav-link text-gray-600 hover:text-black font-medium text-sm uppercase">Über Mich</button>
+                    <button onclick="scrollToContact()" class="bg-gray-900 text-white px-6 py-2 rounded-full font-bold hover:bg-black transition text-sm">Kontakt</button>
+                </div>
+
+                <div class="md:hidden flex items-center">
+                    <button id="mobile-menu-btn" class="text-gray-900 p-2">
+                        <i class="fas fa-bars text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-100 absolute w-full shadow-xl">
+            <div class="px-4 pt-2 pb-6 space-y-2">
+                <button onclick="navigateTo('home'); toggleMobileMenu()" class="block w-full text-left px-3 py-3 font-medium hover:bg-gray-50">Start</button>
+                <button onclick="navigateTo('preise'); toggleMobileMenu()" class="block w-full text-left px-3 py-3 font-bold text-yellow-600">Preise</button>
+                <button onclick="openLoginModal(); toggleMobileMenu()" class="block w-full text-left px-3 py-3 font-bold text-blue-600 border-t border-gray-100 mt-2 pt-4">
+                    <i class="fas fa-lock mr-2"></i> Schüler Login
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <main id="home" class="page-section active pt-32 flex-grow">
+        <div class="max-w-7xl mx-auto px-4 py-12 text-center">
+            <h1 class="text-5xl font-bold mb-6">Deutsch lernen mit technischem Verstand</h1>
+            <p class="text-xl text-gray-600 mb-8">Für Ingenieure, Techniker und alle, die im Job sicher sprechen wollen.</p>
+            <button onclick="navigateTo('preise')" class="bg-gray-900 text-white px-8 py-4 rounded-lg font-bold hover:scale-105 transition">Termin buchen</button>
+        </div>
+        
+        </main>
+
+    <main id="preise" class="page-section pt-32 flex-grow">
+        <div class="max-w-7xl mx-auto px-4 py-12 text-center">
+            <h1 class="text-4xl font-bold mb-8">Pakete & Preise</h1>
+            
+            <div class="bg-yellow-50 p-8 rounded-xl max-w-2xl mx-auto mb-12 border border-yellow-200">
+                <h3 class="font-bold text-xl mb-4">Öffentliche Buchung (Erstgespräch)</h3>
+                <script src="https://calendar.google.com/calendar/scheduling-button-script.js" async></script>
+                <script>
+                (function() {
+                    var target = document.currentScript;
+                    window.addEventListener('load', function() {
+                        calendar.schedulingButton.load({
+                            url: 'https://calendar.google.com/calendar/appointments/schedules/AcZssZ1_fZHZqgiGrYrvgdrr7NVBEofebZ_6G2V7WeN9Km3qdyUlj3UGnWuz05W8esbCq_-z1YVPpf5U?gv=true',
+                            color: '#039BE5',
+                            label: 'Termin eintragen',
+                            target,
+                        });
+                    });
+                })();
+                </script>
+            </div>
+        </div>
+    </main>
+    
+    <main id="konversation" class="page-section pt-32 flex-grow"><div class="text-center pt-20">Konversation Content...</div></main>
+    <main id="business" class="page-section pt-32 flex-grow"><div class="text-center pt-20">Business Content...</div></main>
+    <main id="about" class="page-section pt-32 flex-grow"><div class="text-center pt-20">Über Mich Content...</div></main>
+
+
+    <main id="members-area" class="page-section hidden h-screen bg-gray-50 flex flex-col items-center justify-center">
+        <div class="text-center">
+            <div class="w-20 h-20 bg-brand-yellow rounded-full flex items-center justify-center text-gray-900 mx-auto mb-6 text-3xl font-serif font-bold shadow-lg">
+                J
+            </div>
+            
+            <h1 class="text-3xl font-bold text-gray-900 mb-2">Willkommen zurück!</h1>
+            <p class="text-gray-500 mb-10">Eingeloggt als <span id="user-email-display" class="font-bold text-gray-800">...</span></p>
+            
+            <button onclick="openBookingTool()" class="bg-gray-900 text-white text-xl font-bold py-5 px-10 rounded-2xl shadow-xl hover:bg-black hover:scale-105 transition-transform flex items-center gap-3 mx-auto">
+                <i class="fas fa-calendar-check text-brand-yellow"></i>
+                <span>Unterricht buchen</span>
+            </button>
+            
+            <button onclick="logout()" class="mt-12 text-gray-400 hover:text-red-500 text-sm font-medium transition flex items-center gap-2 mx-auto">
+                <i class="fas fa-sign-out-alt"></i> Abmelden
+            </button>
+        </div>
+    </main>
+
+
+    <div id="loginModal" class="modal-overlay">
+        <div class="bg-white rounded-xl shadow-2xl p-8 max-w-sm w-full mx-4 relative transform transition-all scale-100">
+            <button onclick="closeLoginModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+                <i class="fas fa-times text-xl"></i>
+            </button>
+            
+            <h2 class="text-2xl font-bold mb-6 text-gray-900">Schüler Login</h2>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">E-Mail</label>
+                    <input type="email" id="loginEmail" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-yellow focus:border-transparent outline-none transition">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Passwort</label>
+                    <input type="password" id="loginPass" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-yellow focus:border-transparent outline-none transition">
+                </div>
+                
+                <button onclick="performLogin()" id="loginBtn" class="w-full bg-brand-yellow text-gray-900 font-bold py-3 rounded-lg hover:bg-yellow-400 transition shadow-sm">
+                    Einloggen
+                </button>
+                
+                <p id="loginError" class="text-red-500 text-sm text-center hidden"></p>
+            </div>
+            
+            <p class="text-xs text-gray-400 mt-6 text-center">
+                Noch kein Schüler? <a href="#" onclick="closeLoginModal(); navigateTo('preise')" class="text-gray-600 hover:underline">Hier Termin buchen.</a>
+            </p>
+        </div>
+    </div>
+
+    <div id="bookingModal" class="modal-overlay">
+        <div class="iframe-container flex flex-col">
+            <div class="bg-gray-100 px-4 py-3 border-b border-gray-200 flex justify-between items-center">
+                <span class="font-bold text-gray-700 text-sm">Buchungssystem</span>
+                <button onclick="closeBookingTool()" class="bg-white text-gray-600 hover:text-red-500 hover:bg-red-50 px-3 py-1 rounded-md text-sm font-bold border border-gray-200 transition">
+                    Schließen
+                </button>
+            </div>
+            <div class="flex-grow relative bg-white">
+                <div id="loader" class="absolute inset-0 flex flex-col items-center justify-center text-gray-400">
+                    <i class="fas fa-circle-notch fa-spin text-4xl text-brand-yellow mb-4"></i>
+                    <span>Verbinde mit Kalender...</span>
+                </div>
+                <iframe id="gasFrame" src="" class="w-full h-full border-0"></iframe>
+            </div>
+        </div>
+    </div>
+
+
     <script>
-        // 1. Das Wörterbuch
-        const translations = {
-            'de': {
-                bio: "Deutsch mit mehr Selbstvertrauen sprechen & realistisch trainieren! 🇩🇪",
-                calendarBtn: "📅 Termin direkt hier buchen",
-                book: "🎓 Deutschunterricht auf Preply buchen",
-                discount: "🎁 Erhalte 30% Rabatt auf die Probestunde",
-                mail: "✉️ E-Mail schreiben",
-                legal: "Impressum"
-            },
-            'en': {
-                bio: "Speak German with more confidence & train realistically! 🇩🇪",
-                calendarBtn: "📅 Book an appointment here",
-                book: "🎓 Book German lessons on Preply",
-                discount: "🎁 Get 30% off your first trial lesson",
-                mail: "✉️ Send an E-Mail",
-                legal: "Legal Notice"
-            },
-            'es': {
-                bio: "¡Habla alemán con más confianza y entrena de forma realista! 🇩🇪",
-                calendarBtn: "📅 Reserva tu cita aquí",
-                book: "🎓 Reserva clases de alemán en Preply",
-                discount: "🎁 Obtén 30% de descuento en tu primera clase",
-                mail: "✉️ Enviar un correo",
-                legal: "Aviso Legal"
-            },
-            // Türkisch
-            'tr': {
-                bio: "Daha fazla özgüvenle Almanca konuşun & gerçekçi alıştırmalar yapın! 🇩🇪",
-                calendarBtn: "📅 Randevunuzu buradan alın",
-                book: "🎓 Preply'de Almanca dersi ayırtın",
-                discount: "🎁 İlk deneme dersinde %30 indirim kazanın",
-                mail: "✉️ E-Posta gönderin",
-                legal: "Künye"
-            },
-            // Russisch
-            'ru': {
-                bio: "Говорите по-немецки уверенно и тренируйтесь реалистично! 🇩🇪",
-                calendarBtn: "📅 Запишитесь на прием здесь",
-                book: "🎓 Забронировать урок немецкого на Preply",
-                discount: "🎁 Скидка 30% на первый пробный урок",
-                mail: "✉️ Отправить E-Mail",
-                legal: "Импрессум"
-            },
-            // Polnisch
-            'pl': {
-                bio: "Mów po niemiecku z większą pewnością siebie i trenuj realistycznie! 🇩🇪",
-                calendarBtn: "📅 Zarezerwuj termin tutaj",
-                book: "🎓 Zarezerwuj lekcje niemieckiego na Preply",
-                discount: "🎁 Otrzymaj 30% zniżki na pierwszą lekcję próbną",
-                mail: "✉️ Wyślij e-mail",
-                legal: "Impressum"
-            }
+        // --- 1. KONFIGURATION (DEINE ECHTEN DATEN) ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyBcRjQIY6B65j6DmvVbPFJqIymNykbRuRw",
+            authDomain: "deutschmitjonas.firebaseapp.com",
+            projectId: "deutschmitjonas",
+            storageBucket: "deutschmitjonas.firebasestorage.app",
+            messagingSenderId: "973946116160",
+            appId: "1:973946116160:web:ee21e07f461f5355f067a5",
+            measurementId: "G-NG4HWN4QH8"
         };
 
-        // 2. Sprache erkennen
-        const userLang = navigator.language.slice(0, 2); 
-        // Falls die Sprache nicht dabei ist, Standard Englisch ('en')
-        const currentLang = translations[userLang] ? userLang : 'en';
+        // DEINE GOOGLE APPS SCRIPT URL
+        const GAS_APP_URL = "https://script.google.com/macros/s/AKfycby7xni60TWXpCuxe4MoRYDn9KUY7ipeyaSeocaS96AOF3u7YEwTc8lykx8X3W--2U08Lw/exec"; 
 
-        // 3. Texte austauschen
-        if (currentLang !== 'de') {
-            document.getElementById('txt-bio').innerText = translations[currentLang].bio;
-            document.getElementById('btn-calendar').innerText = translations[currentLang].calendarBtn;
-            document.getElementById('btn-book').innerText = translations[currentLang].book;
-            document.getElementById('btn-discount').innerText = translations[currentLang].discount;
-            document.getElementById('btn-mail').innerText = translations[currentLang].mail;
-            document.getElementById('lnk-legal').innerText = translations[currentLang].legal;
+
+        // --- FIREBASE INIT (Compat Mode) ---
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const analytics = firebase.analytics(); // Analytics optional
+
+        // --- AUTH STATE MONITOR ---
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                // User ist eingeloggt -> Zeige Mitgliederbereich
+                showMemberArea(user);
+            } else {
+                // User ist ausgeloggt -> Zeige öffentliche Seite
+                showPublicArea();
+            }
+        });
+
+        // --- NAVIGATION LOGIC ---
+        function showMemberArea(user) {
+            // Verstecke alle öffentlichen Elemente
+            document.getElementById('top-bar').classList.add('hidden');
+            document.getElementById('navbar').classList.add('hidden');
+            document.querySelector('footer').classList.add('hidden');
+            
+            // Verstecke alle Content Pages
+            document.querySelectorAll('.page-section').forEach(p => p.classList.remove('active'));
+            
+            // Zeige Member Area
+            const memberPage = document.getElementById('members-area');
+            memberPage.classList.remove('hidden');
+            setTimeout(() => memberPage.classList.add('active'), 10);
+            
+            document.getElementById('user-email-display').innerText = user.email;
+            
+            closeLoginModal();
+        }
+
+        function showPublicArea() {
+            // Zeige Navigation wieder
+            document.getElementById('top-bar').classList.remove('hidden');
+            document.getElementById('navbar').classList.remove('hidden');
+            document.querySelector('footer').classList.remove('hidden');
+            
+            // Verstecke Member Area
+            const memberPage = document.getElementById('members-area');
+            memberPage.classList.remove('active');
+            setTimeout(() => memberPage.classList.add('hidden'), 300);
+
+            // Zeige Home
+            navigateTo('home');
+        }
+
+        // --- LOGIN FUNKTIONEN ---
+        function openLoginModal() {
+            document.getElementById('loginModal').classList.add('flex');
+        }
+        function closeLoginModal() {
+            document.getElementById('loginModal').classList.remove('flex');
+            document.getElementById('loginError').classList.add('hidden');
+        }
+        
+        function performLogin() {
+            const e = document.getElementById('loginEmail').value;
+            const p = document.getElementById('loginPass').value;
+            const btn = document.getElementById('loginBtn');
+            const err = document.getElementById('loginError');
+            
+            btn.innerText = "Lade...";
+            btn.disabled = true;
+            
+            auth.signInWithEmailAndPassword(e, p)
+                .then(() => {
+                    // onAuthStateChanged erledigt den Rest
+                    btn.innerText = "Erfolg!";
+                })
+                .catch(error => {
+                    btn.innerText = "Einloggen";
+                    btn.disabled = false;
+                    err.innerText = "Falsche E-Mail oder Passwort.";
+                    err.classList.remove('hidden');
+                    console.error(error);
+                });
+        }
+
+        function logout() {
+            if(confirm("Möchtest du dich abmelden?")) {
+                auth.signOut();
+            }
+        }
+
+        // --- BOOKING TOOL INTEGRATION ---
+        function openBookingTool() {
+            const user = auth.currentUser;
+            if(!user) return;
+
+            document.getElementById('bookingModal').classList.add('flex');
+            document.getElementById('loader').style.display = 'flex';
+            
+            const frame = document.getElementById('gasFrame');
+            
+            // WICHTIG: Wir hängen die Email an die URL an (?u=...), 
+            // damit dein Google Script den Auto-Login machen kann.
+            const fullUrl = GAS_APP_URL + "?u=" + encodeURIComponent(user.email);
+            
+            frame.src = fullUrl;
+            
+            frame.onload = function() {
+                document.getElementById('loader').style.display = 'none';
+            };
+        }
+
+        function closeBookingTool() {
+            document.getElementById('bookingModal').classList.remove('flex');
+            document.getElementById('gasFrame').src = ""; // Reset Iframe
+        }
+
+        // --- PUBLIC ROUTER (Für die öffentliche Seite) ---
+        function navigateTo(pageId) {
+            // Ignorieren wenn im Member-Bereich
+            if(!document.getElementById('members-area').classList.contains('hidden')) return;
+
+            const pages = document.querySelectorAll('main.page-section:not(#members-area)');
+            pages.forEach(page => {
+                page.classList.remove('active');
+                setTimeout(() => {
+                    if(!page.classList.contains('active')) page.style.display = 'none';
+                }, 300);
+            });
+
+            const selectedPage = document.getElementById(pageId);
+            if(selectedPage) {
+                selectedPage.style.display = 'block';
+                setTimeout(() => selectedPage.classList.add('active'), 10);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+        
+        // Mobile Menu
+        function toggleMobileMenu() {
+            document.getElementById('mobile-menu').classList.toggle('hidden');
+        }
+        document.getElementById('mobile-menu-btn').addEventListener('click', toggleMobileMenu);
+
+        // Footer Contact Form (Simuliert)
+        function scrollToContact() {
+            document.querySelector('footer').scrollIntoView({ behavior: 'smooth' });
         }
     </script>
-
 </body>
 </html>
