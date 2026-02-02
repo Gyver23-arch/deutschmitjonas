@@ -354,15 +354,43 @@
         }
 
         // --- BOOKING TOOL ---
-        function openBookingTool() {
-            const user = auth.currentUser;
-            if(!user) return;
-            document.getElementById('bookingModal').classList.add('flex');
-            document.getElementById('loader').style.display = 'flex';
-            const frame = document.getElementById('gasFrame');
-            frame.src = GAS_APP_URL + "?u=" + encodeURIComponent(user.email);
-            frame.onload = function() { document.getElementById('loader').style.display = 'none'; };
-        }
+        // --- 5. BOOKING TOOL (IFRAME MIT SICHERHEIT) ---
+function openBookingTool() {
+    // 1. Prüfen, ob der Nutzer eingeloggt ist
+    const user = auth.currentUser;
+    if (!user) {
+        alert("Bitte erst einloggen!");
+        return;
+    }
+
+    // 2. Die HTML-Elemente holen
+    const modal = document.getElementById('bookingModal');
+    const loader = document.getElementById('loader');
+    const frame = document.getElementById('gasFrame');
+
+    // 3. Modal öffnen und Lade-Kreis anzeigen
+    modal.classList.add('flex');
+    loader.style.display = 'flex';
+
+    // 4. Die URL bauen (Email UND UID)
+    // Wir nutzen encodeURIComponent, damit Sonderzeichen (@, ., etc.) kein Chaos verursachen
+    const emailParam = encodeURIComponent(user.email);
+    const uidParam = encodeURIComponent(user.uid);
+
+    // Das Ergebnis sieht so aus: .../exec?u=name@mail.de&id=A1b2C3d4...
+    const fullUrl = GAS_APP_URL + "?u=" + emailParam + "&id=" + uidParam;
+
+    console.log("Öffne Booking Tool für:", user.email);
+    console.log("Sicherheits-Check UID:", user.uid);
+
+    // 5. Iframe laden
+    frame.src = fullUrl;
+
+    // 6. Sobald das Iframe fertig geladen hat, Lade-Kreis ausblenden
+    frame.onload = function() {
+        loader.style.display = 'none';
+    };
+}
         function closeBookingTool() { 
             document.getElementById('bookingModal').classList.remove('flex'); 
             document.getElementById('gasFrame').src = ""; 
