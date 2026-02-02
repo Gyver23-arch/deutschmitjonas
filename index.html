@@ -192,7 +192,7 @@
         </div>
     </div>
 
-    <script>
+<script>
         // --- 1. CONFIGURATION ---
         const firebaseConfig = {
             apiKey: "AIzaSyBcRjQIY6B65j6DmvVbPFJqIymNykbRuRw",
@@ -205,42 +205,68 @@
         };
         const GAS_APP_URL = "https://script.google.com/macros/s/AKfycby7xni60TWXpCuxe4MoRYDn9KUY7ipeyaSeocaS96AOF3u7YEwTc8lykx8X3W--2U08Lw/exec"; 
 
+        // Firebase initialisieren
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
 
-        // --- AUTH LOGIC ---
+        // --- AUTH MONITOR (Überwacht Login-Zustand) ---
         auth.onAuthStateChanged(user => {
-            if (user) showMemberArea(user);
-            else showPublicArea();
+            if (user) {
+                console.log("User erkannt:", user.email);
+                showMemberArea(user);
+            } else {
+                showPublicArea();
+            }
         });
 
+        // --- ANZEIGE STEUERUNG ---
         function showMemberArea(user) {
+            // 1. Öffentliche Elemente verstecken
             document.getElementById('top-bar').classList.add('hidden');
             document.getElementById('navbar').classList.add('hidden');
-            document.querySelector('footer').classList.add('hidden');
-            document.querySelectorAll('.page-section').forEach(p => p.classList.remove('active'));
+            const footer = document.querySelector('footer');
+            if(footer) footer.classList.add('hidden');
+            
+            // 2. Alle Seiten verstecken
+            document.querySelectorAll('.page-section').forEach(p => {
+                p.classList.remove('active');
+                p.style.display = 'none'; // Wichtig: Hartes Ausblenden
+            });
+
+            // 3. Mitgliederbereich zeigen
             const memberPage = document.getElementById('members-area');
             memberPage.classList.remove('hidden');
+            memberPage.style.display = 'flex'; // Wichtig für Zentrierung
             setTimeout(() => memberPage.classList.add('active'), 10);
+            
+            // 4. Daten setzen
             document.getElementById('user-email-display').innerText = user.email;
+            
+            // 5. Modal schließen
             closeLoginModal();
         }
 
         function showPublicArea() {
             document.getElementById('top-bar').classList.remove('hidden');
             document.getElementById('navbar').classList.remove('hidden');
-            document.querySelector('footer').classList.remove('hidden');
+            const footer = document.querySelector('footer');
+            if(footer) footer.classList.remove('hidden');
+            
             const memberPage = document.getElementById('members-area');
             memberPage.classList.remove('active');
-            setTimeout(() => memberPage.classList.add('hidden'), 300);
+            memberPage.classList.add('hidden');
+            memberPage.style.display = 'none';
+
             navigateTo('home');
         }
 
-        // --- LOGIN / REGISTER / RESET FUNCTIONS ---
+        // --- LOGIN & REGISTER ---
         function openLoginModal() { document.getElementById('loginModal').classList.add('flex'); }
+        
         function closeLoginModal() { 
             document.getElementById('loginModal').classList.remove('flex'); 
             document.getElementById('loginError').classList.add('hidden');
+            document.getElementById('loginBtn').innerText = "Jetzt Einloggen"; // Reset Text
         }
         
         function switchAuthMode(mode) {
@@ -274,10 +300,17 @@
             btn.innerText = "Lade..."; btn.disabled = true;
             
             auth.signInWithEmailAndPassword(e, p)
-                .then(() => { btn.innerText = "Erfolg!"; })
+                .then((userCredential) => { 
+                    btn.innerText = "Erfolg! Weiterleitung...";
+                    // HIER WAR DER FEHLER: Wir rufen jetzt sofort die Ansicht auf
+                    showMemberArea(userCredential.user);
+                })
                 .catch(error => {
                     btn.innerText = "Jetzt Einloggen"; btn.disabled = false;
-                    err.innerText = "Falsche E-Mail oder Passwort.";
+                    console.error(error);
+                    if(error.code === 'auth/wrong-password') err.innerText = "Falsches Passwort.";
+                    else if(error.code === 'auth/user-not-found') err.innerText = "E-Mail nicht gefunden.";
+                    else err.innerText = "Fehler: " + error.message;
                     err.classList.remove('hidden');
                 });
         }
@@ -289,18 +322,18 @@
             const err = document.getElementById('loginError');
             
             if(!e || !p) { err.innerText = "Bitte alles ausfüllen."; err.classList.remove('hidden'); return; }
-            if(p.length < 6) { err.innerText = "Passwort muss mind. 6 Zeichen haben."; err.classList.remove('hidden'); return; }
+            if(p.length < 6) { err.innerText = "Passwort zu kurz (min 6)."; err.classList.remove('hidden'); return; }
 
-            btn.innerText = "Registriere..."; btn.disabled = true;
+            btn.innerText = "Erstelle Konto..."; btn.disabled = true;
             
             auth.createUserWithEmailAndPassword(e, p)
-                .then(() => { 
-                    alert("Registrierung erfolgreich! Du bist jetzt eingeloggt.");
-                    // onAuthStateChanged übernimmt den Rest
+                .then((userCredential) => { 
+                    alert("Konto erstellt!");
+                    showMemberArea(userCredential.user);
                 })
                 .catch(error => {
                     btn.innerText = "Kostenlos Registrieren"; btn.disabled = false;
-                    if(error.code === 'auth/email-already-in-use') err.innerText = "Diese E-Mail wird bereits verwendet.";
+                    if(error.code === 'auth/email-already-in-use') err.innerText = "E-Mail schon vergeben.";
                     else err.innerText = "Fehler: " + error.message;
                     err.classList.remove('hidden');
                 });
@@ -308,14 +341,17 @@
 
         function resetPassword() {
             const e = document.getElementById('loginEmail').value;
-            if(!e) { alert("Bitte gib deine E-Mail oben ein, um das Passwort zurückzusetzen."); return; }
-            
+            if(!e) { alert("Bitte E-Mail oben eingeben."); return; }
             auth.sendPasswordResetEmail(e)
-                .then(() => { alert("E-Mail zum Zurücksetzen wurde gesendet! Überprüfe deinen Posteingang."); })
+                .then(() => { alert("E-Mail gesendet!"); })
                 .catch((error) => { alert("Fehler: " + error.message); });
         }
 
-        function logout() { if(confirm("Möchtest du dich abmelden?")) auth.signOut(); }
+        function logout() { 
+            if(confirm("Abmelden?")) {
+                auth.signOut().then(() => showPublicArea());
+            } 
+        }
 
         // --- BOOKING TOOL ---
         function openBookingTool() {
@@ -334,7 +370,10 @@
 
         // --- NAVIGATION ---
         function navigateTo(pageId) {
-            if(!document.getElementById('members-area').classList.contains('hidden')) return;
+            // Blockieren, wenn im Member-Bereich
+            const memberArea = document.getElementById('members-area');
+            if(memberArea && !memberArea.classList.contains('hidden') && memberArea.style.display !== 'none') return;
+
             document.querySelectorAll('main.page-section:not(#members-area)').forEach(page => {
                 page.classList.remove('active');
                 setTimeout(() => { if(!page.classList.contains('active')) page.style.display = 'none'; }, 300);
@@ -346,9 +385,15 @@
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             }
         }
+        
         function toggleMobileMenu() { document.getElementById('mobile-menu').classList.toggle('hidden'); }
-        document.getElementById('mobile-menu-btn').addEventListener('click', toggleMobileMenu);
-        function scrollToContact() { document.querySelector('footer').scrollIntoView({ behavior: 'smooth' }); }
+        const mbBtn = document.getElementById('mobile-menu-btn');
+        if(mbBtn) mbBtn.addEventListener('click', toggleMobileMenu);
+        
+        function scrollToContact() { 
+            const f = document.querySelector('footer');
+            if(f) f.scrollIntoView({ behavior: 'smooth' }); 
+        }
     </script>
 </body>
 </html>
