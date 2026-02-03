@@ -1,19 +1,20 @@
+
 <!DOCTYPE html>
 <html lang="de" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Deutsch mit Jonas - Technisches Deutsch & Konversation</title>
-    
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Merriweather:ital,wght@0,300;0,700;1,300&display=swap" rel="stylesheet">
     
+    <!-- Google Calendar Styling -->
     <link href="https://calendar.google.com/calendar/scheduling-button-script.css" rel="stylesheet">
 
+    <!-- Firebase (Auth) -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-analytics-compat.js"></script>
@@ -23,116 +24,610 @@
             theme: {
                 extend: {
                     fontFamily: {
-                        sans: ['Outfit', 'sans-serif'],
-                        serif: ['Merriweather', 'serif'],
+                        sans: ['Outfit', 'sans-serif'], // Modern, friendly, approachable
+                        serif: ['Merriweather', 'serif'], // Trustworthy
                     },
                     colors: {
-                        brand: { yellow: '#FCD34D', dark: '#1F2937' },
-                        de: { black: '#1a1a1a', red: '#DD0000', gold: '#FFCC00' }
+                        brand: {
+                            yellow: '#FCD34D', // Matching your photo background roughly
+                            dark: '#1F2937',
+                        },
+                        // Deutschland Farben für Akzente
+                        de: {
+                            black: '#1a1a1a',
+                            red: '#DD0000',
+                            gold: '#FFCC00',
+                        }
                     }
                 }
             }
         }
     </script>
     <style>
-        .page-section { display: none; opacity: 0; transition: opacity 0.3s ease-in-out; }
-        .page-section.active { display: block; opacity: 1; }
+        .flag-border-bottom {
+            border-bottom: 3px solid transparent;
+            border-image: linear-gradient(to right, #1a1a1a 33%, #DD0000 33%, #DD0000 66%, #FFCC00 66%) 1;
+        }
+        
+        /* Smooth fade transition for pages */
+        .page-section {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+        }
+        .page-section.active {
+            display: block;
+            opacity: 1;
+        }
+    
+        /* Modal / Member Area */
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000; justify-content: center; align-items: center; backdrop-filter: blur(5px); }
         .modal-overlay.flex { display: flex; }
         .iframe-container { width: 95%; height: 90%; max-width: 1000px; background: white; border-radius: 12px; overflow: hidden; position: relative; box-shadow: 0 20px 50px rgba(0,0,0,0.3); }
-        
-        /* Tab Styles im Modal */
+
+        /* Tab Styles im Login-Modal */
         .auth-tab { cursor: pointer; padding-bottom: 8px; border-bottom: 2px solid transparent; color: #6b7280; font-weight: 600; }
         .auth-tab.active { border-color: #FCD34D; color: #111827; }
+
     </style>
 </head>
 <body class="font-sans text-gray-700 bg-white antialiased flex flex-col min-h-screen">
 
-    <div id="top-bar" class="bg-gray-900 text-gray-400 text-xs py-2 px-4 border-b border-gray-800">
+    <!-- Navigation -->
+    
+    <div id="top-bar" class="fixed top-0 w-full bg-gray-900 text-gray-400 text-xs py-2 px-4 border-b border-gray-800 z-[60]">
         <div class="max-w-7xl mx-auto flex justify-between items-center">
             <button onclick="openLoginModal()" class="hover:text-white transition flex items-center gap-2 font-bold uppercase tracking-wider">
                 <i class="fas fa-lock"></i> Schüler Login
             </button>
-            <div class="hidden sm:block"><span>Technisches Deutsch & Konversation</span></div>
+            <div class="hidden sm:block"><span>Technisches Deutsch &amp; Konversation</span></div>
         </div>
     </div>
 
-    <nav class="fixed top-8 w-full z-50 bg-white/95 backdrop-blur-md shadow-sm transition-all duration-300" id="navbar">
+    <nav class="fixed top-8 w-full z-50 bg-white/95 backdrop-blur-md shadow-sm" id="navbar">
         <div class="h-1 w-full bg-gradient-to-r from-de-black via-de-red to-de-gold"></div>
+        
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-20 items-center">
+                <!-- Logo / Brand -->
                 <div class="flex-shrink-0 flex items-center cursor-pointer" onclick="navigateTo('home')">
                     <div class="flex items-center gap-2 group">
                         <div class="w-10 h-10 bg-brand-yellow rounded-full flex items-center justify-center text-gray-900 shadow-sm group-hover:scale-110 transition">
                             <span class="font-bold font-serif">J</span>
                         </div>
-                        <span class="text-xl font-bold text-gray-900 tracking-tight">Deutsch mit Jonas</span>
+                        <span class="text-xl font-bold text-gray-900 tracking-tight group-hover:text-gray-600 transition">
+                            Deutsch mit Jonas
+                        </span>
                     </div>
                 </div>
+                
+                <!-- Desktop Menu -->
                 <div class="hidden md:flex space-x-8 items-center">
-                    <button onclick="navigateTo('home')" class="nav-link text-gray-600 hover:text-black font-medium text-sm uppercase">Start</button>
-                    <button onclick="navigateTo('konversation')" class="nav-link text-gray-600 hover:text-black font-medium text-sm uppercase">Konversation</button>
-                    <button onclick="navigateTo('business')" class="nav-link text-gray-600 hover:text-black font-medium text-sm uppercase">Business</button>
-                    <button onclick="navigateTo('preise')" class="nav-link text-brand-dark font-bold text-sm uppercase border-b-2 border-transparent hover:border-brand-yellow">Preise</button>
-                    <button onclick="navigateTo('about')" class="nav-link text-gray-600 hover:text-black font-medium text-sm uppercase">Über Mich</button>
-                    <button onclick="scrollToContact()" class="bg-gray-900 text-white px-6 py-2 rounded-full font-bold hover:bg-black transition text-sm">Kontakt</button>
+                    <button onclick="navigateTo('home')" class="nav-link text-gray-600 hover:text-black font-medium transition text-sm uppercase tracking-wide">Start</button>
+                    <button onclick="navigateTo('konversation')" class="nav-link text-gray-600 hover:text-black font-medium transition text-sm uppercase tracking-wide">Konversation</button>
+                    <button onclick="navigateTo('business')" class="nav-link text-gray-600 hover:text-black font-medium transition text-sm uppercase tracking-wide">Business & Technik</button>
+                    <!-- Preise als eigener, hervorgehobener Tab -->
+                    <button onclick="navigateTo('preise')" class="nav-link text-brand-dark font-bold transition text-sm uppercase tracking-wide border-b-2 border-transparent hover:border-brand-yellow">Preise</button>
+                    <button onclick="navigateTo('about')" class="nav-link text-gray-600 hover:text-black font-medium transition text-sm uppercase tracking-wide">Über Jonas</button>
+                    <button onclick="scrollToContact()" class="bg-gray-900 text-white px-6 py-2.5 rounded-full font-bold hover:bg-gray-800 transition shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
+                        Kontakt
+                    </button>
                 </div>
+
+                <!-- Mobile menu button -->
                 <div class="md:hidden flex items-center">
-                    <button id="mobile-menu-btn" class="text-gray-900 p-2"><i class="fas fa-bars text-2xl"></i></button>
+                    <button id="mobile-menu-btn" class="text-gray-900 p-2">
+                        <i class="fas fa-bars text-2xl"></i>
+                    </button>
                 </div>
             </div>
         </div>
+
+        <!-- Mobile Menu Panel -->
         <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-100 absolute w-full shadow-xl">
             <div class="px-4 pt-2 pb-6 space-y-2">
-                <button onclick="navigateTo('home'); toggleMobileMenu()" class="block w-full text-left px-3 py-3 font-medium hover:bg-gray-50">Start</button>
-                <button onclick="navigateTo('preise'); toggleMobileMenu()" class="block w-full text-left px-3 py-3 font-bold text-yellow-600">Preise</button>
-                <button onclick="openLoginModal(); toggleMobileMenu()" class="block w-full text-left px-3 py-3 font-bold text-blue-600 border-t border-gray-100 mt-2 pt-4"><i class="fas fa-lock mr-2"></i> Schüler Login</button>
-            </div>
+                <button onclick="navigateTo('home'); toggleMobileMenu()" class="block w-full text-left px-3 py-3 font-medium text-gray-700 hover:bg-gray-50">Start</button>
+                <button onclick="navigateTo('konversation'); toggleMobileMenu()" class="block w-full text-left px-3 py-3 font-medium text-gray-700 hover:bg-gray-50">Konversation</button>
+                <button onclick="navigateTo('business'); toggleMobileMenu()" class="block w-full text-left px-3 py-3 font-medium text-gray-700 hover:bg-gray-50">Business & Technik</button>
+                <button onclick="navigateTo('preise'); toggleMobileMenu()" class="block w-full text-left px-3 py-3 font-bold text-yellow-600 bg-yellow-50 rounded">Preise</button>
+                <button onclick="navigateTo('about'); toggleMobileMenu()" class="block w-full text-left px-3 py-3 font-medium text-gray-700 hover:bg-gray-50">Über Jonas</button>
+                <button onclick="scrollToContact(); toggleMobileMenu()" class="block w-full text-left px-3 py-3 font-bold text-white bg-gray-900 mt-4 rounded">Kontakt</button>
+            
+                <button onclick="openLoginModal(); toggleMobileMenu()" class="block w-full text-left px-3 py-3 font-bold text-blue-600 border-t border-gray-100 mt-2 pt-4">
+                    <i class="fas fa-lock mr-2"></i> Schüler Login
+                </button>
+</div>
         </div>
     </nav>
 
+    <!-- CONTENT PAGES (Swapped via JS) -->
+
+    <!-- 1. HOME PAGE -->
     <main id="home" class="page-section active pt-32 flex-grow">
-        <div class="max-w-7xl mx-auto px-4 py-12 text-center">
-            <h1 class="text-5xl font-bold mb-6">Deutsch lernen mit technischem Verstand</h1>
-            <p class="text-xl text-gray-600 mb-8">Für Ingenieure, Techniker und alle, die im Job sicher sprechen wollen.</p>
-            <button onclick="navigateTo('preise')" class="bg-gray-900 text-white px-8 py-4 rounded-lg font-bold hover:scale-105 transition">Termin buchen</button>
+        <!-- Hero -->
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-12">
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <!-- Text Left -->
+                <div class="order-2 lg:order-1 text-center lg:text-left">
+                    <!-- Preply Badge mit Logo -->
+                    <a href="https://preply.com/de/nachhilfelehrer/5032538" target="_blank" class="inline-flex items-center gap-3 bg-white border border-gray-200 rounded-full pl-4 pr-5 py-2 shadow-sm hover:shadow-md transition mb-6 cursor-pointer group">
+                        <img src="https://preply.com/download-cms-assets/f23efc/ygli5cawa8_Preply_Logo_Pink_SVG.svg" alt="Preply Logo" class="h-6 w-auto">
+                        <div class="flex flex-col items-start leading-none">
+                            <span class="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Verifizierter Tutor</span>
+                            <span class="text-sm font-bold text-gray-800 flex items-center gap-1">
+                                4.8 <i class="fas fa-star text-yellow-400 text-xs"></i> (24+ Bewertungen)
+                            </span>
+                        </div>
+                    </a>
+                    
+                    <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight mb-6">
+                        Deutsch lernen mit <br>
+                        <span class="relative inline-block text-gray-900">
+                            technischem Verstand
+                            <span class="absolute bottom-2 left-0 w-full h-3 bg-brand-yellow/50 -z-10 rounded-sm"></span>
+                        </span>
+                        <br> und Herz.
+                    </h1>
+                    <p class="text-xl text-gray-600 mb-8 leading-relaxed">
+                        Ich helfe Ingenieuren, Technikern und Fachkräften, sicher im deutschen Jobmarkt aufzutreten. 
+                        <br class="hidden md:block">Nahbar, individuell und mit 10 Jahren Industrie-Erfahrung.
+                    </p>
+                    
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+                        <button onclick="navigateTo('preise')" class="px-8 py-4 bg-gray-900 text-white font-bold rounded-lg shadow-lg hover:bg-black transition transform hover:-translate-y-1">
+                            Termin buchen
+                        </button>
+                        <button onclick="navigateTo('business')" class="px-8 py-4 bg-white border-2 border-gray-200 text-gray-700 font-bold rounded-lg hover:border-brand-yellow hover:bg-yellow-50 transition">
+                            Für Techniker
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Image Right -->
+                <div class="order-1 lg:order-2 flex justify-center relative">
+                    <!-- Background Blob decoration -->
+                    <div class="absolute top-0 right-0 w-72 h-72 bg-gray-100 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob"></div>
+                    <div class="absolute -bottom-8 left-20 w-72 h-72 bg-yellow-100 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000"></div>
+                    
+                    <!-- Portrait -->
+                    <div class="relative w-80 h-80 md:w-96 md:h-96 rounded-full overflow-hidden border-8 border-white shadow-2xl">
+                        <img src="https://lh3.googleusercontent.com/pw/AP1GczM7-zXkCQ96aQnVFjYihA_3nm45bEkDm_hkfgQKUP9vhhaVHFs6RBZi6DIS57R8NOwUE8wN-PEJqc_-UqOEKilmrGOHaekSTdgU5D27NxUw8g3dl3tWcSoQRY_n1Eg7SGNimvfREpaV4znXhZtnTQB56A=w905-h905-s-no-gm" 
+                             alt="Jonas - Deutschlehrer" 
+                             class="w-full h-full object-cover">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Video Section (YouTube Embed) -->
+        <section class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
+             <div class="bg-gray-50 rounded-2xl p-4 md:p-8 border border-gray-100 shadow-sm text-center">
+                <h2 class="text-2xl font-bold mb-6 text-gray-800">Kurz vorgestellt: Wer ich bin</h2>
+                <div class="aspect-video w-full rounded-xl overflow-hidden shadow-lg border border-gray-200">
+                    <iframe 
+                        class="w-full h-full" 
+                        src="https://www.youtube.com/embed/fHV_RicUkXo" 
+                        title="Deutsch mit Jonas - Vorstellungsvideo" 
+                        frameborder="0" 
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                        allowfullscreen>
+                    </iframe>
+                </div>
+                <p class="mt-4 text-sm text-gray-500">Klick auf Play für einen persönlichen Eindruck</p>
+             </div>
+        </section>
+
+        <!-- Teaser Cards -->
+        <section class="bg-white py-20 border-t border-gray-50">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center max-w-2xl mx-auto mb-16">
+                    <h2 class="text-3xl font-bold mb-4">Wobei kann ich dich unterstützen?</h2>
+                    <div class="h-1 w-20 mx-auto bg-brand-yellow rounded"></div>
+                </div>
+                
+                <div class="grid md:grid-cols-2 gap-8">
+                    <!-- Konversation Card -->
+                    <div class="bg-yellow-50/50 p-8 rounded-2xl shadow-sm hover:shadow-xl transition cursor-pointer border border-yellow-100 group" onclick="navigateTo('konversation')">
+                        <div class="w-14 h-14 bg-yellow-100 rounded-xl flex items-center justify-center text-yellow-600 text-2xl mb-6 group-hover:scale-110 transition">
+                            <i class="fas fa-comment-dots"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-3">Konversationstraining</h3>
+                        <p class="text-gray-600 mb-6">Flüssig sprechen, Angst verlieren und Smalltalk meistern. Für Alltag und Leben.</p>
+                        <span class="text-yellow-600 font-bold group-hover:underline">Mehr erfahren <i class="fas fa-arrow-right ml-1"></i></span>
+                    </div>
+                    
+                    <!-- Business Card -->
+                    <div class="bg-gray-50 p-8 rounded-2xl shadow-sm hover:shadow-xl transition cursor-pointer border border-gray-100 group" onclick="navigateTo('business')">
+                        <div class="w-14 h-14 bg-gray-200 rounded-xl flex items-center justify-center text-gray-700 text-2xl mb-6 group-hover:scale-110 transition">
+                            <i class="fas fa-microchip"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-3">Business & Technik</h3>
+                        <p class="text-gray-600 mb-6">Spezialisiert auf Ingenieure. PCBs, Prozesse, Meetings und technische Dokumentation.</p>
+                        <span class="text-gray-900 font-bold group-hover:underline">Zu meinem Spezialgebiet <i class="fas fa-arrow-right ml-1"></i></span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Testimonials / Bewertungen Section -->
+        <section class="bg-gray-900 text-white py-20 relative overflow-hidden">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                <div class="text-center mb-16">
+                    <div class="inline-flex items-center gap-2 bg-gray-800 px-4 py-2 rounded-full mb-6">
+                        <img src="https://preply.com/download-cms-assets/f23efc/ygli5cawa8_Preply_Logo_Pink_SVG.svg" alt="Preply" class="h-5 brightness-200 contrast-0 filter"> <!-- Logo white filter -->
+                        <span class="font-bold text-yellow-400">4.8 / 5.0</span>
+                    </div>
+                    <h2 class="text-3xl md:text-4xl font-bold">Was meine Schüler sagen</h2>
+                    <p class="text-gray-400 mt-4 max-w-2xl mx-auto">Aus über 24 verifizierten Bewertungen auf Preply.</p>
+                </div>
+
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Review 1: Wiktoria -->
+                    <div class="bg-gray-800 p-6 rounded-xl border border-gray-700">
+                        <div class="flex text-yellow-400 mb-4 text-sm">
+                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                        </div>
+                        <p class="text-gray-300 text-sm mb-6 leading-relaxed">
+                            "Dank seiner Unterstützung habe ich auch einen Job gefunden, bei dem ich Deutsch sprechen muss – das hätte ich vorher nicht für möglich gehalten. Die Stunden sind immer spannend und machen richtig Spaß."
+                        </p>
+                        <div class="flex items-center gap-3 border-t border-gray-700 pt-4">
+                            <div class="w-8 h-8 bg-pink-600 rounded-full flex items-center justify-center text-xs font-bold">W</div>
+                            <div>
+                                <p class="font-bold text-sm">Wiktoria</p>
+                                <p class="text-xs text-gray-500">Juli 2025</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Review 2: Christian -->
+                    <div class="bg-gray-800 p-6 rounded-xl border border-gray-700">
+                        <div class="flex text-yellow-400 mb-4 text-sm">
+                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                        </div>
+                        <p class="text-gray-300 text-sm mb-6 leading-relaxed">
+                            "Jonas versucht, dich so viel wie möglich sprechen zu lassen, was das Lernen der Sprache einfacher macht. Er bereitet die Stunden immer vor, sodass keine Zeit verschwendet wird."
+                        </p>
+                        <div class="flex items-center gap-3 border-t border-gray-700 pt-4">
+                            <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-xs font-bold">C</div>
+                            <div>
+                                <p class="font-bold text-sm">Christian</p>
+                                <p class="text-xs text-gray-500">Oktober 2025</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Review 3: Öykü -->
+                    <div class="bg-gray-800 p-6 rounded-xl border border-gray-700">
+                        <div class="flex text-yellow-400 mb-4 text-sm">
+                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                        </div>
+                        <p class="text-gray-300 text-sm mb-6 leading-relaxed">
+                            "Perfekt auf meine Bedürfnisse abgestimmt. Die Tatsache, dass er mehrere Sprachen spricht (einschließlich Türkisch), war sehr nützlich. Ich habe sehr schnell Fortschritte bemerkt."
+                        </p>
+                        <div class="flex items-center gap-3 border-t border-gray-700 pt-4">
+                            <div class="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center text-xs font-bold">Ö</div>
+                            <div>
+                                <p class="font-bold text-sm">Öykü</p>
+                                <p class="text-xs text-gray-500">September 2025</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Review 4: Anna -->
+                    <div class="bg-gray-800 p-6 rounded-xl border border-gray-700">
+                        <div class="flex text-yellow-400 mb-4 text-sm">
+                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                        </div>
+                        <p class="text-gray-300 text-sm mb-6 leading-relaxed">
+                            "Jonas ist sehr gut auf die Lektionen vorbereitet. Ich kann viel sprechen üben und Vokabeln lernen, die im Alltag tatsächlich nützlich sind, wie das Diskutieren von Filmen."
+                        </p>
+                        <div class="flex items-center gap-3 border-t border-gray-700 pt-4">
+                            <div class="w-8 h-8 bg-yellow-600 rounded-full flex items-center justify-center text-xs font-bold text-white">A</div>
+                            <div>
+                                <p class="font-bold text-sm">Anna</p>
+                                <p class="text-xs text-gray-500">Januar 2026</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Review 5: Elisabetta -->
+                    <div class="bg-gray-800 p-6 rounded-xl border border-gray-700">
+                        <div class="flex text-yellow-400 mb-4 text-sm">
+                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                        </div>
+                        <p class="text-gray-300 text-sm mb-6 leading-relaxed">
+                            "Er schreibt Wörter auf, die ich nicht kenne, damit ich die Schreibweise sehen kann! Er erklärt die Bedeutung auf Deutsch, was ein volles Eintauchen-Erlebnis ermöglicht."
+                        </p>
+                        <div class="flex items-center gap-3 border-t border-gray-700 pt-4">
+                            <div class="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center text-xs font-bold">E</div>
+                            <div>
+                                <p class="font-bold text-sm">Elisabetta</p>
+                                <p class="text-xs text-gray-500">Juli 2024</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Review 6: Alexandra -->
+                    <div class="bg-gray-800 p-6 rounded-xl border border-gray-700">
+                        <div class="flex text-yellow-400 mb-4 text-sm">
+                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                        </div>
+                        <p class="text-gray-300 text-sm mb-6 leading-relaxed">
+                            "Man merkt ihm an, dass er Talent für Sprachen hat und eine Leidenschaft für das Unterrichten. Es lohnt sich wirklich, Unterricht bei ihm zu nehmen."
+                        </p>
+                        <div class="flex items-center gap-3 border-t border-gray-700 pt-4">
+                            <div class="w-8 h-8 bg-indigo-600 rounded-full flex items-center justify-center text-xs font-bold">A</div>
+                            <div>
+                                <p class="font-bold text-sm">Alexandra</p>
+                                <p class="text-xs text-gray-500">August 2024</p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                
+                <div class="mt-12 text-center">
+                    <a href="https://preply.com/de/nachhilfelehrer/5032538#reviews" target="_blank" class="inline-flex items-center text-gray-400 hover:text-white transition font-medium">
+                        Alle 24 Bewertungen auf Preply lesen <i class="fas fa-external-link-alt ml-2 text-xs"></i>
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 2. KONVERSATION PAGE -->
+    <main id="konversation" class="page-section pt-32 flex-grow">
+        <div class="bg-yellow-50 py-16">
+            <div class="max-w-7xl mx-auto px-4 text-center">
+                <span class="bg-white text-yellow-600 py-1 px-3 rounded-full text-xs font-bold uppercase tracking-wider shadow-sm mb-4 inline-block">Alltag & Leben</span>
+                <h1 class="text-4xl font-bold text-gray-900 mb-6">Konversationstraining</h1>
+                <p class="text-xl text-gray-600 max-w-2xl mx-auto">Verliere die Angst vor Fehlern. Wir sprechen über das, was dich bewegt.</p>
+            </div>
+        </div>
+
+        <div class="max-w-4xl mx-auto px-4 py-16">
+            <div class="prose prose-lg text-gray-600 mx-auto">
+                <p>Grammatikübungen aus dem Lehrbuch sind wichtig, aber sie bereiten dich oft nicht auf die Realität vor: Den spontanen Plausch mit dem Nachbarn oder das entspannte Gespräch in der Kaffeepause.</p>
+                
+                <h3 class="text-gray-900 font-bold text-2xl mt-8 mb-4">Mein Ansatz: Real Life Communication</h3>
+                <ul class="space-y-4 list-none pl-0">
+                    <li class="flex items-start">
+                        <i class="fas fa-check text-yellow-500 mt-1.5 mr-3"></i>
+                        <div><strong>Aktives Sprechen:</strong> Du hast 70-80% Redeanteil.</div>
+                    </li>
+                    <li class="flex items-start">
+                        <i class="fas fa-check text-yellow-500 mt-1.5 mr-3"></i>
+                        <div><strong>Kultureller Kontext:</strong> Ich erkläre dir nicht nur die Vokabel, sondern wie man sie in Deutschland wirklich benutzt (Stichwort: Direktheit).</div>
+                    </li>
+                    <li class="flex items-start">
+                        <i class="fas fa-check text-yellow-500 mt-1.5 mr-3"></i>
+                        <div><strong>Storytelling:</strong> Wir üben, Geschichten zu erzählen, damit du interessanter wirkst.</div>
+                    </li>
+                </ul>
+
+                <div class="bg-white border-l-4 border-yellow-400 p-6 mt-10 shadow-sm">
+                    <p class="italic mb-0">"Jonas schafft eine Atmosphäre, in der ich mich traue, einfach drauf loszureden. Fehler werden freundlich korrigiert, ohne den Fluss zu stören."</p>
+                </div>
+                
+                <div class="mt-12 text-center">
+                    <button onclick="navigateTo('preise')" class="bg-brand-yellow text-gray-900 px-8 py-3 rounded-lg font-bold hover:bg-yellow-300 transition shadow">Preise & Buchung</button>
+                </div>
+            </div>
         </div>
     </main>
 
-    <main id="preise" class="page-section pt-32 flex-grow">
-        <div class="max-w-7xl mx-auto px-4 py-12 text-center">
-            <h1 class="text-4xl font-bold mb-8">Pakete & Preise</h1>
-            <div class="bg-yellow-50 p-8 rounded-xl max-w-2xl mx-auto mb-12 border border-yellow-200">
-                <h3 class="font-bold text-xl mb-4">Öffentliche Buchung (Erstgespräch)</h3>
-                <script src="https://calendar.google.com/calendar/scheduling-button-script.js" async></script>
-                <script>
-                (function() {
-                    var target = document.currentScript;
-                    window.addEventListener('load', function() {
-                        calendar.schedulingButton.load({
-                            url: 'https://calendar.google.com/calendar/appointments/schedules/AcZssZ1_fZHZqgiGrYrvgdrr7NVBEofebZ_6G2V7WeN9Km3qdyUlj3UGnWuz05W8esbCq_-z1YVPpf5U?gv=true',
-                            color: '#039BE5', label: 'Termin eintragen', target
-                        });
-                    });
-                })();
-                </script>
+    <!-- 3. BUSINESS & TECHNIK PAGE -->
+    <main id="business" class="page-section pt-32 flex-grow">
+        <div class="bg-gray-900 text-white py-16 relative overflow-hidden">
+            <!-- Tech Pattern Overlay -->
+            <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(#ffffff 1px, transparent 1px); background-size: 20px 20px;"></div>
+            
+            <div class="max-w-7xl mx-auto px-4 text-center relative z-10">
+                <span class="bg-gray-800 text-gray-300 border border-gray-700 py-1 px-3 rounded-full text-xs font-bold uppercase tracking-wider mb-4 inline-block">Für Fachkräfte</span>
+                <h1 class="text-4xl md:text-5xl font-bold mb-6">Deutsch für Ingenieure & Techniker</h1>
+                <p class="text-xl text-gray-400 max-w-2xl mx-auto">Ich spreche deine Sprache. Von der Fertigung bis zum Test-Engineering.</p>
+            </div>
+        </div>
+
+        <div class="max-w-7xl mx-auto px-4 py-16">
+            <div class="grid lg:grid-cols-2 gap-16 items-start">
+                <div>
+                    <h2 class="text-3xl font-bold text-gray-900 mb-6">Warum ich dich verstehe</h2>
+                    <p class="text-gray-600 mb-6 text-lg">
+                        Viele Deutschlehrer wissen nicht, was eine "SPS" (PLC) ist oder wie "Lean Management" funktioniert. 
+                        Ich schon. Bevor ich Lehrer wurde, habe ich <strong>10 Jahre in der Industrie</strong> gearbeitet.
+                    </p>
+                    
+                    <div class="space-y-6">
+                        <div class="flex gap-4">
+                            <div class="flex-shrink-0 w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center text-gray-900 font-bold text-xl">
+                                10
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-gray-900">Jahre bei Lenze</h4>
+                                <p class="text-sm text-gray-600">Maschinenbediener & Instandhaltungstechniker. Ich kenne den Schichtbetrieb und den Zeitdruck in der Produktion.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4">
+                            <div class="flex-shrink-0 w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center text-gray-900 font-bold text-xl">
+                                <i class="fas fa-graduation-cap"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-gray-900">Staatlich gepr. Techniker</h4>
+                                <p class="text-sm text-gray-600">Abschluss in Elektrotechnik. Ich kann komplexe technische Zusammenhänge sprachlich aufbereiten.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4">
+                            <div class="flex-shrink-0 w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center text-gray-900 font-bold text-xl">
+                                <i class="fas fa-vial"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-gray-900">Junior Test Engineer</h4>
+                                <p class="text-sm text-gray-600">Fehleranalyse, Qualitätssicherung und Prozessoptimierung. Ich weiß, wie man Fehlerberichte schreibt.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white p-8 rounded-2xl shadow-xl border border-gray-100">
+                    <h3 class="text-2xl font-bold text-gray-900 mb-6">Das Training umfasst:</h3>
+                    
+                    <div class="space-y-4">
+                        <div class="bg-gray-50 p-4 rounded-lg border-l-4 border-gray-900">
+                            <h5 class="font-bold">Technische Kommunikation</h5>
+                            <p class="text-sm text-gray-600">Prozesse erklären, Fehler beschreiben, Sicherheitsunterweisungen verstehen.</p>
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded-lg border-l-4 border-gray-900">
+                            <h5 class="font-bold">Meetings & Abstimmungen</h5>
+                            <p class="text-sm text-gray-600">Diplomatisch widersprechen, Vorschläge einbringen (KVP/Lean), Zusammenfassungen geben.</p>
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded-lg border-l-4 border-gray-900">
+                            <h5 class="font-bold">Bewerbungstraining</h5>
+                            <p class="text-sm text-gray-600">Simulation von Vorstellungsgesprächen speziell für technische Rollen in Deutschland.</p>
+                        </div>
+                    </div>
+
+                    <div class="mt-8 pt-6 border-t border-gray-100 text-center">
+                        <button onclick="navigateTo('preise')" class="w-full bg-gray-900 text-white py-3 rounded-lg font-bold hover:bg-black transition">Termine & Preise ansehen</button>
+                    </div>
+                </div>
             </div>
         </div>
     </main>
     
-    <main id="konversation" class="page-section pt-32 flex-grow"><div class="text-center pt-20">Konversation Content...</div></main>
-    <main id="business" class="page-section pt-32 flex-grow"><div class="text-center pt-20">Business Content...</div></main>
-    <main id="about" class="page-section pt-32 flex-grow"><div class="text-center pt-20">Über Mich Content...</div></main>
+    <!-- 4. PREISE PAGE -->
+    <main id="preise" class="page-section pt-32 flex-grow">
+        <div class="bg-gray-900 text-white py-16">
+            <div class="max-w-7xl mx-auto px-4 text-center">
+                <span class="bg-brand-yellow text-gray-900 py-1 px-3 rounded-full text-xs font-bold uppercase tracking-wider shadow-sm mb-4 inline-block">Investiere in dich</span>
+                <h1 class="text-4xl font-bold mb-6">Pakete & Termine</h1>
+                <p class="text-xl text-gray-300 max-w-2xl mx-auto">Transparente Preise. Keine versteckten Kosten. Buche deinen Termin direkt.</p>
+            </div>
+        </div>
 
+        <div class="max-w-7xl mx-auto px-4 py-16">
+            
+            <!-- Booking CTA Section (Google Calendar) -->
+            <div class="bg-yellow-50 rounded-2xl p-8 border border-yellow-100 shadow-md text-center max-w-4xl mx-auto mb-16">
+                <h2 class="text-2xl font-bold text-gray-900 mb-4">Bereit loszulegen?</h2>
+                <p class="text-gray-600 mb-8">Wähle deinen passenden Termin direkt im Kalender aus. Ich freue mich auf dich!</p>
+                
+                <!-- Google Calendar Appointment Scheduling begin -->
+                <div class="flex justify-center">
+                    <script src="https://calendar.google.com/calendar/scheduling-button-script.js" async></script>
+                    <script>
+                    (function() {
+                    var target = document.currentScript;
+                    window.addEventListener('load', function() {
+                        calendar.schedulingButton.load({
+                        url: 'https://calendar.google.com/calendar/appointments/schedules/AcZssZ1_fZHZqgiGrYrvgdrr7NVBEofebZ_6G2V7WeN9Km3qdyUlj3UGnWuz05W8esbCq_-z1YVPpf5U?gv=true',
+                        color: '#039BE5',
+                        label: 'Termin eintragen',
+                        target,
+                        });
+                    });
+                    })();
+                    </script>
+                </div>
+                <!-- end Google Calendar Appointment Scheduling -->
+                
+                <p class="text-xs text-gray-500 mt-4">Klick auf den Button, um den Kalender zu öffnen.</p>
+            </div>
 
+            <!-- Pricing Grid -->
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Card 1 -->
+                <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-8 flex flex-col hover:border-brand-yellow transition">
+                    <h3 class="text-xl font-bold text-gray-900 mb-4">Einzelstunde</h3>
+                    <p class="text-gray-500 mb-6 text-sm">Perfekt zum Kennenlernen oder für akute Vorbereitung (z.B. Vorstellungsgespräch).</p>
+                    <div class="text-3xl font-bold text-gray-900 mb-6">€XX <span class="text-base font-normal text-gray-500">/ 50 Min</span></div>
+                    <ul class="space-y-3 mb-8 text-sm text-gray-600 flex-grow">
+                        <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i> Individueller Fokus</li>
+                        <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i> Feedback-Notizen</li>
+                        <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i> Flexibel buchbar</li>
+                    </ul>
+                </div>
+
+                <!-- Card 2 (Highlight) -->
+                <div class="bg-gray-900 rounded-2xl shadow-xl border-2 border-brand-yellow p-8 flex flex-col transform md:-translate-y-4 relative">
+                    <div class="absolute top-0 right-0 bg-brand-yellow text-gray-900 text-xs font-bold px-3 py-1 rounded-bl-lg rounded-tr-lg">BESTSELLER</div>
+                    <h3 class="text-xl font-bold text-white mb-4">4-Wochen-Paket</h3>
+                    <p class="text-gray-400 mb-6 text-sm">Für sichtbaren Fortschritt. Ein fester Termin pro Woche sorgt für Routine.</p>
+                    <div class="text-3xl font-bold text-brand-yellow mb-6">€XX <span class="text-base font-normal text-gray-400">/ Monat</span></div>
+                    <ul class="space-y-3 mb-8 text-sm text-gray-300 flex-grow">
+                        <li class="flex items-center"><i class="fas fa-check text-brand-yellow mr-2"></i> 4 Sessions à 50 Min</li>
+                        <li class="flex items-center"><i class="fas fa-check text-brand-yellow mr-2"></i> Material inkl.</li>
+                        <li class="flex items-center"><i class="fas fa-check text-brand-yellow mr-2"></i> WhatsApp Support</li>
+                        <li class="flex items-center"><i class="fas fa-check text-brand-yellow mr-2"></i> Technischer Fokus möglich</li>
+                    </ul>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-8 flex flex-col hover:border-brand-yellow transition">
+                    <h3 class="text-xl font-bold text-gray-900 mb-4">Intensiv-Paket</h3>
+                    <p class="text-gray-500 mb-6 text-sm">Wenn es schnell gehen muss. 2 Sessions pro Woche für maximale Immersion.</p>
+                    <div class="text-3xl font-bold text-gray-900 mb-6">€XX <span class="text-base font-normal text-gray-500">/ 8 Sessions</span></div>
+                    <ul class="space-y-3 mb-8 text-sm text-gray-600 flex-grow">
+                        <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i> 8 Sessions à 50 Min</li>
+                        <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i> Deep Dive Themen</li>
+                        <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i> Bewerbungstraining inkl.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 5. ÜBER MICH PAGE -->
+    <main id="about" class="page-section pt-32 flex-grow">
+        <div class="max-w-4xl mx-auto px-4 py-16">
+            <h1 class="text-4xl font-bold text-gray-900 mb-8 text-center">Vom Maschinenbau zum Sprachlehrer</h1>
+            
+            <div class="bg-white p-8 rounded-2xl shadow-lg border border-gray-100 mb-12 flex flex-col md:flex-row gap-8 items-start">
+                <img src="https://lh3.googleusercontent.com/pw/AP1GczM7-zXkCQ96aQnVFjYihA_3nm45bEkDm_hkfgQKUP9vhhaVHFs6RBZi6DIS57R8NOwUE8wN-PEJqc_-UqOEKilmrGOHaekSTdgU5D27NxUw8g3dl3tWcSoQRY_n1Eg7SGNimvfREpaV4znXhZtnTQB56A=w905-h905-s-no-gm" class="w-32 h-32 rounded-full object-cover border-4 border-yellow-100 flex-shrink-0 mx-auto md:mx-0">
+                <div>
+                    <p class="text-lg leading-relaxed text-gray-700 mb-4">
+                        Hi, ich bin Jonas. Aktuell lebe ich aus dem Koffer und reise durch <strong>Lateinamerika</strong>. 
+                        Davor bin ich den Jakobsweg (Camino de Santiago) gelaufen.
+                    </p>
+                    <p class="text-gray-600 mb-4">
+                        Ich weiß genau, wie es sich anfühlt, in einem fremden Land zu sein und die Sprache noch nicht perfekt zu beherrschen. Ich lerne gerade selbst Spanisch und verbessere mein Englisch. Diese Erfahrung der "Verwundbarkeit" bringe ich in meinen Unterricht ein.
+                    </p>
+                    <p class="text-gray-600 font-medium">
+                        Ich bin kein klassischer Lehrer, der nur Theorie kennt. Ich bin ein Praktiker, der die deutsche Arbeitskultur aus dem Effeff kennt.
+                    </p>
+                </div>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-6 text-center">
+                <div class="p-6 bg-gray-50 rounded-xl">
+                    <i class="fas fa-globe-americas text-3xl text-brand-yellow mb-3"></i>
+                    <h4 class="font-bold">Digital Nomad</h4>
+                    <p class="text-sm text-gray-500">Ich unterrichte remote und bringe internationale Perspektiven mit.</p>
+                </div>
+                <div class="p-6 bg-gray-50 rounded-xl">
+                    <i class="fas fa-hiking text-3xl text-brand-yellow mb-3"></i>
+                    <h4 class="font-bold">Resilienz</h4>
+                    <p class="text-sm text-gray-500">Durch Reisen und Pilgern habe ich gelernt, auch bei Schwierigkeiten dranzubleiben.</p>
+                </div>
+                <div class="p-6 bg-gray-50 rounded-xl">
+                    <i class="fas fa-hands-helping text-3xl text-brand-yellow mb-3"></i>
+                    <h4 class="font-bold">Empathie</h4>
+                    <p class="text-sm text-gray-500">Geduld ist meine Stärke. Ich schaffe einen sicheren Raum für dich.</p>
+                </div>
+            </div>
+        </div>
+    </main>
+    <!-- MEMBERS AREA (only after login) -->
     <main id="members-area" class="page-section hidden h-screen bg-gray-50 flex flex-col items-center justify-center">
-        <div class="text-center">
+        <div class="text-center px-6">
             <div class="w-20 h-20 bg-brand-yellow rounded-full flex items-center justify-center text-gray-900 mx-auto mb-6 text-3xl font-serif font-bold shadow-lg">J</div>
             <h1 class="text-3xl font-bold text-gray-900 mb-2">Willkommen zurück!</h1>
             <p class="text-gray-500 mb-10">Eingeloggt als <span id="user-email-display" class="font-bold text-gray-800">...</span></p>
+
             <button onclick="openBookingTool()" class="bg-gray-900 text-white text-xl font-bold py-5 px-10 rounded-2xl shadow-xl hover:bg-black hover:scale-105 transition-transform flex items-center gap-3 mx-auto">
                 <i class="fas fa-calendar-check text-brand-yellow"></i> <span>Unterricht buchen</span>
             </button>
+
             <button onclick="logout()" class="mt-12 text-gray-400 hover:text-red-500 text-sm font-medium transition flex items-center gap-2 mx-auto">
                 <i class="fas fa-sign-out-alt"></i> Abmelden
             </button>
@@ -140,15 +635,87 @@
     </main>
 
 
+    
+
+    <!-- Global Contact & Footer (Visible on all "pages") -->
+    <footer<footer id="contact-section" class="bg-gray-900 text-gray-300 py-16 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-2 gap-12">
+                
+                <!-- Contact Info -->
+                <div>
+                    <h2 class="text-3xl font-bold text-white mb-6">Kontakt aufnehmen</h2>
+                    <p class="mb-8 text-gray-400">
+                        Hast du Fragen vor der Buchung? Egal ob du Konversation üben willst oder dich auf ein technisches Vorstellungsgespräch vorbereitest. Schreib mir einfach.
+                    </p>
+                    
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center text-brand-yellow">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <!-- Placeholder email -->
+                        <span>jonas@example.com</span>
+                    </div>
+
+                    <div class="mt-8">
+                        <p class="text-sm text-gray-500 mb-2">Direkt buchen?</p>
+                        <p class="text-white mb-4">Nutze den Google Kalender im "Preise"-Bereich für die schnellste Terminfindung.</p>
+                        <button onclick="navigateTo('preise')" class="text-brand-yellow border border-brand-yellow px-4 py-2 rounded hover:bg-brand-yellow hover:text-gray-900 transition text-sm font-bold">
+                            Zum Buchungskalender
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Simple Form -->
+                <form id="contactForm" onsubmit="handleFormSubmit(event)" class="bg-white rounded-xl p-8 text-gray-800 shadow-2xl">
+                    <h3 class="font-bold text-xl mb-4">Nachricht schreiben</h3>
+                    <div class="mb-4">
+                        <label class="block text-sm font-bold mb-2">Name</label>
+                        <input type="text" class="w-full bg-gray-50 border border-gray-300 rounded p-3 focus:outline-none focus:border-brand-yellow" placeholder="Dein Name" required>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-sm font-bold mb-2">Email</label>
+                        <input type="email" class="w-full bg-gray-50 border border-gray-300 rounded p-3 focus:outline-none focus:border-brand-yellow" placeholder="deine@email.com" required>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-sm font-bold mb-2">Interesse</label>
+                        <select class="w-full bg-gray-50 border border-gray-300 rounded p-3 focus:outline-none focus:border-brand-yellow">
+                            <option>Allgemeine Frage</option>
+                            <option>Konversationstraining</option>
+                            <option>Business / Technisches Deutsch</option>
+                        </select>
+                    </div>
+                    <div class="mb-6">
+                        <label class="block text-sm font-bold mb-2">Nachricht</label>
+                        <textarea class="w-full bg-gray-50 border border-gray-300 rounded p-3 focus:outline-none focus:border-brand-yellow" rows="3" placeholder="Wie kann ich dir helfen?"></textarea>
+                    </div>
+                    <button type="submit" class="w-full bg-gray-900 text-white font-bold py-3 rounded hover:bg-black transition">
+                        Absenden
+                    </button>
+                </form>
+            </div>
+
+            <div class="border-t border-gray-800 mt-16 pt-8 text-center text-sm text-gray-500 flex flex-col md:flex-row justify-between items-center">
+                <p>&copy; 2026 Deutsch mit Jonas. Alle Rechte vorbehalten.</p>
+                <div class="flex gap-4 mt-4 md:mt-0">
+                    <a href="#" class="hover:text-white">Impressum</a>
+                    <a href="#" class="hover:text-white">Datenschutz</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <!-- LOGIN MODAL -->
     <div id="loginModal" class="modal-overlay">
         <div class="bg-white rounded-xl shadow-2xl p-8 max-w-sm w-full mx-4 relative transform transition-all scale-100">
-            <button onclick="closeLoginModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600"><i class="fas fa-times text-xl"></i></button>
-            
+            <button onclick="closeLoginModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+                <i class="fas fa-times text-xl"></i>
+            </button>
+
             <div class="flex gap-6 mb-6 border-b border-gray-200">
                 <div onclick="switchAuthMode('login')" id="tabLogin" class="auth-tab active">Einloggen</div>
                 <div onclick="switchAuthMode('register')" id="tabRegister" class="auth-tab">Registrieren</div>
             </div>
-            
+
             <div class="space-y-4">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">E-Mail</label>
@@ -158,24 +725,28 @@
                     <label class="block text-sm font-medium text-gray-700 mb-1">Passwort</label>
                     <input type="password" id="loginPass" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-yellow focus:border-transparent outline-none transition">
                 </div>
-                
+
                 <button onclick="performLogin()" id="loginBtn" class="w-full bg-brand-yellow text-gray-900 font-bold py-3 rounded-lg hover:bg-yellow-400 transition shadow-sm">
                     Jetzt Einloggen
                 </button>
-                
+
                 <button onclick="performRegister()" id="registerBtn" class="w-full bg-gray-900 text-white font-bold py-3 rounded-lg hover:bg-black transition shadow-sm hidden">
                     Kostenlos Registrieren
                 </button>
-                
+
                 <p id="loginError" class="text-red-500 text-sm text-center hidden"></p>
-                
+                <p id="loginInfo" class="text-gray-500 text-sm text-center hidden"></p>
+
                 <div class="flex justify-between items-center mt-4 text-xs">
-                    <a href="#" onclick="resetPassword()" class="text-gray-500 hover:text-gray-800 underline">Passwort vergessen?</a>
+                    <a href="#" onclick="resetPassword(); return false;" class="text-gray-500 hover:text-gray-800 underline">Passwort vergessen?</a>
                 </div>
             </div>
         </div>
     </div>
 
+
+
+    <!-- BOOKING MODAL (GAS IFRAME) -->
     <div id="bookingModal" class="modal-overlay">
         <div class="iframe-container flex flex-col">
             <div class="bg-gray-100 px-4 py-3 border-b border-gray-200 flex justify-between items-center">
@@ -192,8 +763,14 @@
         </div>
     </div>
 
-<script>
-        // --- 1. CONFIGURATION ---
+
+
+
+    <!-- Scripts -->
+    <script>
+        // -----------------------------
+        // 1) Firebase / Auth Config
+        // -----------------------------
         const firebaseConfig = {
             apiKey: "AIzaSyBcRjQIY6B65j6DmvVbPFJqIymNykbRuRw",
             authDomain: "deutschmitjonas.firebaseapp.com",
@@ -203,79 +780,96 @@
             appId: "1:973946116160:web:ee21e07f461f5355f067a5",
             measurementId: "G-NG4HWN4QH8"
         };
-        const GAS_APP_URL = "https://script.google.com/macros/s/AKfycby7xni60TWXpCuxe4MoRYDn9KUY7ipeyaSeocaS96AOF3u7YEwTc8lykx8X3W--2U08Lw/exec"; 
 
-        // Firebase initialisieren
+        // Google Apps Script WebApp (Buchungstool)
+        const GAS_APP_URL = "https://script.google.com/macros/s/AKfycby7xni60TWXpCuxe4MoRYDn9KUY7ipeyaSeocaS96AOF3u7YEwTc8lykx8X3W--2U08Lw/exec";
+
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
 
-        // --- AUTH MONITOR (Überwacht Login-Zustand) ---
+        function el(id) { return document.getElementById(id); }
+
+        // -----------------------------
+        // 2) UI State Switching
+        // -----------------------------
         auth.onAuthStateChanged(user => {
             if (user) {
-                console.log("User erkannt:", user.email);
                 showMemberArea(user);
             } else {
                 showPublicArea();
             }
         });
 
-        // --- ANZEIGE STEUERUNG ---
         function showMemberArea(user) {
-            // 1. Öffentliche Elemente verstecken
-            document.getElementById('top-bar').classList.add('hidden');
-            document.getElementById('navbar').classList.add('hidden');
+            // Topbar / Nav / Footer ausblenden
+            el('top-bar')?.classList.add('hidden');
+            el('navbar')?.classList.add('hidden');
             const footer = document.querySelector('footer');
-            if(footer) footer.classList.add('hidden');
-            
-            // 2. Alle Seiten verstecken
-            document.querySelectorAll('.page-section').forEach(p => {
+            if (footer) footer.classList.add('hidden');
+
+            // Alle Seiten ausblenden
+            document.querySelectorAll('main.page-section').forEach(p => {
                 p.classList.remove('active');
-                p.style.display = 'none'; // Wichtig: Hartes Ausblenden
+                p.style.display = 'none';
             });
 
-            // 3. Mitgliederbereich zeigen
-            const memberPage = document.getElementById('members-area');
+            // Member Area anzeigen
+            const memberPage = el('members-area');
             memberPage.classList.remove('hidden');
-            memberPage.style.display = 'flex'; // Wichtig für Zentrierung
+            memberPage.style.display = 'flex';
             setTimeout(() => memberPage.classList.add('active'), 10);
-            
-            // 4. Daten setzen
-            document.getElementById('user-email-display').innerText = user.email;
-            
-            // 5. Modal schließen
+
+            // User Info
+            el('user-email-display').innerText = user.email || '';
+
+            // Login Modal schließen
             closeLoginModal();
         }
 
         function showPublicArea() {
-            document.getElementById('top-bar').classList.remove('hidden');
-            document.getElementById('navbar').classList.remove('hidden');
+            el('top-bar')?.classList.remove('hidden');
+            el('navbar')?.classList.remove('hidden');
             const footer = document.querySelector('footer');
-            if(footer) footer.classList.remove('hidden');
-            
-            const memberPage = document.getElementById('members-area');
+            if (footer) footer.classList.remove('hidden');
+
+            // Member Area ausblenden
+            const memberPage = el('members-area');
             memberPage.classList.remove('active');
             memberPage.classList.add('hidden');
             memberPage.style.display = 'none';
 
-            navigateTo('home');
+            // Öffentliche Seiten wieder aktivieren (Hash respektieren)
+            const hash = window.location.hash.replace('#', '') || 'home';
+            if (document.getElementById(hash)) navigateTo(hash);
+            else navigateTo('home');
         }
 
-        // --- LOGIN & REGISTER ---
-        function openLoginModal() { document.getElementById('loginModal').classList.add('flex'); }
-        
-        function closeLoginModal() { 
-            document.getElementById('loginModal').classList.remove('flex'); 
-            document.getElementById('loginError').classList.add('hidden');
-            document.getElementById('loginBtn').innerText = "Jetzt Einloggen"; // Reset Text
+        // -----------------------------
+        // 3) Login Modal
+        // -----------------------------
+        function openLoginModal() {
+            el('loginModal').classList.add('flex');
+            el('loginInfo').classList.add('hidden');
+            el('loginError').classList.add('hidden');
         }
-        
+
+        function closeLoginModal() {
+            el('loginModal').classList.remove('flex');
+            el('loginError').classList.add('hidden');
+            el('loginInfo').classList.add('hidden');
+            el('loginBtn').innerText = "Jetzt Einloggen";
+            el('loginBtn').disabled = false;
+            el('registerBtn').innerText = "Kostenlos Registrieren";
+            el('registerBtn').disabled = false;
+        }
+
         function switchAuthMode(mode) {
-            const btnLogin = document.getElementById('loginBtn');
-            const btnRegister = document.getElementById('registerBtn');
-            const tabLogin = document.getElementById('tabLogin');
-            const tabRegister = document.getElementById('tabRegister');
-            
-            if(mode === 'login') {
+            const btnLogin = el('loginBtn');
+            const btnRegister = el('registerBtn');
+            const tabLogin = el('tabLogin');
+            const tabRegister = el('tabRegister');
+
+            if (mode === 'login') {
                 btnLogin.classList.remove('hidden');
                 btnRegister.classList.add('hidden');
                 tabLogin.classList.add('active');
@@ -286,141 +880,196 @@
                 tabLogin.classList.remove('active');
                 tabRegister.classList.add('active');
             }
-            document.getElementById('loginError').classList.add('hidden');
+            el('loginError').classList.add('hidden');
+            el('loginInfo').classList.add('hidden');
         }
 
         function performLogin() {
-            const e = document.getElementById('loginEmail').value;
-            const p = document.getElementById('loginPass').value;
-            const btn = document.getElementById('loginBtn');
-            const err = document.getElementById('loginError');
-            
-            if(!e || !p) { err.innerText = "Bitte alles ausfüllen."; err.classList.remove('hidden'); return; }
+            const e = el('loginEmail').value.trim();
+            const p = el('loginPass').value;
+            const btn = el('loginBtn');
+            const err = el('loginError');
 
-            btn.innerText = "Lade..."; btn.disabled = true;
-            
+            if (!e || !p) {
+                err.innerText = "Bitte alles ausfüllen.";
+                err.classList.remove('hidden');
+                return;
+            }
+
+            btn.innerText = "Lade...";
+            btn.disabled = true;
+
             auth.signInWithEmailAndPassword(e, p)
-                .then((userCredential) => { 
-                    btn.innerText = "Erfolg! Weiterleitung...";
-                    // HIER WAR DER FEHLER: Wir rufen jetzt sofort die Ansicht auf
-                    showMemberArea(userCredential.user);
-                })
                 .catch(error => {
-                    btn.innerText = "Jetzt Einloggen"; btn.disabled = false;
-                    console.error(error);
-                    if(error.code === 'auth/wrong-password') err.innerText = "Falsches Passwort.";
-                    else if(error.code === 'auth/user-not-found') err.innerText = "E-Mail nicht gefunden.";
-                    else err.innerText = "Fehler: " + error.message;
+                    btn.innerText = "Jetzt Einloggen";
+                    btn.disabled = false;
+
+                    if (error.code === 'auth/wrong-password') err.innerText = "Falsches Passwort.";
+                    else if (error.code === 'auth/user-not-found') err.innerText = "E-Mail nicht gefunden.";
+                    else err.innerText = "Fehler: " + (error.message || error.code);
+
                     err.classList.remove('hidden');
                 });
         }
 
         function performRegister() {
-            const e = document.getElementById('loginEmail').value;
-            const p = document.getElementById('loginPass').value;
-            const btn = document.getElementById('registerBtn');
-            const err = document.getElementById('loginError');
-            
-            if(!e || !p) { err.innerText = "Bitte alles ausfüllen."; err.classList.remove('hidden'); return; }
-            if(p.length < 6) { err.innerText = "Passwort zu kurz (min 6)."; err.classList.remove('hidden'); return; }
+            const e = el('loginEmail').value.trim();
+            const p = el('loginPass').value;
+            const btn = el('registerBtn');
+            const err = el('loginError');
+            const info = el('loginInfo');
 
-            btn.innerText = "Erstelle Konto..."; btn.disabled = true;
-            
+            if (!e || !p) {
+                err.innerText = "Bitte alles ausfüllen.";
+                err.classList.remove('hidden');
+                return;
+            }
+            if (p.length < 6) {
+                err.innerText = "Passwort zu kurz (min. 6 Zeichen).";
+                err.classList.remove('hidden');
+                return;
+            }
+
+            btn.innerText = "Erstelle Konto...";
+            btn.disabled = true;
+
             auth.createUserWithEmailAndPassword(e, p)
-                .then((userCredential) => { 
-                    alert("Konto erstellt!");
-                    showMemberArea(userCredential.user);
+                .then(() => {
+                    info.innerText = "Konto erstellt. Du wirst eingeloggt...";
+                    info.classList.remove('hidden');
                 })
                 .catch(error => {
-                    btn.innerText = "Kostenlos Registrieren"; btn.disabled = false;
-                    if(error.code === 'auth/email-already-in-use') err.innerText = "E-Mail schon vergeben.";
-                    else err.innerText = "Fehler: " + error.message;
+                    btn.innerText = "Kostenlos Registrieren";
+                    btn.disabled = false;
+
+                    if (error.code === 'auth/email-already-in-use') err.innerText = "E-Mail schon vergeben.";
+                    else err.innerText = "Fehler: " + (error.message || error.code);
+
                     err.classList.remove('hidden');
                 });
         }
 
         function resetPassword() {
-            const e = document.getElementById('loginEmail').value;
-            if(!e) { alert("Bitte E-Mail oben eingeben."); return; }
-            auth.sendPasswordResetEmail(e)
-                .then(() => { alert("E-Mail gesendet!"); })
-                .catch((error) => { alert("Fehler: " + error.message); });
-        }
+            const e = el('loginEmail').value.trim();
+            const err = el('loginError');
+            const info = el('loginInfo');
 
-        function logout() { 
-            if(confirm("Abmelden?")) {
-                auth.signOut().then(() => showPublicArea());
-            } 
-        }
+            err.classList.add('hidden');
+            info.classList.add('hidden');
 
-        // --- BOOKING TOOL ---
-        // --- 5. BOOKING TOOL (IFRAME MIT SICHERHEIT) ---
-function openBookingTool() {
-    // 1. Prüfen, ob der Nutzer eingeloggt ist
-    const user = auth.currentUser;
-    if (!user) {
-        alert("Bitte erst einloggen!");
-        return;
-    }
-
-    // 2. Die HTML-Elemente holen
-    const modal = document.getElementById('bookingModal');
-    const loader = document.getElementById('loader');
-    const frame = document.getElementById('gasFrame');
-
-    // 3. Modal öffnen und Lade-Kreis anzeigen
-    modal.classList.add('flex');
-    loader.style.display = 'flex';
-
-    // 4. Die URL bauen (Email UND UID)
-    // Wir nutzen encodeURIComponent, damit Sonderzeichen (@, ., etc.) kein Chaos verursachen
-    const emailParam = encodeURIComponent(user.email);
-    const uidParam = encodeURIComponent(user.uid);
-
-    // Das Ergebnis sieht so aus: .../exec?u=name@mail.de&id=A1b2C3d4...
-    const fullUrl = GAS_APP_URL + "?u=" + emailParam + "&id=" + uidParam;
-
-    console.log("Öffne Booking Tool für:", user.email);
-    console.log("Sicherheits-Check UID:", user.uid);
-
-    // 5. Iframe laden
-    frame.src = fullUrl;
-
-    // 6. Sobald das Iframe fertig geladen hat, Lade-Kreis ausblenden
-    frame.onload = function() {
-        loader.style.display = 'none';
-    };
-}
-        function closeBookingTool() { 
-            document.getElementById('bookingModal').classList.remove('flex'); 
-            document.getElementById('gasFrame').src = ""; 
-        }
-
-        // --- NAVIGATION ---
-        function navigateTo(pageId) {
-            // Blockieren, wenn im Member-Bereich
-            const memberArea = document.getElementById('members-area');
-            if(memberArea && !memberArea.classList.contains('hidden') && memberArea.style.display !== 'none') return;
-
-            document.querySelectorAll('main.page-section:not(#members-area)').forEach(page => {
-                page.classList.remove('active');
-                setTimeout(() => { if(!page.classList.contains('active')) page.style.display = 'none'; }, 300);
-            });
-            const selectedPage = document.getElementById(pageId);
-            if(selectedPage) {
-                selectedPage.style.display = 'block';
-                setTimeout(() => selectedPage.classList.add('active'), 10);
-                window.scrollTo({ top: 0, behavior: 'smooth' });
+            if (!e) {
+                err.innerText = "Bitte E-Mail oben eingeben.";
+                err.classList.remove('hidden');
+                return;
             }
+
+            auth.sendPasswordResetEmail(e)
+                .then(() => {
+                    info.innerText = "E-Mail zum Zurücksetzen wurde gesendet.";
+                    info.classList.remove('hidden');
+                })
+                .catch((error) => {
+                    err.innerText = "Fehler: " + (error.message || error.code);
+                    err.classList.remove('hidden');
+                });
         }
-        
-        function toggleMobileMenu() { document.getElementById('mobile-menu').classList.toggle('hidden'); }
-        const mbBtn = document.getElementById('mobile-menu-btn');
-        if(mbBtn) mbBtn.addEventListener('click', toggleMobileMenu);
-        
-        function scrollToContact() { 
-            const f = document.querySelector('footer');
-            if(f) f.scrollIntoView({ behavior: 'smooth' }); 
+
+        function logout() {
+            auth.signOut();
+        }
+
+        // -----------------------------
+        // 4) Booking Tool (GAS iframe)
+        // -----------------------------
+        function openBookingTool() {
+            const user = auth.currentUser;
+            if (!user) {
+                openLoginModal();
+                return;
+            }
+
+            const modal = el('bookingModal');
+            const loader = el('loader');
+            const frame = el('gasFrame');
+
+            modal.classList.add('flex');
+            loader.style.display = 'flex';
+
+            const emailParam = encodeURIComponent(user.email || '');
+            const uidParam = encodeURIComponent(user.uid || '');
+            const fullUrl = GAS_APP_URL + "?u=" + emailParam + "&id=" + uidParam;
+
+            frame.src = fullUrl;
+
+            frame.onload = function() {
+                loader.style.display = 'none';
+            };
+        }
+
+        function closeBookingTool() {
+            el('bookingModal').classList.remove('flex');
+            el('gasFrame').src = "";
+        }
+
+        // -----------------------------
+        // 5) Router (Public Pages)
+        // -----------------------------
+        function navigateTo(pageId) {
+            // Blockieren, wenn Member-Area sichtbar
+            const memberArea = el('members-area');
+            const memberVisible = memberArea && !memberArea.classList.contains('hidden') && memberArea.style.display !== 'none';
+            if (memberVisible) return;
+
+            const pages = document.querySelectorAll('main.page-section:not(#members-area)');
+            pages.forEach(page => {
+                page.classList.remove('active');
+                setTimeout(() => {
+                    if (!page.classList.contains('active')) page.style.display = 'none';
+                }, 300);
+            });
+
+            const selectedPage = el(pageId);
+            if (!selectedPage) return;
+
+            selectedPage.style.display = 'block';
+            setTimeout(() => selectedPage.classList.add('active'), 10);
+
+            history.pushState(null, null, `#${pageId}`);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Back Button
+        window.addEventListener('popstate', () => {
+            const hash = window.location.hash.replace('#', '') || 'home';
+            if (document.getElementById(hash)) navigateTo(hash);
+            else navigateTo('home');
+        });
+
+        // Mobile Menu
+        const menu = document.getElementById('mobile-menu');
+        function toggleMobileMenu() {
+            menu.classList.toggle('hidden');
+        }
+        document.getElementById('mobile-menu-btn').addEventListener('click', toggleMobileMenu);
+
+        // Scroll to Contact
+        function scrollToContact() {
+            document.getElementById('contact-section').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Form Handler
+        function handleFormSubmit(event) {
+            event.preventDefault();
+            const form = document.getElementById('contactForm');
+            form.innerHTML = `
+                <div class="text-center py-10">
+                    <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-check text-green-600 text-3xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-2">Nachricht gesendet!</h3>
+                    <p class="text-gray-600">Ich melde mich in Kürze bei dir.</p>
+                </div>
+            `;
         }
     </script>
 </body>
