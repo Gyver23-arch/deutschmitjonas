@@ -14,16 +14,20 @@
   <!-- Firebase (Auth) -->
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-analytics-compat.js"></script>
 
   <script>
     tailwind.config = {
       theme: {
         extend: {
-          fontFamily: { sans: ['Outfit','sans-serif'], serif: ['Merriweather','serif'] },
+          fontFamily: {
+            sans: ['Outfit', 'sans-serif'],
+            serif: ['Merriweather', 'serif'],
+          },
           colors: {
-            brand: { yellow: '#FCD34D', dark: '#1F2937' },
-            de: { black: '#1a1a1a', red: '#DD0000', gold: '#FFCC00' }
+            brand: {
+              yellow: '#FCD34D',
+              dark: '#1F2937',
+            },
           }
         }
       }
@@ -31,149 +35,113 @@
   </script>
 
   <style>
-    .flag-border-bottom {
-      border-bottom: 3px solid transparent;
-      border-image: linear-gradient(to right, #1a1a1a 33%, #DD0000 33%, #DD0000 66%, #FFCC00 66%) 1;
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+      backdrop-filter: blur(5px);
     }
-    .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:1000; justify-content:center; align-items:center; backdrop-filter: blur(5px); }
-    .modal-overlay.flex { display:flex; }
-    .iframe-container { width: 96%; height: 92%; max-width: 1200px; background:#fff; border-radius: 14px; overflow:hidden; position:relative; box-shadow: 0 20px 50px rgba(0,0,0,0.3); }
-    .auth-tab { cursor:pointer; padding-bottom: 8px; border-bottom: 2px solid transparent; color:#6b7280; font-weight:700; }
-    .auth-tab.active { border-color: #FCD34D; color:#111827; }
+    .modal-overlay.flex { display: flex; }
+
+    .iframe-container {
+      width: 95%;
+      height: 90%;
+      max-width: 1000px;
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      position: relative;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+    }
   </style>
 </head>
 
-<body class="font-sans text-gray-700 bg-gray-50 antialiased min-h-screen">
-  <!-- Top Bar -->
-  <div class="fixed top-0 w-full bg-gray-900 text-gray-200 text-xs py-2 px-4 border-b border-gray-800 z-[60]">
-    <div class="max-w-7xl mx-auto flex justify-between items-center">
-      <a href="/index.html#home" class="hover:text-white transition flex items-center gap-2 font-bold uppercase tracking-wider">
-        <i class="fas fa-arrow-left"></i> Zur Startseite
+<body class="font-sans bg-gray-50 text-gray-800 min-h-screen flex flex-col">
+
+  <!-- Topbar -->
+  <header class="bg-white border-b border-gray-200">
+    <div class="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
+      <a href="/" class="flex items-center gap-3 font-bold text-gray-900">
+        <span class="w-10 h-10 rounded-full bg-brand-yellow flex items-center justify-center font-serif">J</span>
+        <span>Mitgliederbereich</span>
       </a>
-      <div class="hidden sm:block text-gray-400">Mitgliederbereich</div>
-      <button id="logoutBtnTop" onclick="logout()" class="hover:text-white transition flex items-center gap-2 font-bold uppercase tracking-wider hidden">
-        <i class="fas fa-sign-out-alt"></i> Abmelden
-      </button>
-    </div>
-  </div>
 
-  <!-- Header -->
-  <header class="pt-12">
-    <div class="h-1 w-full bg-gradient-to-r from-de-black via-de-red to-de-gold"></div>
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <div class="flex items-center justify-between">
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 bg-brand-yellow rounded-full flex items-center justify-center text-gray-900 shadow-sm">
-            <span class="font-bold font-serif">J</span>
-          </div>
-          <div>
-            <div class="text-xl font-bold text-gray-900 leading-tight">Deutsch mit Jonas</div>
-            <div class="text-sm text-gray-500 -mt-0.5">Dashboard & Buchung</div>
-          </div>
-        </div>
-
-        <div class="flex items-center gap-3">
-
-        </div>
+      <div class="flex items-center gap-3">
+        <a href="/#preise" class="hidden sm:inline-flex items-center gap-2 text-sm font-bold text-gray-700 hover:text-black">
+          <i class="fas fa-arrow-left"></i> Zur Website
+        </a>
+        <button id="logoutBtn" class="inline-flex items-center gap-2 text-sm font-bold text-gray-700 hover:text-red-600">
+          <i class="fas fa-sign-out-alt"></i> Abmelden
+        </button>
       </div>
     </div>
   </header>
 
-  <!-- CONTENT -->
-  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-10">
-
-    <!-- Login Card -->
-    <section id="loginSection" class="bg-white border border-gray-100 rounded-2xl shadow-lg p-6 sm:p-10 max-w-xl mx-auto">
-      <div class="flex gap-6 mb-6 border-b border-gray-200">
-        <div onclick="switchAuthMode('login')" id="tabLogin" class="auth-tab active">Einloggen</div>
-        <div onclick="switchAuthMode('register')" id="tabRegister" class="auth-tab">Registrieren</div>
-      </div>
-
-      <div class="space-y-4">
-        <div>
-          <label class="block text-sm font-bold text-gray-700 mb-1">E-Mail</label>
-          <input type="email" id="loginEmail" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-yellow focus:border-transparent outline-none transition">
-        </div>
-        <div>
-          <label class="block text-sm font-bold text-gray-700 mb-1">Passwort</label>
-          <input type="password" id="loginPass" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-yellow focus:border-transparent outline-none transition">
+  <!-- Content -->
+  <main class="flex-grow flex items-center justify-center px-4 py-10">
+    <div class="w-full max-w-xl">
+      <div class="bg-white rounded-2xl shadow-xl border border-gray-100 p-8 text-center">
+        <div class="w-16 h-16 bg-brand-yellow rounded-full flex items-center justify-center text-gray-900 mx-auto mb-5 text-2xl font-serif font-bold">
+          J
         </div>
 
-        <button onclick="performLogin()" id="loginBtn" class="w-full bg-brand-yellow text-gray-900 font-bold py-3 rounded-lg hover:bg-yellow-400 transition shadow-sm">
-          Jetzt Einloggen
+        <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Willkommen zurück!</h1>
+        <p class="text-gray-500 mb-8">
+          Eingeloggt als
+          <span id="user-email-display" class="font-bold text-gray-800" data-unique="user-email">...</span>
+        </p>
+
+        <button id="open-booking-btn" data-unique="booking-btn"
+          class="w-full bg-gray-900 text-white text-lg font-bold py-4 px-6 rounded-2xl shadow hover:bg-black transition flex items-center justify-center gap-3">
+          <i class="fas fa-calendar-check text-brand-yellow"></i>
+          <span>Unterricht buchen</span>
         </button>
 
-        <button onclick="performRegister()" id="registerBtn" class="w-full bg-gray-900 text-white font-bold py-3 rounded-lg hover:bg-black transition shadow-sm hidden">
-          Kostenlos Registrieren
-        </button>
-
-        <p id="loginError" class="text-red-500 text-sm text-center hidden"></p>
-        <p id="loginInfo" class="text-gray-500 text-sm text-center hidden"></p>
-
-        <div class="flex justify-between items-center mt-2 text-xs">
-          <a href="#" onclick="resetPassword(); return false;" class="text-gray-500 hover:text-gray-800 underline">Passwort vergessen?</a>
-        </div>
+        <p class="text-xs text-gray-400 mt-4">
+          Der Kalender öffnet sich in einem sicheren Fenster.
+        </p>
       </div>
-    </section>
-
-    <!-- Dashboard -->
-    <section id="dashboardSection" class="hidden">
-      <div class="bg-white border border-gray-100 rounded-2xl shadow-lg overflow-hidden">
-        <div class="p-4 sm:p-6 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-          <div>
-            <h1 class="text-2xl font-bold text-gray-900">Dein Dashboard</h1>
-            <p class="text-sm text-gray-500">Eingeloggt als <span id="userEmailInline" class="font-bold text-gray-800">…</span></p>
-          </div>
-
-          <div class="flex items-center gap-3">
-            <button onclick="openBookingTool()" class="bg-gray-900 text-white px-5 py-3 rounded-xl font-bold hover:bg-black transition shadow-sm">
-              <i class="fas fa-calendar-check text-brand-yellow mr-2"></i> Terminbuchung laden
-            </button>
-            <button onclick="logout()" class="text-gray-500 hover:text-red-600 font-bold px-3 py-3 rounded-xl transition">
-              <i class="fas fa-sign-out-alt mr-2"></i> Abmelden
-            </button>
-          </div>
-        </div>
-
-        <div class="relative">
-          <div id="dashLoader" class="absolute inset-0 flex flex-col items-center justify-center text-gray-400 bg-white/70">
-            <i class="fas fa-circle-notch fa-spin text-4xl text-brand-yellow mb-4"></i>
-            <span>Dashboard wird geladen…</span>
-          </div>
-
-          <iframe id="dashboardFrame" src="" class="w-full border-0" style="height: calc(100vh - 260px); min-height: 520px;"></iframe>
-        </div>
-
-        <div class="px-4 sm:px-6 py-4 border-t border-gray-100 text-xs text-gray-500">
-          Falls das Dashboard im iFrame blockiert wird: <a id="dashFallbackLink" class="underline font-bold" href="#" target="_blank" rel="noopener">in neuem Tab öffnen</a>
-        </div>
-      </div>
-    </section>
-
+    </div>
   </main>
 
   <!-- BOOKING MODAL (GAS IFRAME) -->
   <div id="bookingModal" class="modal-overlay">
     <div class="iframe-container flex flex-col">
       <div class="bg-gray-100 px-4 py-3 border-b border-gray-200 flex justify-between items-center">
-        <span class="font-bold text-gray-700 text-sm">Terminbuchung</span>
-        <button onclick="closeBookingTool()" class="bg-white text-gray-600 hover:text-red-500 hover:bg-red-50 px-3 py-1 rounded-md text-sm font-bold border border-gray-200 transition">
+        <span class="font-bold text-gray-700 text-sm">Buchungssystem</span>
+        <button id="closeBookingBtn" class="bg-white text-gray-600 hover:text-red-500 hover:bg-red-50 px-3 py-1 rounded-md text-sm font-bold border border-gray-200 transition">
           Schließen
         </button>
       </div>
+
       <div class="flex-grow relative bg-white">
-        <div id="bookingLoader" class="absolute inset-0 flex flex-col items-center justify-center text-gray-400">
+        <div id="loader" class="absolute inset-0 flex flex-col items-center justify-center text-gray-400">
           <i class="fas fa-circle-notch fa-spin text-4xl text-brand-yellow mb-4"></i>
-          <span>Verbinde…</span>
+          <span>Verbinde mit Kalender...</span>
         </div>
-        <iframe id="bookingFrame" src="" class="w-full h-full border-0"></iframe>
+        <iframe id="gasFrame" src="" class="w-full h-full border-0"></iframe>
       </div>
     </div>
   </div>
 
   <script>
+    // ------------------------------------------------
+    // 0) Safeguard: Entfernt doppelte Elemente, falls
+    //    sie versehentlich 2x im HTML vorhanden sind.
+    // ------------------------------------------------
+    function removeDuplicates(selector) {
+      const nodes = document.querySelectorAll(selector);
+      nodes.forEach((n, idx) => { if (idx > 0) n.remove(); });
+    }
+    removeDuplicates('#user-email-display');
+    removeDuplicates('#open-booking-btn');
+
     // -----------------------------
-    // Firebase / Auth Config
+    // 1) Firebase / Auth Config
     // -----------------------------
     const firebaseConfig = {
       apiKey: "AIzaSyBcRjQIY6B65j6DmvVbPFJqIymNykbRuRw",
@@ -185,210 +153,68 @@
       measurementId: "G-NG4HWN4QH8"
     };
 
-    // Dashboard (fix eingeblendet)
-    const DASHBOARD_URL = "https://script.google.com/macros/s/AKfycbx-OCo4P_o4U9BmHIxtT7_ymLhBKv_rPKGOJnNtaoFx1_0UdGAq04IZKUazMfyP9-s1/exec";
-
-    // Terminbuchung (Modal per Button)
-    const BOOKING_APP_URL = "https://script.google.com/macros/s/AKfycby7xni60TWXpCuxe4MoRYDn9KUY7ipeyaSeocaS96AOF3u7YEwTc8lykx8X3W--2U08Lw/exec";
+    // Google Apps Script WebApp (Buchungstool)
+    const GAS_APP_URL = "https://script.google.com/macros/s/AKfycby7xni60TWXpCuxe4MoRYDn9KUY7ipeyaSeocaS96AOF3u7YEwTc8lykx8X3W--2U08Lw/exec";
 
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
 
-    function el(id){ return document.getElementById(id); }
+    const el = (id) => document.getElementById(id);
 
     // -----------------------------
-    // Tabs
+    // 2) Auth Gate
     // -----------------------------
-    function switchAuthMode(mode) {
-      const btnLogin = el('loginBtn');
-      const btnRegister = el('registerBtn');
-      const tabLogin = el('tabLogin');
-      const tabRegister = el('tabRegister');
-
-      if (mode === 'login') {
-        btnLogin.classList.remove('hidden');
-        btnRegister.classList.add('hidden');
-        tabLogin.classList.add('active');
-        tabRegister.classList.remove('active');
-      } else {
-        btnLogin.classList.add('hidden');
-        btnRegister.classList.remove('hidden');
-        tabLogin.classList.remove('active');
-        tabRegister.classList.add('active');
-      }
-      el('loginError').classList.add('hidden');
-      el('loginInfo').classList.add('hidden');
-    }
-
-    // -----------------------------
-    // Auth Actions
-    // -----------------------------
-    function performLogin() {
-      const e = el('loginEmail').value.trim();
-      const p = el('loginPass').value;
-      const btn = el('loginBtn');
-      const err = el('loginError');
-
-      if (!e || !p) {
-        err.innerText = "Bitte alles ausfüllen.";
-        err.classList.remove('hidden');
-        return;
-      }
-
-      btn.innerText = "Lade…";
-      btn.disabled = true;
-
-      auth.signInWithEmailAndPassword(e, p)
-        .catch(error => {
-          btn.innerText = "Jetzt Einloggen";
-          btn.disabled = false;
-
-          if (error.code === 'auth/wrong-password') err.innerText = "Falsches Passwort.";
-          else if (error.code === 'auth/user-not-found') err.innerText = "E-Mail nicht gefunden.";
-          else err.innerText = "Fehler: " + (error.message || error.code);
-
-          err.classList.remove('hidden');
-        });
-    }
-
-    function performRegister() {
-      const e = el('loginEmail').value.trim();
-      const p = el('loginPass').value;
-      const btn = el('registerBtn');
-      const err = el('loginError');
-      const info = el('loginInfo');
-
-      if (!e || !p) {
-        err.innerText = "Bitte alles ausfüllen.";
-        err.classList.remove('hidden');
-        return;
-      }
-      if (p.length < 6) {
-        err.innerText = "Passwort zu kurz (min. 6 Zeichen).";
-        err.classList.remove('hidden');
-        return;
-      }
-
-      btn.innerText = "Erstelle Konto…";
-      btn.disabled = true;
-
-      auth.createUserWithEmailAndPassword(e, p)
-        .then(() => {
-          info.innerText = "Konto erstellt. Du wirst eingeloggt…";
-          info.classList.remove('hidden');
-        })
-        .catch(error => {
-          btn.innerText = "Kostenlos Registrieren";
-          btn.disabled = false;
-
-          if (error.code === 'auth/email-already-in-use') err.innerText = "E-Mail schon vergeben.";
-          else err.innerText = "Fehler: " + (error.message || error.code);
-
-          err.classList.remove('hidden');
-        });
-    }
-
-    function resetPassword() {
-      const e = el('loginEmail').value.trim();
-      const err = el('loginError');
-      const info = el('loginInfo');
-
-      err.classList.add('hidden');
-      info.classList.add('hidden');
-
-      if (!e) {
-        err.innerText = "Bitte E-Mail oben eingeben.";
-        err.classList.remove('hidden');
-        return;
-      }
-
-      auth.sendPasswordResetEmail(e)
-        .then(() => {
-          info.innerText = "E-Mail zum Zurücksetzen wurde gesendet.";
-          info.classList.remove('hidden');
-        })
-        .catch((error) => {
-          err.innerText = "Fehler: " + (error.message || error.code);
-          err.classList.remove('hidden');
-        });
-    }
-
-    function logout() {
-      auth.signOut();
-    }
-
-    // -----------------------------
-    // Dashboard + UI State
-    // -----------------------------
-    function showLoggedOutUI() {
-      el('loginSection').classList.remove('hidden');
-      el('dashboardSection').classList.add('hidden');
-
-      el('logoutBtnTop').classList.add('hidden');
-      el('bookingBtnTop').classList.add('hidden');
-      el('userChip').classList.add('hidden');
-
-      // Frames leeren
-      el('dashboardFrame').src = "";
-      el('bookingFrame').src = "";
-    }
-
-    function showLoggedInUI(user) {
-      el('loginSection').classList.add('hidden');
-      el('dashboardSection').classList.remove('hidden');
-
-      el('logoutBtnTop').classList.remove('hidden');
-      el('bookingBtnTop').classList.remove('hidden');
-      el('userChip').classList.remove('hidden');
-
-      const email = user.email || "";
-      const uid = user.uid || "";
-
-      el('userEmailTop').innerText = email;
-      el('userEmailInline').innerText = email;
-
-      const dashUrl = DASHBOARD_URL + "?u=" + encodeURIComponent(email) + "&id=" + encodeURIComponent(uid);
-      el('dashFallbackLink').href = dashUrl;
-
-      const dashLoader = el('dashLoader');
-      dashLoader.style.display = "flex";
-
-      const dashFrame = el('dashboardFrame');
-      dashFrame.onload = () => { dashLoader.style.display = "none"; };
-      dashFrame.src = dashUrl;
-    }
-
     auth.onAuthStateChanged(user => {
-      if (user) showLoggedInUI(user);
-      else showLoggedOutUI();
+      if (!user) {
+        window.location.href = "/#home";
+        return;
+      }
+      el('user-email-display').innerText = user.email || '';
     });
 
     // -----------------------------
-    // Booking Modal (GAS iframe)
+    // 3) Booking Modal
     // -----------------------------
     function openBookingTool() {
       const user = auth.currentUser;
       if (!user) return;
 
       const modal = el('bookingModal');
-      const loader = el('bookingLoader');
-      const frame = el('bookingFrame');
+      const loader = el('loader');
+      const frame = el('gasFrame');
 
       modal.classList.add('flex');
       loader.style.display = 'flex';
 
       const emailParam = encodeURIComponent(user.email || '');
       const uidParam = encodeURIComponent(user.uid || '');
-      const fullUrl = BOOKING_APP_URL + "?u=" + emailParam + "&id=" + uidParam;
+      frame.src = `${GAS_APP_URL}?u=${emailParam}&id=${uidParam}`;
 
-      frame.onload = function() { loader.style.display = 'none'; };
-      frame.src = fullUrl;
+      frame.onload = () => { loader.style.display = 'none'; };
     }
 
     function closeBookingTool() {
       el('bookingModal').classList.remove('flex');
-      el('bookingFrame').src = "";
+      el('gasFrame').src = "";
+      el('loader').style.display = 'flex';
     }
+
+    el('open-booking-btn').addEventListener('click', openBookingTool);
+    el('closeBookingBtn').addEventListener('click', closeBookingTool);
+
+    // -----------------------------
+    // 4) Logout
+    // -----------------------------
+    el('logoutBtn').addEventListener('click', () => {
+      auth.signOut().then(() => {
+        window.location.href = "/#home";
+      });
+    });
+
+    // Close modal on ESC
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeBookingTool();
+    });
   </script>
 </body>
 </html>
