@@ -64,7 +64,7 @@
 
   <!-- Topbar -->
   <header class="bg-white border-b border-gray-200">
-    <div class="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
+    <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
       <a href="/" class="flex items-center gap-3 font-bold text-gray-900">
         <span class="w-10 h-10 rounded-full bg-brand-yellow flex items-center justify-center font-serif">J</span>
         <span>Mitgliederbereich</span>
@@ -82,21 +82,24 @@
   </header>
 
   <!-- Content -->
-  <main class="flex-grow flex items-center justify-center px-4 py-10">
-    <div class="w-full max-w-xl">
-      <div class="bg-white rounded-2xl shadow-xl border border-gray-100 p-8 text-center">
+  <main class="flex-grow px-4 py-8">
+    <div class="w-full max-w-6xl mx-auto">
+
+      <!-- Welcome Card -->
+      <div class="bg-white rounded-2xl shadow-xl border border-gray-100 p-6 sm:p-8 text-center">
         <div class="w-16 h-16 bg-brand-yellow rounded-full flex items-center justify-center text-gray-900 mx-auto mb-5 text-2xl font-serif font-bold">
           J
         </div>
 
         <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Willkommen zurück!</h1>
-        <p class="text-gray-500 mb-8">
+        <p class="text-gray-500 mb-6">
           Eingeloggt als
           <span id="user-email-display" class="font-bold text-gray-800" data-unique="user-email">...</span>
         </p>
 
+        <!-- Button direkt ÜBER dem Dashboard -->
         <button id="open-booking-btn" data-unique="booking-btn"
-          class="w-full bg-gray-900 text-white text-lg font-bold py-4 px-6 rounded-2xl shadow hover:bg-black transition flex items-center justify-center gap-3">
+          class="w-full sm:w-auto bg-gray-900 text-white text-lg font-bold py-4 px-6 rounded-2xl shadow hover:bg-black transition inline-flex items-center justify-center gap-3">
           <i class="fas fa-calendar-check text-brand-yellow"></i>
           <span>Unterricht buchen</span>
         </button>
@@ -105,6 +108,35 @@
           Der Kalender öffnet sich in einem sicheren Fenster.
         </p>
       </div>
+
+      <!-- Dashboard -->
+      <section class="mt-8 bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
+        <div class="px-4 sm:px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+          <div class="flex items-center gap-2 text-sm font-bold text-gray-700">
+            <i class="fas fa-gauge-high text-gray-400"></i>
+            <span>Dashboard</span>
+          </div>
+          <div class="text-xs text-gray-400">
+            <span id="dashboard-status">Lade…</span>
+          </div>
+        </div>
+
+        <div class="relative bg-white">
+          <div id="dashboardLoader" class="absolute inset-0 flex flex-col items-center justify-center text-gray-400">
+            <i class="fas fa-circle-notch fa-spin text-4xl text-brand-yellow mb-4"></i>
+            <span>Dashboard wird geladen…</span>
+          </div>
+
+          <iframe
+            id="dashboardFrame"
+            src=""
+            class="w-full border-0 h-[70vh] min-h-[520px]"
+            referrerpolicy="no-referrer-when-downgrade"
+            allow="clipboard-read; clipboard-write; fullscreen"
+          ></iframe>
+        </div>
+      </section>
+
     </div>
   </main>
 
@@ -139,6 +171,7 @@
     }
     removeDuplicates('#user-email-display');
     removeDuplicates('#open-booking-btn');
+    removeDuplicates('#dashboardFrame');
 
     // -----------------------------
     // 1) Firebase / Auth Config
@@ -154,26 +187,45 @@
     };
 
     // Google Apps Script WebApp (Buchungstool)
-    const GAS_APP_URL = "https://script.google.com/macros/s/AKfycby7xni60TWXpCuxe4MoRYDn9KUY7ipeyaSeocaS96AOF3u7YEwTc8lykx8X3W--2U08Lw/exec";
+    const GAS_BOOKING_URL = "https://script.google.com/macros/s/AKfycby7xni60TWXpCuxe4MoRYDn9KUY7ipeyaSeocaS96AOF3u7YEwTc8lykx8X3W--2U08Lw/exec";
 
-    // Init (safe)
-    if (!firebase.apps || !firebase.apps.length) {
-      firebase.initializeApp(firebaseConfig);
-    }
+    // Dashboard (GAS)
+    const GAS_DASHBOARD_URL = "https://script.google.com/macros/s/AKfycbx-OCo4P_o4U9BmHIxtT7_ymLhBKv_rPKGOJnNtaoFx1_0UdGAq04IZKUazMfyP9-s1/exec";
+
+    firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
 
     const el = (id) => document.getElementById(id);
 
     // -----------------------------
-    // 2) Auth Gate
+    // 2) Auth Gate + Dashboard laden
     // -----------------------------
     auth.onAuthStateChanged(user => {
       if (!user) {
         window.location.href = "/#home";
         return;
       }
-      const emailEl = el('user-email-display');
-      if (emailEl) emailEl.innerText = user.email || '';
+
+      el('user-email-display').innerText = user.email || '';
+
+      // Dashboard src setzen (mit Parametern; falls Dashboard sie ignoriert, ist es trotzdem ok)
+      const emailParam = encodeURIComponent(user.email || '');
+      const uidParam = encodeURIComponent(user.uid || '');
+      const dashUrl = `${GAS_DASHBOARD_URL}?u=${emailParam}&id=${uidParam}`;
+
+      const dashFrame = el('dashboardFrame');
+      const dashLoader = el('dashboardLoader');
+      const dashStatus = el('dashboard-status');
+
+      dashLoader.style.display = 'flex';
+      dashStatus.textContent = 'Lade…';
+
+      dashFrame.onload = () => {
+        dashLoader.style.display = 'none';
+        dashStatus.textContent = 'Bereit';
+      };
+
+      dashFrame.src = dashUrl;
     });
 
     // -----------------------------
@@ -192,7 +244,7 @@
 
       const emailParam = encodeURIComponent(user.email || '');
       const uidParam = encodeURIComponent(user.uid || '');
-      frame.src = `${GAS_APP_URL}?u=${emailParam}&id=${uidParam}`;
+      frame.src = `${GAS_BOOKING_URL}?u=${emailParam}&id=${uidParam}`;
 
       frame.onload = () => { loader.style.display = 'none'; };
     }
@@ -205,11 +257,6 @@
 
     el('open-booking-btn').addEventListener('click', openBookingTool);
     el('closeBookingBtn').addEventListener('click', closeBookingTool);
-
-    // Optional: Click auf Overlay schließt
-    el('bookingModal').addEventListener('click', (e) => {
-      if (e.target === el('bookingModal')) closeBookingTool();
-    });
 
     // -----------------------------
     // 4) Logout
