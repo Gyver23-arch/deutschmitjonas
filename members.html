@@ -156,7 +156,10 @@
     // Google Apps Script WebApp (Buchungstool)
     const GAS_APP_URL = "https://script.google.com/macros/s/AKfycby7xni60TWXpCuxe4MoRYDn9KUY7ipeyaSeocaS96AOF3u7YEwTc8lykx8X3W--2U08Lw/exec";
 
-    firebase.initializeApp(firebaseConfig);
+    // Init (safe)
+    if (!firebase.apps || !firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
     const auth = firebase.auth();
 
     const el = (id) => document.getElementById(id);
@@ -169,7 +172,8 @@
         window.location.href = "/#home";
         return;
       }
-      el('user-email-display').innerText = user.email || '';
+      const emailEl = el('user-email-display');
+      if (emailEl) emailEl.innerText = user.email || '';
     });
 
     // -----------------------------
@@ -201,6 +205,11 @@
 
     el('open-booking-btn').addEventListener('click', openBookingTool);
     el('closeBookingBtn').addEventListener('click', closeBookingTool);
+
+    // Optional: Click auf Overlay schließt
+    el('bookingModal').addEventListener('click', (e) => {
+      if (e.target === el('bookingModal')) closeBookingTool();
+    });
 
     // -----------------------------
     // 4) Logout
