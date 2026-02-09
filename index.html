@@ -107,8 +107,13 @@
                 <!-- Logo / Brand -->
                 <div class="flex-shrink-0 flex items-center cursor-pointer" onclick="navigateTo('home')">
                     <div class="flex items-center gap-2 group">
-                        <div class="w-10 h-10 bg-brand-yellow rounded-full flex items-center justify-center text-gray-900 shadow-sm group-hover:scale-110 transition">
-                            <span class="font-bold font-serif">J</span>
+                        <div class="w-10 h-10 bg-brand-yellow rounded-full overflow-hidden shadow-sm group-hover:scale-110 transition">
+                            <img
+                                src="https://lh3.googleusercontent.com/pw/AP1GczM7-zXkCQ96aQnVFjYihA_3nm45bEkDm_hkfgQKUP9vhhaVHFs6RBZi6DIS57R8NOwUE8wN-PEJqc_-UqOEKilmrGOHaekSTdgU5D27NxUw8g3dl3tWcSoQRY_n1Eg7SGNimvfREpaV4znXhZtnTQB56A=w905-h905-s-no-gm"
+                                alt="Jonas"
+                                class="w-full h-full object-cover"
+                                loading="lazy"
+                            >
                         </div>
                         <span class="text-xl font-bold text-gray-900 tracking-tight group-hover:text-gray-600 transition">
                             Deutsch mit Jonas
@@ -123,11 +128,6 @@
                     <button onclick="navigateTo('business')" class="nav-link text-gray-600 hover:text-black font-medium transition text-sm uppercase tracking-wide">Business & Technik</button>
                     <button onclick="navigateTo('preise')" class="nav-link text-brand-dark font-bold transition text-sm uppercase tracking-wide border-b-2 border-transparent hover:border-brand-yellow">Preise</button>
                     <button onclick="navigateTo('about')" class="nav-link text-gray-600 hover:text-black font-medium transition text-sm uppercase tracking-wide">Über Jonas</button>
-
-                    <!-- Memberbereich als Unterseite -->
-                    <a href="/members.html" class="text-blue-700 hover:text-blue-900 font-bold transition text-sm uppercase tracking-wide">
-                        <i class="fas fa-user-lock mr-2"></i> Dashboard
-                    </a>
 
                     <button onclick="scrollToContact()" class="bg-gray-900 text-white px-6 py-2.5 rounded-full font-bold hover:bg-gray-800 transition shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
                         Kontakt
@@ -393,38 +393,43 @@
     <main id="konversation" class="page-section pt-32 flex-grow">
         <div class="bg-yellow-50 py-16">
             <div class="max-w-7xl mx-auto px-4 text-center">
-                <span class="bg-white text-yellow-600 py-1 px-3 rounded-full text-xs font-bold uppercase tracking-wider shadow-sm mb-4 inline-block">Alltag & Leben</span>
-                <h1 class="text-4xl font-bold text-gray-900 mb-6">Konversationstraining</h1>
-                <p class="text-xl text-gray-600 max-w-2xl mx-auto">Verliere die Angst vor Fehlern. Wir sprechen über das, was dich bewegt.</p>
+                <span class="bg-white text-yellow-600 py-1 px-3 rounded-full text-xs font-bold uppercase tracking-wider shadow-sm mb-4 inline-block">Alltag &amp; Leben</span>
+                <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Konversationstraining: Dein Upgrade für das echte Leben</h1>
+                <p class="text-xl text-gray-600 max-w-2xl mx-auto">Schluss mit der Sprachblockade. Fang an zu leben.</p>
             </div>
         </div>
 
         <div class="max-w-4xl mx-auto px-4 py-16">
             <div class="prose prose-lg text-gray-600 mx-auto">
-                <p>Grammatikübungen aus dem Lehrbuch sind wichtig, aber sie bereiten dich oft nicht auf die Realität vor: Den spontanen Plausch mit dem Nachbarn oder das entspannte Gespräch in der Kaffeepause.</p>
+                <p>
+                    Du kennst die Grammatikregeln, aber dein Kopf wird leer, sobald dich jemand auf der Straße anspricht?
+                    Das ist völlig normal. In der Schule lernen wir, keine Fehler zu machen – bei mir lernst du, einfach loszureden.
+                </p>
 
-                <h3 class="text-gray-900 font-bold text-2xl mt-8 mb-4">Mein Ansatz: Real Life Communication</h3>
-                <ul class="space-y-4 list-none pl-0">
+                <h3 class="text-gray-900 font-bold text-2xl mt-10 mb-4">Mein Ansatz: Real Life Communication</h3>
+                <p>Vergiss veraltete Dialoge aus dem Lehrbuch. Wir trainieren für die Momente, die wirklich zählen.</p>
+
+                <ul class="space-y-5 list-none pl-0 mt-6">
                     <li class="flex items-start">
                         <i class="fas fa-check text-yellow-500 mt-1.5 mr-3"></i>
-                        <div><strong>Aktives Sprechen:</strong> Du hast 70-80% Redeanteil.</div>
+                        <div><strong>80% Redeanteil für dich:</strong> Sprache ist ein Muskel. Bei mir bist du die Hauptperson. Durch das ständige Sprechen verlierst du die Hemmungen und entwickelst einen natürlichen Redefluss.</div>
                     </li>
                     <li class="flex items-start">
                         <i class="fas fa-check text-yellow-500 mt-1.5 mr-3"></i>
-                        <div><strong>Kultureller Kontext:</strong> Ich erkläre dir nicht nur die Vokabel, sondern wie man sie in Deutschland wirklich benutzt (Stichwort: Direktheit).</div>
+                        <div><strong>Der „Kultur-Code“:</strong> Ich bringe dir nicht nur Vokabeln bei, sondern das „Wie“. Warum sind Deutsche so direkt? Wie bricht man das Eis? Du lernst, zwischen den Zeilen zu lesen.</div>
                     </li>
                     <li class="flex items-start">
                         <i class="fas fa-check text-yellow-500 mt-1.5 mr-3"></i>
-                        <div><strong>Storytelling:</strong> Wir üben, Geschichten zu erzählen, damit du interessanter wirkst.</div>
+                        <div><strong>Storytelling mit Persönlichkeit:</strong> Niemand will nur Fakten hören. Wir üben, wie du Erlebnisse spannend erzählst, damit man dir im Café oder auf der Party gebannt zuhört.</div>
+                    </li>
+                    <li class="flex items-start">
+                        <i class="fas fa-check text-yellow-500 mt-1.5 mr-3"></i>
+                        <div><strong>Fehler sind deine Freunde:</strong> Wir korrigieren sanft und gezielt. Mein Ziel ist nicht Perfektion, sondern dass du dich verstanden und sicher fühlst.</div>
                     </li>
                 </ul>
 
-                <div class="bg-white border-l-4 border-yellow-400 p-6 mt-10 shadow-sm">
-                    <p class="italic mb-0">"Jonas schafft eine Atmosphäre, in der ich mich traue, einfach drauf loszureden. Fehler werden freundlich korrigiert, ohne den Fluss zu stören."</p>
-                </div>
-
                 <div class="mt-12 text-center">
-                    <button onclick="navigateTo('preise')" class="bg-brand-yellow text-gray-900 px-8 py-3 rounded-lg font-bold hover:bg-yellow-300 transition shadow">Preise & Buchung</button>
+                    <button onclick="navigateTo('preise')" class="bg-brand-yellow text-gray-900 px-8 py-3 rounded-lg font-bold hover:bg-yellow-300 transition shadow">Preise &amp; Buchung</button>
                 </div>
             </div>
         </div>
@@ -445,18 +450,48 @@
         <div class="max-w-7xl mx-auto px-4 py-16">
             <div class="grid lg:grid-cols-2 gap-16 items-start">
                 <div>
-                    <h2 class="text-3xl font-bold text-gray-900 mb-6">Warum ich dich verstehe</h2>
-                    <p class="text-gray-600 mb-6 text-lg">
-                        Viele Deutschlehrer wissen nicht, was eine "SPS" (PLC) ist oder wie "Lean Management" funktioniert.
-                        Ich schon. Bevor ich Lehrer wurde, habe ich <strong>10 Jahre in der Industrie</strong> gearbeitet.
-                    </p>
+                    <p class="text-sm font-bold text-gray-900/70 uppercase tracking-wide mb-3">Kein Schuldeutsch. Sondern Deutsch für den Job.</p>
+                    <h2 class="text-3xl font-bold text-gray-900 mb-6">Vom Schichtbetrieb in den Unterricht</h2>
+                    <div class="space-y-4 mb-10 text-lg text-gray-600">
+                        <p>Viele Deutschlehrer kennen die Technik nur aus Büchern. Ich komme aus der Praxis.</p>
+                        <p>Ich war 10 Jahre in der Industrie – mit Schichtarbeit, Zeitdruck, Störungen, Übergaben, Meetings und technischer Doku.</p>
+                        <p><strong>Genau das trainieren wir:</strong> Deutsch, das du im Betrieb jeden Tag brauchst.</p>
+                    </div>
+
+                    <h3 class="text-xl font-bold text-gray-900 mb-4">Warum mit mir</h3>
 
                     <div class="space-y-6">
                         <div class="flex gap-4">
                             <div class="flex-shrink-0 w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center text-gray-900 font-bold text-xl">10</div>
                             <div>
-                                <h4 class="font-bold text-gray-900">Jahre bei xx</h4>
-                                <p class="text-sm text-gray-600">Maschinenbediener & Instandhaltungstechniker. Ich kenne den Schichtbetrieb und den Zeitdruck in der Produktion.</p>
+                                <h4 class="font-bold text-gray-900">10 Jahre Industrie-Erfahrung</h4>
+                                <p class="text-sm text-gray-600">Ich kenne die Situationen in Produktion und Instandhaltung – und die Sprache, die dort funktioniert.</p>
+                            </div>
+                        </div>
+
+                        <div class="flex gap-4">
+                            <div class="flex-shrink-0 w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center text-gray-900 font-bold text-xl">
+                                <i class="fas fa-graduation-cap"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-gray-900">Staatlich geprüfter Techniker (Elektrotechnik)</h4>
+                                <p class="text-sm text-gray-600">Ich verstehe Schaltpläne und Technik. Du lernst, Dinge klar und verständlich auf Deutsch zu erklären.</p>
+                            </div>
+                        </div>
+
+                        <div class="flex gap-4">
+                            <div class="flex-shrink-0 w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center text-gray-900 font-bold text-xl">
+                                <i class="fas fa-clipboard-check"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-gray-900">Qualität &amp; Prozesse</h4>
+                                <p class="text-sm text-gray-600">Wir üben Deutsch für Fehler, Rückfragen und Berichte – so, wie es im Betrieb üblich ist.</p>
+                            </div>
+                        </div>
+                    </div>
+                            <div>
+                                <h4 class="font-bold text-gray-900">10 Jahre Industrie-Expertise</h4>
+                                <p class="text-sm text-gray-600">Gearbeitet bei einem marktführenden Unternehmen der Automatisierungstechnik. Ich kenne die täglichen Herausforderungen von Instandhaltungstechnikern und Maschinenbedienern aus der Praxis.</p>
                             </div>
                         </div>
                         <div class="flex gap-4">
@@ -464,37 +499,37 @@
                                 <i class="fas fa-graduation-cap"></i>
                             </div>
                             <div>
-                                <h4 class="font-bold text-gray-900">Staatlich gepr. Techniker</h4>
-                                <p class="text-sm text-gray-600">Abschluss in Elektrotechnik. Ich kann komplexe technische Zusammenhänge sprachlich aufbereiten.</p>
+                                <h4 class="font-bold text-gray-900">Staatlich geprüfte Technik-Kompetenz</h4>
+                                <p class="text-sm text-gray-600">Als staatlich geprüfter Techniker (Elektrotechnik) verstehe ich deine Schaltpläne und technischen Zusammenhänge. Ich bringe dir bei, sie präzise und professionell auf Deutsch zu erklären.</p>
                             </div>
                         </div>
                         <div class="flex gap-4">
                             <div class="flex-shrink-0 w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center text-gray-900 font-bold text-xl">
-                                <i class="fas fa-vial"></i>
+                                <i class="fas fa-clipboard-check"></i>
                             </div>
                             <div>
-                                <h4 class="font-bold text-gray-900">XXXr</h4>
-                                <p class="text-sm text-gray-600">Fehleranalyse, Qualitätssicherung und Prozessoptimierung. Ich weiß, wie man Fehlerberichte schreibt.</p>
+                                <h4 class="font-bold text-gray-900">Qualität &amp; Prozesse im Blut</h4>
+                                <p class="text-sm text-gray-600">Ob Fehleranalyse, Qualitätssicherung oder KVP – ich weiß, worauf es in der Kommunikation mit Vorgesetzten und Kunden ankommt. Wir trainieren genau das Vokabular, das du für Fehlerberichte und Audits brauchst.</p>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <div class="bg-white p-8 rounded-2xl shadow-xl border border-gray-100">
-                    <h3 class="text-2xl font-bold text-gray-900 mb-6">Das Training umfasst:</h3>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-6">Das Training</h3>
 
                     <div class="space-y-4">
                         <div class="bg-gray-50 p-4 rounded-lg border-l-4 border-gray-900">
-                            <h5 class="font-bold">Technische Kommunikation</h5>
-                            <p class="text-sm text-gray-600">Prozesse erklären, Fehler beschreiben, Sicherheitsunterweisungen verstehen.</p>
+                            <h5 class="font-bold">1) Technische Kommunikation</h5>
+                            <p class="text-sm text-gray-600">Prozesse erklären, Fehler beschreiben, Maßnahmen erklären, Sicherheitsregeln verstehen.</p>
                         </div>
                         <div class="bg-gray-50 p-4 rounded-lg border-l-4 border-gray-900">
-                            <h5 class="font-bold">Meetings & Abstimmungen</h5>
-                            <p class="text-sm text-gray-600">Diplomatisch widersprechen, Vorschläge einbringen (KVP/Lean), Zusammenfassungen geben.</p>
+                            <h5 class="font-bold">2) Meetings &amp; Abstimmung</h5>
+                            <p class="text-sm text-gray-600">Nachfragen, kurz zusammenfassen, höflich widersprechen, Vorschläge machen.</p>
                         </div>
                         <div class="bg-gray-50 p-4 rounded-lg border-l-4 border-gray-900">
-                            <h5 class="font-bold">Bewerbungstraining</h5>
-                            <p class="text-sm text-gray-600">Simulation von Vorstellungsgesprächen speziell für technische Rollen in Deutschland.</p>
+                            <h5 class="font-bold">3) Bewerbung &amp; Präsentation</h5>
+                            <p class="text-sm text-gray-600">Vorstellungsgespräche für technische Jobs + Präsentationen üben.</p>
                         </div>
                     </div>
 
@@ -547,38 +582,54 @@
 
             <!-- Pricing Grid -->
             <div class="grid md:grid-cols-3 gap-8">
+                <!-- 1) Probeunterricht -->
                 <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-8 flex flex-col hover:border-brand-yellow transition">
-                    <h3 class="text-xl font-bold text-gray-900 mb-4">Einzelstunde</h3>
-                    <p class="text-gray-500 mb-6 text-sm">Perfekt zum Kennenlernen oder für akute Vorbereitung (z.B. Vorstellungsgespräch).</p>
-                    <div class="text-3xl font-bold text-gray-900 mb-6">€XX <span class="text-base font-normal text-gray-500">/ 50 Min</span></div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-2">Probeunterricht</h3>
+                    <p class="text-gray-500 mb-6 text-sm">Kurzes Kennenlernen, klare Zielsetzung – und direkt ins Sprechen kommen.</p>
+
+                    <div class="text-3xl font-bold text-gray-900 mb-6">€20 <span class="text-base font-normal text-gray-500">/ 20 Min</span></div>
+
                     <ul class="space-y-3 mb-8 text-sm text-gray-600 flex-grow">
-                        <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i> Individueller Fokus</li>
-                        <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i> Feedback-Notizen</li>
-                        <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i> Flexibel buchbar</li>
+                        <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i> Erstes Kennenlernen</li>
+                        <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i> Zielsetzung</li>
+                        <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i> Spaß</li>
+                        <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i> Ab Niveaustufe A2+</li>
                     </ul>
                 </div>
 
+                <!-- 2) Konversationsunterricht (Bestseller) -->
                 <div class="bg-gray-900 rounded-2xl shadow-xl border-2 border-brand-yellow p-8 flex flex-col transform md:-translate-y-4 relative">
                     <div class="absolute top-0 right-0 bg-brand-yellow text-gray-900 text-xs font-bold px-3 py-1 rounded-bl-lg rounded-tr-lg">BESTSELLER</div>
-                    <h3 class="text-xl font-bold text-white mb-4">4-Wochen-Paket</h3>
-                    <p class="text-gray-400 mb-6 text-sm">Für sichtbaren Fortschritt. Ein fester Termin pro Woche sorgt für Routine.</p>
-                    <div class="text-3xl font-bold text-brand-yellow mb-6">€XX <span class="text-base font-normal text-gray-400">/ Monat</span></div>
+
+                    <h3 class="text-xl font-bold text-white mb-2">Individueller Konversationsunterricht</h3>
+                    <p class="text-gray-400 mb-6 text-sm">Direkte Korrektur, Material &amp; Lernplan – damit du spürbar sicherer wirst.</p>
+
+                    <div class="text-3xl font-bold text-brand-yellow mb-2">€40 <span class="text-base font-normal text-gray-400">/ 45 Min</span></div>
+                    <p class="text-xs text-gray-400 mb-6">Ab 8× pro Monat: <span class="text-brand-yellow font-bold">€37</span> / 45 Min</p>
+
                     <ul class="space-y-3 mb-8 text-sm text-gray-300 flex-grow">
-                        <li class="flex items-center"><i class="fas fa-check text-brand-yellow mr-2"></i> 4 Sessions à 50 Min</li>
-                        <li class="flex items-center"><i class="fas fa-check text-brand-yellow mr-2"></i> Material inkl.</li>
-                        <li class="flex items-center"><i class="fas fa-check text-brand-yellow mr-2"></i> WhatsApp Support</li>
-                        <li class="flex items-center"><i class="fas fa-check text-brand-yellow mr-2"></i> Technischer Fokus möglich</li>
+                        <li class="flex items-center"><i class="fas fa-check text-brand-yellow mr-2"></i> Direkte Korrektur &amp; Verbesserung</li>
+                        <li class="flex items-center"><i class="fas fa-check text-brand-yellow mr-2"></i> Hausaufgaben</li>
+                        <li class="flex items-center"><i class="fas fa-check text-brand-yellow mr-2"></i> Lernmaterial</li>
+                        <li class="flex items-center"><i class="fas fa-check text-brand-yellow mr-2"></i> Persönlicher Lernplan</li>
+                        <li class="flex items-center"><i class="fas fa-check text-brand-yellow mr-2"></i> Spaß</li>
+                        <li class="flex items-center"><i class="fas fa-check text-brand-yellow mr-2"></i> Ab Niveaustufe A2+</li>
                     </ul>
                 </div>
 
+                <!-- 3) Bewerbungstraining -->
                 <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-8 flex flex-col hover:border-brand-yellow transition">
-                    <h3 class="text-xl font-bold text-gray-900 mb-4">Intensiv-Paket</h3>
-                    <p class="text-gray-500 mb-6 text-sm">Wenn es schnell gehen muss. 2 Sessions pro Woche für maximale Immersion.</p>
-                    <div class="text-3xl font-bold text-gray-900 mb-6">€XX <span class="text-base font-normal text-gray-500">/ 8 Sessions</span></div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-2">Bewerbungstraining</h3>
+                    <p class="text-gray-500 mb-6 text-sm">Unterlagen optimieren, Interview üben und professionell auftreten.</p>
+
+                    <div class="text-3xl font-bold text-gray-900 mb-6">€45 <span class="text-base font-normal text-gray-500">/ 45 Min</span></div>
+
                     <ul class="space-y-3 mb-8 text-sm text-gray-600 flex-grow">
-                        <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i> 8 Sessions à 50 Min</li>
-                        <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i> Deep Dive Themen</li>
-                        <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i> Bewerbungstraining inkl.</li>
+                        <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i> Lebenslauf-Check</li>
+                        <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i> Anschreiben-Check</li>
+                        <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i> Interviewtraining</li>
+                        <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i> Hilfreiche Tipps &amp; Coaching</li>
+                        <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i> Ab Niveaustufe B1+</li>
                     </ul>
                 </div>
             </div>
@@ -702,10 +753,20 @@
 
     <!-- LOGIN MODAL -->
     <div id="loginModal" class="modal-overlay">
-        <div class="bg-white rounded-xl shadow-2xl p-8 max-w-sm w-full mx-4 relative transform transition-all scale-100">
+        <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-sm w-full mx-4 relative">
             <button onclick="closeLoginModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
                 <i class="fas fa-times text-xl"></i>
             </button>
+
+            <div class="flex items-center gap-3 mb-6">
+                <div class="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center text-yellow-700">
+                    <i class="fas fa-user-lock"></i>
+                </div>
+                <div class="leading-tight">
+                    <p class="text-xs text-gray-500">Schülerbereich</p>
+                    <h3 id="authHeadline" class="text-xl font-bold text-gray-900">Einloggen</h3>
+                </div>
+            </div>
 
             <div class="flex gap-6 mb-6 border-b border-gray-200">
                 <div onclick="switchAuthMode('login')" id="tabLogin" class="auth-tab active">Einloggen</div>
@@ -715,29 +776,40 @@
             <div class="space-y-4">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">E-Mail</label>
-                    <input type="email" id="loginEmail" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-yellow focus:border-transparent outline-none transition">
+                    <input type="email" id="loginEmail" autocomplete="email" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-yellow focus:border-transparent outline-none transition" placeholder="deine@email.com">
                 </div>
-                <div>
+
+                <div id="nameWrap" class="hidden">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Name (optional)</label>
+                    <input type="text" id="registerName" autocomplete="name" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-yellow focus:border-transparent outline-none transition" placeholder="Vorname">
+                </div>
+
+                <div id="passWrap">
                     <label class="block text-sm font-medium text-gray-700 mb-1">Passwort</label>
-                    <input type="password" id="loginPass" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-yellow focus:border-transparent outline-none transition">
+                    <input type="password" id="loginPass" autocomplete="current-password" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-yellow focus:border-transparent outline-none transition" placeholder="••••••••">
                 </div>
+
+                <p id="registerHint" class="text-xs text-gray-500 hidden">
+                    Du bekommst danach eine E-Mail, um dein Passwort festzulegen.
+                </p>
 
                 <button onclick="performLogin()" id="loginBtn" class="w-full bg-brand-yellow text-gray-900 font-bold py-3 rounded-lg hover:bg-yellow-400 transition shadow-sm">
                     Jetzt Einloggen
                 </button>
 
                 <button onclick="performRegister()" id="registerBtn" class="w-full bg-gray-900 text-white font-bold py-3 rounded-lg hover:bg-black transition shadow-sm hidden">
-                    Kostenlos Registrieren
+                    Registrierung anfordern
                 </button>
 
                 <p id="loginError" class="text-red-500 text-sm text-center hidden"></p>
-                <p id="loginInfo" class="text-gray-500 text-sm text-center hidden"></p>
+                <p id="loginInfo" class="text-gray-600 text-sm text-center hidden"></p>
 
-                <div class="flex justify-between items-center mt-4 text-xs">
+                <div id="forgotWrap" class="flex justify-between items-center mt-2 text-xs">
                     <a href="#" onclick="resetPassword(); return false;" class="text-gray-500 hover:text-gray-800 underline">Passwort vergessen?</a>
+                    <button type="button" onclick="switchAuthMode('register')" class="text-gray-500 hover:text-gray-800 underline">Neu hier?</button>
                 </div>
 
-                <div class="text-center pt-2">
+                <div class="text-center pt-1">
                     <a href="/members.html" class="text-xs text-blue-600 hover:text-blue-800 underline">Direkt zum Dashboard</a>
                 </div>
             </div>
@@ -788,6 +860,7 @@
         // -----------------------------
         function openLoginModal() {
             el('loginModal').classList.add('flex');
+            switchAuthMode('login');
             el('loginInfo').classList.add('hidden');
             el('loginError').classList.add('hidden');
         }
@@ -796,10 +869,18 @@
             el('loginModal').classList.remove('flex');
             el('loginError').classList.add('hidden');
             el('loginInfo').classList.add('hidden');
+
             el('loginBtn').innerText = "Jetzt Einloggen";
             el('loginBtn').disabled = false;
-            el('registerBtn').innerText = "Kostenlos Registrieren";
+
+            el('registerBtn').innerText = "Registrierung anfordern";
             el('registerBtn').disabled = false;
+
+            // Felder leeren
+            el('loginEmail').value = '';
+            el('loginPass').value = '';
+            const rn = el('registerName');
+            if (rn) rn.value = '';
         }
 
         function switchAuthMode(mode) {
@@ -807,17 +888,44 @@
             const btnRegister = el('registerBtn');
             const tabLogin = el('tabLogin');
             const tabRegister = el('tabRegister');
+            const passWrap = el('passWrap');
+            const nameWrap = el('nameWrap');
+            const regHint = el('registerHint');
+            const forgotWrap = el('forgotWrap');
+            const headline = el('authHeadline');
 
             if (mode === 'login') {
                 btnLogin.classList.remove('hidden');
                 btnRegister.classList.add('hidden');
+
                 tabLogin.classList.add('active');
                 tabRegister.classList.remove('active');
+
+                if (passWrap) passWrap.classList.remove('hidden');
+                if (nameWrap) nameWrap.classList.add('hidden');
+                if (regHint) regHint.classList.add('hidden');
+                if (forgotWrap) forgotWrap.classList.remove('hidden');
+                if (headline) headline.innerText = 'Einloggen';
+
+                // Autofill-Hint
+                const pass = el('loginPass');
+                if (pass) pass.setAttribute('autocomplete', 'current-password');
             } else {
                 btnLogin.classList.add('hidden');
                 btnRegister.classList.remove('hidden');
+
                 tabLogin.classList.remove('active');
                 tabRegister.classList.add('active');
+
+                if (passWrap) passWrap.classList.add('hidden');
+                if (nameWrap) nameWrap.classList.remove('hidden');
+                if (regHint) regHint.classList.remove('hidden');
+                if (forgotWrap) forgotWrap.classList.add('hidden');
+                if (headline) headline.innerText = 'Registrieren';
+
+                // Passwortfeld beim Registrieren nicht nötig
+                const pass = el('loginPass');
+                if (pass) pass.value = '';
             }
 
             el('loginError').classList.add('hidden');
@@ -831,7 +939,7 @@
             const err = el('loginError');
 
             if (!e || !p) {
-                err.innerText = "Bitte alles ausfüllen.";
+                err.innerText = "Bitte E-Mail und Passwort eingeben.";
                 err.classList.remove('hidden');
                 return;
             }
@@ -855,41 +963,87 @@
                 });
         }
 
+        function generateTempPassword(len = 24) {
+            const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!$%&*?';
+            try {
+                const arr = new Uint32Array(len);
+                (window.crypto || window.msCrypto).getRandomValues(arr);
+                let out = '';
+                for (let i = 0; i < len; i++) out += chars[arr[i] % chars.length];
+                return out;
+            } catch (e) {
+                // Fallback
+                let out = '';
+                for (let i = 0; i < len; i++) out += chars[Math.floor(Math.random() * chars.length)];
+                return out;
+            }
+        }
+
+        // Registrieren ohne Passwort: Account wird angelegt (falls neu) und es wird eine E-Mail zum Passwort-Setzen gesendet.
         function performRegister() {
             const e = el('loginEmail').value.trim();
-            const p = el('loginPass').value;
+            const name = (el('registerName')?.value || '').trim();
             const btn = el('registerBtn');
             const err = el('loginError');
             const info = el('loginInfo');
 
-            if (!e || !p) {
-                err.innerText = "Bitte alles ausfüllen.";
-                err.classList.remove('hidden');
-                return;
-            }
-            if (p.length < 6) {
-                err.innerText = "Passwort zu kurz (min. 6 Zeichen).";
+            err.classList.add('hidden');
+            info.classList.add('hidden');
+
+            if (!e) {
+                err.innerText = "Bitte E-Mail eingeben.";
                 err.classList.remove('hidden');
                 return;
             }
 
-            btn.innerText = "Erstelle Konto...";
+            btn.innerText = "Sende E-Mail...";
             btn.disabled = true;
 
-            auth.createUserWithEmailAndPassword(e, p)
-                .then(() => {
-                    info.innerText = "Konto erstellt. Weiterleitung...";
-                    info.classList.remove('hidden');
-                    window.location.href = MEMBERS_URL;
-                })
-                .catch(error => {
-                    btn.innerText = "Kostenlos Registrieren";
-                    btn.disabled = false;
+            const sendReset = () => auth.sendPasswordResetEmail(e);
 
-                    if (error.code === 'auth/email-already-in-use') err.innerText = "E-Mail schon vergeben.";
+            // 1) Wenn Account existiert: direkt Reset-Mail senden
+            // 2) Wenn nicht: Account mit temporärem Passwort anlegen, dann Reset-Mail senden, danach ausloggen
+            Promise.resolve()
+                .then(() => sendReset())
+                .then(() => {
+                    info.innerText = "Wenn ein Konto existiert, wurde eine E-Mail zum Passwort-Setzen gesendet.";
+                    info.classList.remove('hidden');
+                    switchAuthMode('login');
+                })
+                .catch((error) => {
+                    if (error.code === 'auth/user-not-found') {
+                        const tempPass = generateTempPassword();
+                        return auth.createUserWithEmailAndPassword(e, tempPass)
+                            .then(async () => {
+                                if (name && auth.currentUser) {
+                                    try { await auth.currentUser.updateProfile({ displayName: name }); } catch (_) {}
+                                }
+                                await sendReset();
+                                await auth.signOut();
+                                info.innerText = "Fast fertig: Bitte E-Mail prüfen und ein Passwort festlegen. Danach kannst du dich einloggen.";
+                                info.classList.remove('hidden');
+                                switchAuthMode('login');
+                            })
+                            .catch((e2) => {
+                                if (e2.code === 'auth/email-already-in-use') {
+                                    return sendReset().then(() => {
+                                        info.innerText = "E-Mail ist schon registriert. Wir haben dir einen Link zum Passwort-Setzen geschickt.";
+                                        info.classList.remove('hidden');
+                                        switchAuthMode('login');
+                                    });
+                                }
+                                throw e2;
+                            });
+                    }
+
+                    if (error.code === 'auth/invalid-email') err.innerText = "Bitte eine gültige E-Mail eingeben.";
                     else err.innerText = "Fehler: " + (error.message || error.code);
 
                     err.classList.remove('hidden');
+                })
+                .finally(() => {
+                    btn.innerText = "Registrierung anfordern";
+                    btn.disabled = false;
                 });
         }
 
