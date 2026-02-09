@@ -834,8 +834,14 @@
         // Ziel-Unterseiten
         const MEMBERS_URL = "/members.html";
 
-        firebase.initializeApp(firebaseConfig);
+        // Firebase App nur einmal initialisieren (wichtig, falls Skripte mehrfach geladen werden)
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+
         const auth = firebase.auth();
+        try { firebase.analytics(); } catch (_) {}
+        try { auth.useDeviceLanguage(); } catch (_) {}
 
         function el(id) { return document.getElementById(id); }
 
@@ -980,6 +986,21 @@
         }
 
         // Registrieren ohne Passwort: Account wird angelegt (falls neu) und es wird eine E-Mail zum Passwort-Setzen gesendet.
+        function sendPasswordResetEmailSmart(email) {
+            const origin = window.location.origin;
+            const settings = { url: origin, handleCodeInApp: false };
+
+            // Falls die Domain in Firebase Auth nicht als „authorized domain“ eingetragen ist,
+            // fällt Firebase mit settings manchmal um. Dann senden wir ohne settings als Fallback.
+            return auth.sendPasswordResetEmail(email, settings).catch((err) => {
+                if (err && (err.code === 'auth/unauthorized-continue-uri' || err.code === 'auth/invalid-continue-uri')) {
+                    return auth.sendPasswordResetEmail(email);
+                }
+                throw err;
+            });
+        }
+
+        // Registrieren ohne Passwort: Account wird angelegt (falls neu) und es wird eine E-Mail zum Passwort-Setzen gesendet.
         function performRegister() {
             const e = el('loginEmail').value.trim();
             const name = (el('registerName')?.value || '').trim();
@@ -999,45 +1020,49 @@
             btn.innerText = "Sende E-Mail...";
             btn.disabled = true;
 
-            const sendReset = () => auth.sendPasswordResetEmail(e);
+            // Robust: erst prüfen, ob es ein Konto gibt. Wenn nicht: anlegen + Reset-Mail.
+            auth.fetchSignInMethodsForEmail(e)
+                .then(async (methods) => {
+                    const exists = Array.isArray(methods) && methods.length > 0;
 
-            // 1) Wenn Account existiert: direkt Reset-Mail senden
-            // 2) Wenn nicht: Account mit temporärem Passwort anlegen, dann Reset-Mail senden, danach ausloggen
-            Promise.resolve()
-                .then(() => sendReset())
-                .then(() => {
-                    info.innerText = "Wenn ein Konto existiert, wurde eine E-Mail zum Passwort-Setzen gesendet.";
+                    if (exists) {
+                        await sendPasswordResetEmailSmart(e);
+                        info.innerText = "Wenn ein Konto existiert, wurde eine E-Mail zum Passwort-Setzen gesendet.";
+                        info.classList.remove('hidden');
+                        switchAuthMode('login');
+                        return;
+                    }
+
+                    // Kein Konto: temporär anlegen, optional Name setzen, dann Reset-Mail
+                    const tempPass = generateTempPassword();
+                    await auth.createUserWithEmailAndPassword(e, tempPass);
+
+                    if (name && auth.currentUser) {
+                        try { await auth.currentUser.updateProfile({ displayName: name }); } catch (_) {}
+                    }
+
+                    await sendPasswordResetEmailSmart(e);
+                    await auth.signOut();
+
+                    info.innerText = "Bitte E-Mail prüfen und ein Passwort festlegen. Danach kannst du dich einloggen.";
                     info.classList.remove('hidden');
                     switchAuthMode('login');
                 })
-                .catch((error) => {
-                    if (error.code === 'auth/user-not-found') {
-                        const tempPass = generateTempPassword();
-                        return auth.createUserWithEmailAndPassword(e, tempPass)
-                            .then(async () => {
-                                if (name && auth.currentUser) {
-                                    try { await auth.currentUser.updateProfile({ displayName: name }); } catch (_) {}
-                                }
-                                await sendReset();
-                                await auth.signOut();
-                                info.innerText = "Fast fertig: Bitte E-Mail prüfen und ein Passwort festlegen. Danach kannst du dich einloggen.";
-                                info.classList.remove('hidden');
-                                switchAuthMode('login');
-                            })
-                            .catch((e2) => {
-                                if (e2.code === 'auth/email-already-in-use') {
-                                    return sendReset().then(() => {
-                                        info.innerText = "E-Mail ist schon registriert. Wir haben dir einen Link zum Passwort-Setzen geschickt.";
-                                        info.classList.remove('hidden');
-                                        switchAuthMode('login');
-                                    });
-                                }
-                                throw e2;
-                            });
+                .catch(async (error) => {
+                    // Falls Fetch wegen Enumeration/Policy o.ä. nicht zuverlässig ist, fallbacken wir:
+                    if (error && error.code === 'auth/email-already-in-use') {
+                        try {
+                            await sendPasswordResetEmailSmart(e);
+                            info.innerText = "E-Mail ist schon registriert. Wir haben dir einen Link zum Passwort-Setzen geschickt.";
+                            info.classList.remove('hidden');
+                            switchAuthMode('login');
+                            return;
+                        } catch (_) {}
                     }
 
-                    if (error.code === 'auth/invalid-email') err.innerText = "Bitte eine gültige E-Mail eingeben.";
-                    else err.innerText = "Fehler: " + (error.message || error.code);
+                    if (error && error.code === 'auth/invalid-email') err.innerText = "Bitte eine gültige E-Mail eingeben.";
+                    else if (error && error.code === 'auth/operation-not-allowed') err.innerText = "Firebase Auth: Email/Passwort ist im Projekt nicht aktiviert.";
+                    else err.innerText = "Fehler: " + (error?.message || error?.code || 'unbekannt');
 
                     err.classList.remove('hidden');
                 })
