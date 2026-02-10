@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="de" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
@@ -7,23 +8,47 @@
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&amp;family=Merriweather:ital,wght@0,300;0,700;1,300&amp;display=swap" rel="stylesheet">
+
+    
     <link href="https://calendar.google.com/calendar/scheduling-button-script.css" rel="stylesheet">
 
+    
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-analytics-compat.js"></script>
 
     <script>
         tailwind.config = {
             theme: {
                 extend: {
-                    fontFamily: { sans: ['Outfit', 'sans-serif'], serif: ['Merriweather', 'serif'] },
-                    colors: { brand: { yellow: '#FCD34D', dark: '#1F2937' }, de: { black: '#1a1a1a', red: '#DD0000', gold: '#FFCC00' } }
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                        serif: ['Merriweather', 'serif'],
+                    },
+                    colors: {
+                        brand: {
+                            yellow: '#FCD34D',
+                            dark: '#1F2937',
+                        },
+                        de: {
+                            black: '#1a1a1a',
+                            red: '#DD0000',
+                            gold: '#FFCC00',
+                        }
+                    }
                 }
             }
         }
     </script>
+
     <style>
+        .flag-border-bottom {
+            border-bottom: 3px solid transparent;
+            border-image: linear-gradient(to right, #1a1a1a 33%, #DD0000 33%, #DD0000 66%, #FFCC00 66%) 1;
+        }
         .page-section { display: none; opacity: 0; transition: opacity 0.3s ease-in-out; }
         .page-section.active { display: block; opacity: 1; }
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000; justify-content: center; align-items: center; backdrop-filter: blur(5px); }
@@ -35,23 +60,28 @@
 
 <body class="font-sans text-gray-700 bg-white antialiased flex flex-col min-h-screen">
 
+    
     <div id="top-bar" class="fixed top-0 w-full bg-gray-900 text-gray-400 text-xs py-2 px-4 border-b border-gray-800 z-[60]">
         <div class="max-w-7xl mx-auto flex justify-between items-center">
             <button id="topbar-auth-btn" onclick="openLoginModal()" class="hover:text-white transition flex items-center gap-2 font-bold uppercase tracking-wider">
                 <i class="fas fa-lock"></i> <span data-i18n="btn_login">Login</span>
             </button>
-            <div class="hidden sm:block"><span data-i18n="topbar_text">Technisches Deutsch</span></div>
-            <div class="flex gap-2">
-                <button onclick="setLanguage('DE')" class="hover:text-white">DE</button> | 
-                <button onclick="setLanguage('EN')" class="hover:text-white">EN</button>
+            <div class="hidden sm:block"><span data-i18n="topbar_text">Technisches Deutsch & Konversation</span></div>
+            
+            <div class="flex gap-2 text-gray-500">
+                <button onclick="setLanguage('DE')" class="hover:text-white font-bold">DE</button>
+                <button onclick="setLanguage('EN')" class="hover:text-white font-bold">EN</button>
             </div>
         </div>
     </div>
 
+    
     <nav class="fixed top-8 w-full z-50 bg-white/95 backdrop-blur-md shadow-sm" id="navbar">
         <div class="h-1 w-full bg-gradient-to-r from-de-black via-de-red to-de-gold"></div>
+
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-20 items-center">
+                
                 <div class="flex-shrink-0 flex items-center cursor-pointer" onclick="navigateTo('home')">
                     <div class="flex items-center gap-2 group">
                         <div class="w-10 h-10 bg-brand-yellow rounded-full overflow-hidden shadow-sm group-hover:scale-110 transition">
@@ -60,6 +90,8 @@
                         <span class="text-xl font-bold text-gray-900 tracking-tight group-hover:text-gray-600 transition" data-i18n="nav_brand">Deutsch mit Jonas</span>
                     </div>
                 </div>
+
+                
                 <div class="hidden md:flex space-x-8 items-center">
                     <button onclick="navigateTo('home')" class="nav-link text-gray-600 hover:text-black font-medium transition text-sm uppercase tracking-wide" data-i18n="nav_home">Start</button>
                     <button onclick="navigateTo('konversation')" class="nav-link text-gray-600 hover:text-black font-medium transition text-sm uppercase tracking-wide" data-i18n="nav_konv">Konversation</button>
@@ -68,11 +100,15 @@
                     <button onclick="navigateTo('about')" class="nav-link text-gray-600 hover:text-black font-medium transition text-sm uppercase tracking-wide" data-i18n="nav_about">Über</button>
                     <button onclick="scrollToContact()" class="bg-gray-900 text-white px-6 py-2.5 rounded-full font-bold hover:bg-gray-800 transition shadow-md hover:shadow-lg transform hover:-translate-y-0.5" data-i18n="nav_contact">Kontakt</button>
                 </div>
+
+                
                 <div class="md:hidden flex items-center">
                     <button id="mobile-menu-btn" class="text-gray-900 p-2"><i class="fas fa-bars text-2xl"></i></button>
                 </div>
             </div>
         </div>
+
+        
         <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-100 absolute w-full shadow-xl">
             <div class="px-4 pt-2 pb-6 space-y-2">
                 <button onclick="navigateTo('home'); toggleMobileMenu()" class="block w-full text-left px-3 py-3 font-medium text-gray-700" data-i18n="nav_home">Start</button>
@@ -80,16 +116,21 @@
                 <button onclick="navigateTo('business'); toggleMobileMenu()" class="block w-full text-left px-3 py-3 font-medium text-gray-700" data-i18n="nav_business">Biz</button>
                 <button onclick="navigateTo('preise'); toggleMobileMenu()" class="block w-full text-left px-3 py-3 font-bold text-yellow-600 bg-yellow-50 rounded" data-i18n="nav_prices">Preise</button>
                 <button onclick="navigateTo('about'); toggleMobileMenu()" class="block w-full text-left px-3 py-3 font-medium text-gray-700" data-i18n="nav_about">About</button>
+                <a href="/members.html" class="block w-full text-left px-3 py-3 font-bold text-blue-700 border-t border-gray-100 mt-2 pt-4"><i class="fas fa-user-lock mr-2"></i> <span data-i18n="nav_dashboard">Dashboard</span></a>
                 <button onclick="scrollToContact(); toggleMobileMenu()" class="block w-full text-left px-3 py-3 font-bold text-white bg-gray-900 mt-4 rounded" data-i18n="nav_contact">Kontakt</button>
+                <button onclick="openLoginModal(); toggleMobileMenu()" class="block w-full text-left px-3 py-3 font-bold text-blue-600 border-t border-gray-100 mt-2 pt-4"><i class="fas fa-lock mr-2"></i> <span data-i18n="btn_login">Login</span></button>
             </div>
         </div>
     </nav>
 
+    
+
+    
     <main id="home" class="page-section active pt-32 flex-grow">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-12">
             <div class="grid lg:grid-cols-2 gap-12 items-center">
                 <div class="order-2 lg:order-1 text-center lg:text-left">
-                    <a href="#" class="inline-flex items-center gap-3 bg-white border border-gray-200 rounded-full pl-4 pr-5 py-2 shadow-sm mb-6">
+                    <a href="https://preply.com/de/nachhilfelehrer/5032538" target="_blank" class="inline-flex items-center gap-3 bg-white border border-gray-200 rounded-full pl-4 pr-5 py-2 shadow-sm mb-6">
                         <img src="https://preply.com/download-cms-assets/f23efc/ygli5cawa8_Preply_Logo_Pink_SVG.svg" class="h-6 w-auto">
                         <div class="flex flex-col items-start leading-none">
                             <span class="text-[10px] text-gray-500 font-bold uppercase tracking-wider" data-i18n="hero_badge">Tutor</span>
@@ -104,7 +145,7 @@
                         </span><br>
                         <span data-i18n="hero_line2">und Herz</span>
                     </h1>
-                    <p class="text-xl text-gray-600 mb-8 leading-relaxed" data-i18n="hero_subtext">Intro Text...</p>
+                    <p class="text-xl text-gray-600 mb-8 leading-relaxed" data-i18n="hero_subtext">Intro...</p>
                     <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
                         <button onclick="navigateTo('preise')" class="px-8 py-4 bg-gray-900 text-white font-bold rounded-lg shadow-lg hover:bg-black transition" data-i18n="btn_hero_1">Termin</button>
                         <button onclick="navigateTo('business')" class="px-8 py-4 bg-white border-2 border-gray-200 text-gray-700 font-bold rounded-lg hover:border-brand-yellow hover:bg-yellow-50 transition" data-i18n="btn_hero_2">Technik</button>
@@ -124,7 +165,7 @@
                 <div class="aspect-video w-full rounded-xl overflow-hidden shadow-lg border border-gray-200">
                     <iframe id="video-iframe" class="w-full h-full" src="" frameborder="0" allowfullscreen></iframe>
                 </div>
-                <p class="mt-4 text-sm text-gray-500" data-i18n="video_subtext">Klick auf Play</p>
+                <p class="mt-4 text-sm text-gray-500" data-i18n="video_subtext">Klick Play</p>
             </div>
         </section>
 
@@ -151,6 +192,7 @@
             </div>
         </section>
 
+        
         <section class="bg-gray-900 text-white py-20 relative overflow-hidden">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                 <div class="text-center mb-16">
@@ -192,6 +234,7 @@
         </section>
     </main>
 
+    
     <main id="konversation" class="page-section pt-32 flex-grow">
         <div class="bg-yellow-50 py-16">
             <div class="max-w-7xl mx-auto px-4 text-center">
@@ -218,6 +261,7 @@
         </div>
     </main>
 
+    
     <main id="business" class="page-section pt-32 flex-grow">
         <div class="bg-gray-900 text-white py-16 relative overflow-hidden">
             <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(#ffffff 1px, transparent 1px); background-size: 20px 20px;"></div>
@@ -255,6 +299,7 @@
         </div>
     </main>
 
+    
     <main id="preise" class="page-section pt-32 flex-grow">
         <div class="bg-gray-900 text-white py-16">
             <div class="max-w-7xl mx-auto px-4 text-center">
@@ -284,12 +329,14 @@
                 <p class="text-xs text-gray-500 mt-4" data-i18n="cal_note">Klick Button</p>
             </div>
             <div class="grid md:grid-cols-3 gap-8">
+                
                 <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-8 flex flex-col hover:border-brand-yellow transition">
                     <h3 class="text-xl font-bold text-gray-900 mb-2" data-i18n="price_card1_title">Probe</h3>
                     <p class="text-gray-500 mb-6 text-sm" data-i18n="price_card1_desc">Intro</p>
                     <div class="text-3xl font-bold text-gray-900 mb-6" data-i18n="price_card1_price">20</div>
                     <ul class="space-y-3 mb-8 text-sm text-gray-600 flex-grow" data-i18n="price_card1_list"><li>List</li></ul>
                 </div>
+                
                 <div class="bg-gray-900 rounded-2xl shadow-xl border-2 border-brand-yellow p-8 flex flex-col transform md:-translate-y-4 relative">
                     <div class="absolute top-0 right-0 bg-brand-yellow text-gray-900 text-xs font-bold px-3 py-1 rounded-bl-lg rounded-tr-lg" data-i18n="price_card2_badge">TOP</div>
                     <h3 class="text-xl font-bold text-white mb-2" data-i18n="price_card2_title">Individuell</h3>
@@ -298,6 +345,7 @@
                     <p class="text-xs text-gray-400 mb-6" data-i18n="price_card2_subprice">Abo</p>
                     <ul class="space-y-3 mb-8 text-sm text-gray-300 flex-grow" data-i18n="price_card2_list"><li>List</li></ul>
                 </div>
+                
                 <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-8 flex flex-col hover:border-brand-yellow transition">
                     <h3 class="text-xl font-bold text-gray-900 mb-2" data-i18n="price_card3_title">Bewerbung</h3>
                     <p class="text-gray-500 mb-6 text-sm" data-i18n="price_card3_desc">Desc</p>
@@ -308,6 +356,7 @@
         </div>
     </main>
 
+    
     <main id="about" class="page-section pt-32 flex-grow">
         <div class="max-w-4xl mx-auto px-4 py-16">
             <h1 class="text-4xl font-bold text-gray-900 mb-8 text-center" data-i18n="about_headline">Headline</h1>
@@ -323,6 +372,7 @@
         </div>
     </main>
 
+    
     <footer id="contact-section" class="bg-gray-900 text-gray-300 py-16 mt-auto">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid md:grid-cols-2 gap-12">
@@ -362,22 +412,72 @@
         </div>
     </footer>
 
+    
     <div id="loginModal" class="modal-overlay">
         <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-sm w-full mx-4 relative">
-            <button onclick="closeLoginModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600"><i class="fas fa-times text-xl"></i></button>
-            <div class="flex items-center gap-3 mb-6"><div class="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center text-yellow-700"><i class="fas fa-user-lock"></i></div><div class="leading-tight"><p class="text-xs text-gray-500">Area</p><h3 id="authHeadline" class="text-xl font-bold text-gray-900">Login</h3></div></div>
-            <div class="flex gap-6 mb-6 border-b border-gray-200"><div onclick="switchAuthMode('login')" id="tabLogin" class="auth-tab active">Login</div><div onclick="switchAuthMode('register')" id="tabRegister" class="auth-tab">Register</div></div>
+            <button onclick="closeLoginModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+                <i class="fas fa-times text-xl"></i>
+            </button>
+
+            <div class="flex items-center gap-3 mb-6">
+                <div class="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center text-yellow-700">
+                    <i class="fas fa-user-lock"></i>
+                </div>
+                <div class="leading-tight">
+                    <p class="text-xs text-gray-500">Schülerbereich</p>
+                    <h3 id="authHeadline" class="text-xl font-bold text-gray-900">Einloggen</h3>
+                </div>
+            </div>
+
+            <div class="flex gap-6 mb-6 border-b border-gray-200">
+                <div onclick="switchAuthMode('login')" id="tabLogin" class="auth-tab active">Einloggen</div>
+                <div onclick="switchAuthMode('register')" id="tabRegister" class="auth-tab">Registrieren</div>
+            </div>
+
             <div class="space-y-4">
-                <div><label class="block text-sm font-medium text-gray-700 mb-1">Email</label><input type="email" id="loginEmail" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-yellow focus:border-transparent outline-none"></div>
-                <div id="nameWrap" class="hidden"><label class="block text-sm font-medium text-gray-700 mb-1">Name</label><input type="text" id="registerName" class="w-full p-3 border border-gray-300 rounded-lg"></div>
-                <div id="passWrap"><label class="block text-sm font-medium text-gray-700 mb-1">Pass</label><input type="password" id="loginPass" class="w-full p-3 border border-gray-300 rounded-lg"></div>
-                <button onclick="performLogin()" id="loginBtn" class="w-full bg-brand-yellow text-gray-900 font-bold py-3 rounded-lg hover:bg-yellow-400 transition">Login</button>
-                <button onclick="performRegister()" id="registerBtn" class="w-full bg-gray-900 text-white font-bold py-3 rounded-lg hidden">Register</button>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">E-Mail</label>
+                    <input type="email" id="loginEmail" autocomplete="email" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-yellow focus:border-transparent outline-none transition" placeholder="deine@email.com">
+                </div>
+
+                <div id="nameWrap" class="hidden">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Name (optional)</label>
+                    <input type="text" id="registerName" autocomplete="name" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-yellow focus:border-transparent outline-none transition" placeholder="Vorname">
+                </div>
+
+                <div id="passWrap">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Passwort</label>
+                    <input type="password" id="loginPass" autocomplete="current-password" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-yellow focus:border-transparent outline-none transition" placeholder="••••••••">
+                </div>
+
+                <p id="registerHint" class="text-xs text-gray-500 hidden">
+                    Du bekommst danach eine E-Mail, um dein Passwort festzulegen.
+                </p>
+
+                <button onclick="performLogin()" id="loginBtn" class="w-full bg-brand-yellow text-gray-900 font-bold py-3 rounded-lg hover:bg-yellow-400 transition shadow-sm">
+                    Jetzt Einloggen
+                </button>
+
+                <button onclick="performRegister()" id="registerBtn" class="w-full bg-gray-900 text-white font-bold py-3 rounded-lg hover:bg-black transition shadow-sm hidden">
+                    Registrierung anfordern
+                </button>
+
                 <p id="loginError" class="text-red-500 text-sm text-center hidden"></p>
+                <p id="loginInfo" class="text-gray-600 text-sm text-center hidden"></p>
+
+                <div id="forgotWrap" class="flex justify-between items-center mt-2 text-xs">
+                    <a href="#" onclick="resetPassword(); return false;" class="text-gray-500 hover:text-gray-800 underline">Passwort vergessen?</a>
+                    <button type="button" onclick="switchAuthMode('register')" class="text-gray-500 hover:text-gray-800 underline">Neu hier?</button>
+                </div>
+
+                <div class="text-center pt-1">
+                    <a href="/members.html" class="text-xs text-blue-600 hover:text-blue-800 underline">Direkt zum Dashboard</a>
+                </div>
             </div>
         </div>
     </div>
 
+    
     <script>
         
         
@@ -386,43 +486,26 @@
         const translations = {"DE":{"meta_title":"Deutsch mit Jonas - Technisches Deutsch & Konversation","btn_login":"Schüler Login","topbar_text":"Technisches Deutsch & Konversation","nav_brand":"Deutsch mit Jonas","nav_home":"Start","nav_konv":"Konversation","nav_business":"Business & Technik","nav_prices":"Preise","nav_about":"Über Jonas","nav_dashboard":"Dashboard","nav_contact":"Kontakt","hero_badge":"Verifizierter Tutor","hero_rating":4.8,"hero_line1":"Deutsch lernen mit","hero_highlight":"technischem Verstand","hero_line2":"und Herz.","hero_subtext":"Ich helfe Ingenieuren, Technikern und Fachkräften, sicher im deutschen Jobmarkt aufzutreten. Nahbar, individuell und mit 10 Jahren Industrie-Erfahrung.","btn_hero_1":"Termin buchen","btn_hero_2":"Für Techniker","video_headline":"Kurz vorgestellt: Wer ich bin","youtube_id":"fHV_RicUkXo","video_subtext":"Klick auf Play für einen persönlichen Eindruck","teaser_headline":"Wobei kann ich dich unterstützen?","teaser_card1_title":"Konversationstraining","teaser_card1_text":"Flüssig sprechen, Angst verlieren und Smalltalk meistern. Für Alltag und Leben.","teaser_card1_link":"Mehr erfahren","teaser_card2_title":"Business & Technik","teaser_card2_text":"Spezialisiert auf Ingenieure. PCBs, Prozesse, Meetings und technische Dokumentation.","teaser_card2_link":"Zu meinem Spezialgebiet","testi_headline":"Was meine Schüler sagen","testi_subtext":"Aus über 24 verifizierten Bewertungen auf Preply.","review_1_text":"Dank seiner Unterstützung habe ich auch einen Job gefunden, bei dem ich Deutsch sprechen muss – das hätte ich vorher nicht für möglich gehalten.","review_1_name":"Wiktoria","review_1_date":"Juli 2025","review_1_initial":"W","review_2_text":"Jonas versucht, dich so viel wie möglich sprechen zu lassen, was das Lernen der Sprache einfacher macht.","review_2_name":"Christian","review_2_date":"Oktober 2025","review_2_initial":"C","review_3_text":"Perfekt auf meine Bedürfnisse abgestimmt. Die Tatsache, dass er mehrere Sprachen spricht, war sehr nützlich.","review_3_name":"Öykü","review_3_date":"2025-09-01T05:00:00.000Z","review_3_initial":"Ö","testi_link_text":"Alle Bewertungen lesen","konv_badge":"Alltag & Leben","konv_headline":"Konversationstraining: Dein Upgrade für das echte Leben","konv_subline":"Schluss mit der Sprachblockade. Fang an zu leben.","konv_intro":"Du kennst die Grammatikregeln, aber dein Kopf wird leer, sobald dich jemand auf der Straße anspricht? Das ist völlig normal.","konv_approach_head":"Mein Ansatz: Real Life Communication","konv_approach_text":"Vergiss veraltete Dialoge aus dem Lehrbuch. Wir trainieren für die Momente, die wirklich zählen.","konv_list_1":"<strong>80% Redeanteil für dich:</strong> Sprache ist ein Muskel. Bei mir bist du die Hauptperson.","konv_list_2":"<strong>Der „Kultur-Code“:</strong> Ich bringe dir nicht nur Vokabeln bei, sondern das „Wie“. Warum sind Deutsche so direkt?","konv_list_3":"<strong>Storytelling:</strong> Wir üben, wie du Erlebnisse spannend erzählst.","konv_list_4":"<strong>Fehler sind deine Freunde:</strong> Wir korrigieren sanft und gezielt.","btn_prices_booking":"Preise & Buchung","biz_badge":"Für Fachkräfte","biz_headline":"Deutsch für Ingenieure & Techniker","biz_subtext":"Ich spreche deine Sprache. Von der Fertigung bis zum Test-Engineering.","biz_intro_sub":"Kein Schuldeutsch. Sondern Deutsch für den Job.","biz_intro_head":"Vom Schichtbetrieb in den Unterricht","biz_intro_text":"<p>Viele Deutschlehrer kennen die Technik nur aus Büchern. Ich komme aus der Praxis.</p><p>Ich war 10 Jahre in der Industrie – mit Schichtarbeit, Zeitdruck, Störungen.</p><p><strong>Genau das trainieren wir:</strong> Deutsch, das du im Betrieb jeden Tag brauchst.</p>","biz_whyme_head":"Warum mit mir","biz_point_1_head":"10 Jahre Industrie-Erfahrung","biz_point_1_text":"Ich kenne die Situationen in Produktion und Instandhaltung.","biz_point_2_head":"Staatlich geprüfter Techniker","biz_point_2_text":"Ich verstehe Schaltpläne und Technik.","biz_point_3_head":"Qualität & Prozesse","biz_point_3_text":"Wir üben Deutsch für Fehler, Rückfragen und Berichte.","biz_box_head":"Das Training","biz_box_1_head":"1) Technische Kommunikation","biz_box_1_text":"Prozesse erklären, Fehler beschreiben, Maßnahmen erklären.","biz_box_2_head":"2) Meetings & Abstimmung","biz_box_2_text":"Nachfragen, kurz zusammenfassen, höflich widersprechen.","biz_box_3_head":"3) Bewerbung & Präsentation","biz_box_3_text":"Vorstellungsgespräche für technische Jobs üben.","biz_btn_prices":"Termine & Preise ansehen","price_badge":"Investiere in dich","price_headline":"Pakete & Termine","price_subtext":"Transparente Preise. Keine versteckten Kosten. Buche deinen Termin direkt.","cal_headline":"Bereit loszulegen?","cal_text":"Wähle deinen passenden Termin direkt im Kalender aus. Ich freue mich auf dich!","cal_note":"Klick auf den Button, um den Kalender zu öffnen.","price_card1_title":"Probeunterricht","price_card1_desc":"Kurzes Kennenlernen, klare Zielsetzung – und direkt ins Sprechen kommen.","price_card1_price":"€20 <span class=\"text-base font-normal text-gray-500\">/ 20 Min</span>","price_card1_list":"<li>Erstes Kennenlernen</li><li>Zielsetzung</li><li>Spaß</li><li>Ab A2+</li>","price_card2_badge":"BESTSELLER","price_card2_title":"Individuell","price_card2_desc":"Direkte Korrektur, Material & Lernplan – damit du spürbar sicherer wirst.","price_card2_price":"€40 <span class=\"text-base font-normal text-gray-400\">/ 45 Min</span>","price_card2_subprice":"Ab 8× pro Monat: <strong>€37</strong> / 45 Min","price_card2_list":"<li>Direkte Korrektur</li><li>Hausaufgaben</li><li>Lernmaterial</li><li>Persönlicher Plan</li>","price_card3_title":"Bewerbung","price_card3_desc":"Unterlagen optimieren, Interview üben und professionell auftreten.","price_card3_price":"€45 <span class=\"text-base font-normal text-gray-500\">/ 45 Min</span>","price_card3_list":"<li>Lebenslauf-Check</li><li>Anschreiben-Check</li><li>Interviewtraining</li><li>Ab B1+</li>","about_headline":"Vom Maschinenbau zum Sprachlehrer","about_text_html":"<p>Hi, ich bin Jonas. Aktuell lebe ich aus dem Koffer und reise durch <strong>Lateinamerika</strong>.</p><p>Ich weiß genau, wie es sich anfühlt, in einem fremden Land zu sein und die Sprache noch nicht perfekt zu beherrschen.</p><p>Ich bin kein klassischer Lehrer, der nur Theorie kennt. Ich bin ein Praktiker.</p>","about_grid1_head":"Digital Nomad","about_grid1_text":"Ich unterrichte remote und bringe internationale Perspektiven mit.","about_grid2_head":"Resilienz","about_grid2_text":"Durch Reisen und Pilgern habe ich gelernt, auch bei Schwierigkeiten dranzubleiben.","about_grid3_head":"Empathie","about_grid3_text":"Geduld ist meine Stärke. Ich schaffe einen sicheren Raum für dich.","contact_headline":"Kontakt aufnehmen","contact_text":"Hast du Fragen vor der Buchung? Schreib mir einfach.","contact_email":"info@deutschmitjonas.de","contact_direct_sub":"Direkt buchen?","contact_direct_text":"Nutze den Google Kalender im \"Preise\"-Bereich.","contact_direct_btn":"Zum Buchungskalender","contact_member_sub":"Schon Schüler?","contact_member_btn":"Zum Dashboard","form_headline":"Nachricht schreiben","form_label_name":"Name","form_label_email":"Email","form_label_interest":"Interesse","form_opt_general":"Allgemeine Frage","form_opt_konv":"Konversationstraining","form_opt_business":"Business / Technisches Deutsch","form_label_msg":"Nachricht","form_btn_send":"Absenden","footer_copy":"© 2026 Deutsch mit Jonas. Alle Rechte vorbehalten.","footer_impressum":"Impressum","footer_privacy":"Datenschutz"},"EN":{"meta_title":"German with Jonas - Technical German & Conversation","btn_login":"Student Login","topbar_text":"Technical German & Conversation","nav_brand":"German with Jonas","nav_home":"Home","nav_konv":"Conversation","nav_business":"Business & Tech","nav_prices":"Prices","nav_about":"About Jonas","nav_dashboard":"Dashboard","nav_contact":"Contact","hero_badge":"Verified Tutor","hero_rating":4.8,"hero_line1":"Learn German with","hero_highlight":"technical understanding","hero_line2":"and heart.","hero_subtext":"I help engineers, technicians, and specialists to appear confident in the German job market. Approachable, individual, and with 10 years of industry experience.","btn_hero_1":"Book Appointment","btn_hero_2":"For Technicians","video_headline":"A quick introduction: Who I am","youtube_id":"fHV_RicUkXo","video_subtext":"Click play for a personal impression","teaser_headline":"How can I support you?","teaser_card1_title":"Conversation Training","teaser_card1_text":"Speak fluently, lose fear, and master small talk. For everyday life and living.","teaser_card1_link":"Learn more","teaser_card2_title":"Business & Tech","teaser_card2_text":"Specialized for engineers. PCBs, processes, meetings, and technical documentation.","teaser_card2_link":"To my specialty","testi_headline":"What my students say","testi_subtext":"From over 24 verified reviews on Preply.","review_1_text":"Thanks to his support, I found a job where I have to speak German – I wouldn't have thought that possible before.","review_1_name":"Wiktoria","review_1_date":"2025-07-01T05:00:00.000Z","review_1_initial":"W","review_2_text":"Jonas tries to let you speak as much as possible, which makes learning the language easier.","review_2_name":"Christian","review_2_date":"2025-10-01T05:00:00.000Z","review_2_initial":"C","review_3_text":"Perfectly tailored to my needs. The fact that he speaks several languages was very useful.","review_3_name":"Öykü","review_3_date":"2025-09-01T05:00:00.000Z","review_3_initial":"Ö","testi_link_text":"Read all reviews","konv_badge":"Everyday Life","konv_headline":"Conversation Training: Your Upgrade for Real Life","konv_subline":"End the language blockade. Start living.","konv_intro":"You know the grammar rules, but your mind goes blank as soon as someone speaks to you on the street? That is completely normal.","konv_approach_head":"My Approach: Real Life Communication","konv_approach_text":"Forget outdated dialogues from textbooks. We train for the moments that really count.","konv_list_1":"<strong>80% Speaking time for you:</strong> Language is a muscle. With me, you are the main character.","konv_list_2":"<strong>The \"Culture Code\":</strong> I don't just teach vocabulary, but the \"How\". Why are Germans so direct?","konv_list_3":"<strong>Storytelling:</strong> We practice how to tell experiences excitedly.","konv_list_4":"<strong>Mistakes are your friends:</strong> We correct gently and specifically.","btn_prices_booking":"Prices & Booking","biz_badge":"For Specialists","biz_headline":"German for Engineers & Technicians","biz_subtext":"I speak your language. From manufacturing to test engineering.","biz_intro_sub":"Not school German. But German for the job.","biz_intro_head":"From shift work to teaching","biz_intro_text":"<p>Many German teachers only know technology from books. I come from practice.</p><p>I spent 10 years in the industry – with shift work, time pressure, malfunctions.</p><p><strong>This is exactly what we train:</strong> German that you need every day in operations.</p>","biz_whyme_head":"Why with me","biz_point_1_head":"10 years industry experience","biz_point_1_text":"I know the situations in production and maintenance.","biz_point_2_head":"State-certified Technician","biz_point_2_text":"I understand circuit diagrams and technology.","biz_point_3_head":"Quality & Processes","biz_point_3_text":"We practice German for errors, queries, and reports.","biz_box_head":"The Training","biz_box_1_head":"1) Technical Communication","biz_box_1_text":"Explaining processes, describing errors, explaining measures.","biz_box_2_head":"2) Meetings & Coordination","biz_box_2_text":"Asking questions, summarizing briefly, disagreeing politely.","biz_box_3_head":"3) Application & Presentation","biz_box_3_text":"Practicing interviews for technical jobs.","biz_btn_prices":"View Dates & Prices","price_badge":"Invest in yourself","price_headline":"Packages & Dates","price_subtext":"Transparent prices. No hidden costs. Book your appointment directly.","cal_headline":"Ready to start?","cal_text":"Choose your suitable appointment directly in the calendar. I look forward to seeing you!","cal_note":"Click the button to open the calendar.","price_card1_title":"Trial Lesson","price_card1_desc":"Short introduction, clear goal setting – and get straight into speaking.","price_card1_price":"€20 <span class=\"text-base font-normal text-gray-500\">/ 20 Min</span>","price_card1_list":"<li>First meeting</li><li>Goal setting</li><li>Fun</li><li>From A2+</li>","price_card2_badge":"BESTSELLER","price_card2_title":"Individual","price_card2_desc":"Direct correction, material & study plan – so you become noticeably more confident.","price_card2_price":"€40 <span class=\"text-base font-normal text-gray-400\">/ 45 Min</span>","price_card2_subprice":"From 8× per month: <strong>€37</strong> / 45 Min","price_card2_list":"<li>Direct correction</li><li>Homework</li><li>Learning material</li><li>Personal plan</li>","price_card3_title":"Application","price_card3_desc":"Optimize documents, practice interview, and appear professional.","price_card3_price":"€45 <span class=\"text-base font-normal text-gray-500\">/ 45 Min</span>","price_card3_list":"<li>CV Check</li><li>Cover Letter Check</li><li>Interview Training</li><li>From B1+</li>","about_headline":"From Mechanical Engineering to Language Teacher","about_text_html":"<p>Hi, I am Jonas. Currently, I am living out of a suitcase and traveling through <strong>Latin America</strong>.</p><p>I know exactly how it feels to be in a foreign country and not yet master the language perfectly.</p><p>I am not a classic teacher who only knows theory. I am a practitioner.</p>","about_grid1_head":"Digital Nomad","about_grid1_text":"I teach remotely and bring international perspectives.","about_grid2_head":"Resilience","about_grid2_text":"Through traveling and pilgrimage, I learned to stick with it even in difficulties.","about_grid3_head":"Empathy","about_grid3_text":"Patience is my strength. I create a safe space for you.","contact_headline":"Get in touch","contact_text":"Do you have questions before booking? Just write to me.","contact_email":"info@deutschmitjonas.de","contact_direct_sub":"Book directly?","contact_direct_text":"Use the Google Calendar in the \"Prices\" section.","contact_direct_btn":"To Booking Calendar","contact_member_sub":"Already a student?","contact_member_btn":"To Dashboard","form_headline":"Write a message","form_label_name":"Name","form_label_email":"Email","form_label_interest":"Interest","form_opt_general":"General Question","form_opt_konv":"Conversation Training","form_opt_business":"Business / Technical German","form_label_msg":"Message","form_btn_send":"Send","footer_copy":"© 2026 Deutsch mit Jonas. All rights reserved.","footer_impressum":"Imprint","footer_privacy":"Privacy"}}; 
 
         function setLanguage(lang) {
-            
             if (!translations[lang]) lang = 'DE';
-
             const data = translations[lang];
-            
             
             document.querySelectorAll('[data-i18n]').forEach(el => {
                 const key = el.getAttribute('data-i18n');
-                if (data[key]) {
-                    
-                    el.innerHTML = data[key];
-                }
+                if (data[key]) el.innerHTML = data[key];
             });
 
-            
-            
             const videoIframe = document.getElementById('video-iframe');
             if (videoIframe && data['youtube_id']) {
                 videoIframe.src = "https://www.youtube.com/embed/" + data['youtube_id'];
             }
-            
-            
             document.documentElement.lang = lang.toLowerCase();
-            console.log("Language set to:", lang);
         }
 
         function detectAndSetLanguage() {
-            
             const userLang = navigator.language || navigator.userLanguage; 
-            const langCode = userLang.substring(0, 2).toUpperCase(); 
-
-            
-            if (translations[langCode]) {
-                setLanguage(langCode);
-            } else {
-                setLanguage('DE');
-            }
+            const langCode = userLang.substring(0, 2).toUpperCase();
+            if (translations[langCode]) setLanguage(langCode);
+            else setLanguage('DE');
         }
 
         
@@ -462,33 +545,221 @@
         // ----------------------------------------------------
         
         
-        const firebaseConfig = { apiKey: "AIzaSyBcRjQIY6B65j6DmvVbPFJqIymNykbRuRw", authDomain: "deutschmitjonas.firebaseapp.com", projectId: "deutschmitjonas", storageBucket: "deutschmitjonas.firebasestorage.app", messagingSenderId: "973946116160", appId: "1:973946116160:web:ee21e07f461f5355f067a5" };
+        const firebaseConfig = { apiKey: "AIzaSyBcRjQIY6B65j6DmvVbPFJqIymNykbRuRw", authDomain: "deutschmitjonas.firebaseapp.com", projectId: "deutschmitjonas", storageBucket: "deutschmitjonas.firebasestorage.app", messagingSenderId: "973946116160", appId: "1:973946116160:web:ee21e07f461f5355f067a5", measurementId: "G-NG4HWN4QH8" };
         firebase.initializeApp(firebaseConfig); 
         const auth = firebase.auth();
+        const MEMBERS_URL = "/members.html";
 
-        auth.onAuthStateChanged(user => { 
+        function el(id) { return document.getElementById(id); }
+
+        
+        auth.onAuthStateChanged(user => {
+            const btn = el('topbar-auth-btn');
+            if (!btn) return;
             
-            
+            if (user) {
+                btn.innerHTML = `<i class="fas fa-user-lock"></i> Dashboard`;
+                btn.onclick = () => { window.location.href = MEMBERS_URL; };
+            } else {
+                btn.innerHTML = `<i class="fas fa-lock"></i> Login`;
+                btn.onclick = () => openLoginModal();
+            }
         });
 
-        function openLoginModal() { document.getElementById('loginModal').classList.add('flex'); switchAuthMode('login'); }
-        function closeLoginModal() { document.getElementById('loginModal').classList.remove('flex'); }
         
+        function openLoginModal() {
+            el('loginModal').classList.add('flex');
+            switchAuthMode('login');
+            el('loginInfo').classList.add('hidden');
+            el('loginError').classList.add('hidden');
+        }
+
+        function closeLoginModal() {
+            el('loginModal').classList.remove('flex');
+            el('loginError').classList.add('hidden');
+            el('loginInfo').classList.add('hidden');
+            el('loginBtn').innerText = "Jetzt Einloggen";
+            el('loginBtn').disabled = false;
+            el('registerBtn').innerText = "Registrierung anfordern";
+            el('registerBtn').disabled = false;
+            el('loginEmail').value = '';
+            el('loginPass').value = '';
+            const rn = el('registerName');
+            if (rn) rn.value = '';
+        }
+
         function switchAuthMode(mode) {
-            const l = document.getElementById('loginBtn'), r = document.getElementById('registerBtn'), tl = document.getElementById('tabLogin'), tr = document.getElementById('tabRegister'), pw = document.getElementById('passWrap'), nw = document.getElementById('nameWrap'), hl = document.getElementById('authHeadline');
-            if (mode === 'login') { l.classList.remove('hidden'); r.classList.add('hidden'); tl.classList.add('active'); tr.classList.remove('active'); pw.classList.remove('hidden'); nw.classList.add('hidden'); hl.innerText = 'Login'; }
-            else { l.classList.add('hidden'); r.classList.remove('hidden'); tl.classList.remove('active'); tr.classList.add('active'); pw.classList.add('hidden'); nw.classList.remove('hidden'); hl.innerText = 'Register'; }
+            const btnLogin = el('loginBtn');
+            const btnRegister = el('registerBtn');
+            const tabLogin = el('tabLogin');
+            const tabRegister = el('tabRegister');
+            const passWrap = el('passWrap');
+            const nameWrap = el('nameWrap');
+            const regHint = el('registerHint');
+            const forgotWrap = el('forgotWrap');
+            const headline = el('authHeadline');
+
+            if (mode === 'login') {
+                btnLogin.classList.remove('hidden');
+                btnRegister.classList.add('hidden');
+                tabLogin.classList.add('active');
+                tabRegister.classList.remove('active');
+                if (passWrap) passWrap.classList.remove('hidden');
+                if (nameWrap) nameWrap.classList.add('hidden');
+                if (regHint) regHint.classList.add('hidden');
+                if (forgotWrap) forgotWrap.classList.remove('hidden');
+                if (headline) headline.innerText = 'Einloggen';
+                const pass = el('loginPass');
+                if (pass) pass.setAttribute('autocomplete', 'current-password');
+            } else {
+                btnLogin.classList.add('hidden');
+                btnRegister.classList.remove('hidden');
+                tabLogin.classList.remove('active');
+                tabRegister.classList.add('active');
+                if (passWrap) passWrap.classList.add('hidden');
+                if (nameWrap) nameWrap.classList.remove('hidden');
+                if (regHint) regHint.classList.remove('hidden');
+                if (forgotWrap) forgotWrap.classList.add('hidden');
+                if (headline) headline.innerText = 'Registrieren';
+                const pass = el('loginPass');
+                if (pass) pass.value = '';
+            }
+            el('loginError').classList.add('hidden');
+            el('loginInfo').classList.add('hidden');
         }
 
         function performLogin() {
-            const e = document.getElementById('loginEmail').value, p = document.getElementById('loginPass').value;
-            if(!e || !p) return;
-            auth.signInWithEmailAndPassword(e, p).then(() => window.location.href = "/members.html").catch(alert);
+            const e = el('loginEmail').value.trim();
+            const p = el('loginPass').value;
+            const btn = el('loginBtn');
+            const err = el('loginError');
+
+            if (!e || !p) {
+                err.innerText = "Bitte E-Mail und Passwort eingeben.";
+                err.classList.remove('hidden');
+                return;
+            }
+
+            btn.innerText = "Lade...";
+            btn.disabled = true;
+
+            auth.signInWithEmailAndPassword(e, p)
+                .then(() => { window.location.href = MEMBERS_URL; })
+                .catch(error => {
+                    btn.innerText = "Jetzt Einloggen";
+                    btn.disabled = false;
+                    if (error.code === 'auth/wrong-password') err.innerText = "Falsches Passwort.";
+                    else if (error.code === 'auth/user-not-found') err.innerText = "E-Mail nicht gefunden.";
+                    else err.innerText = "Fehler: " + (error.message || error.code);
+                    err.classList.remove('hidden');
+                });
         }
+
+        function generateTempPassword(len = 24) {
+            const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!$%&*?';
+            try {
+                const arr = new Uint32Array(len);
+                (window.crypto || window.msCrypto).getRandomValues(arr);
+                let out = '';
+                for (let i = 0; i < len; i++) out += chars[arr[i] % chars.length];
+                return out;
+            } catch (e) {
+                let out = '';
+                for (let i = 0; i < len; i++) out += chars[Math.floor(Math.random() * chars.length)];
+                return out;
+            }
+        }
+
         function performRegister() {
-            const e = document.getElementById('loginEmail').value;
-            if(!e) return;
-            auth.sendPasswordResetEmail(e).then(() => alert("Email sent if account exists.")).catch(console.error);
+            const e = el('loginEmail').value.trim();
+            const name = (el('registerName')?.value || '').trim();
+            const btn = el('registerBtn');
+            const err = el('loginError');
+            const info = el('loginInfo');
+
+            err.classList.add('hidden');
+            info.classList.add('hidden');
+
+            if (!e) {
+                err.innerText = "Bitte E-Mail eingeben.";
+                err.classList.remove('hidden');
+                return;
+            }
+
+            btn.innerText = "Sende E-Mail...";
+            btn.disabled = true;
+
+            const sendReset = () => auth.sendPasswordResetEmail(e);
+
+            
+            auth.fetchSignInMethodsForEmail(e)
+            .then(methods => {
+                const exists = Array.isArray(methods) && methods.length > 0;
+                if (exists) {
+                     return sendReset().then(() => {
+                        info.innerText = "Wenn ein Konto existiert, wurde eine E-Mail zum Passwort-Setzen gesendet.";
+                        info.classList.remove('hidden');
+                        switchAuthMode('login');
+                     });
+                } else {
+                    const tempPass = generateTempPassword();
+                    return auth.createUserWithEmailAndPassword(e, tempPass)
+                        .then(async () => {
+                            if (name && auth.currentUser) {
+                                try { await auth.currentUser.updateProfile({ displayName: name }); } catch (_) {}
+                            }
+                            await sendReset();
+                            await auth.signOut();
+                            info.innerText = "Bitte E-Mail prüfen und ein Passwort festlegen. Danach kannst du dich einloggen.";
+                            info.classList.remove('hidden');
+                            switchAuthMode('login');
+                        });
+                }
+            })
+            .catch(error => {
+                 if (error.code === 'auth/email-already-in-use') {
+                     sendReset().then(() => {
+                        info.innerText = "E-Mail ist schon registriert. Wir haben dir einen Link zum Passwort-Setzen geschickt.";
+                        info.classList.remove('hidden');
+                        switchAuthMode('login');
+                     });
+                 } else if (error.code === 'auth/invalid-email') {
+                     err.innerText = "Bitte eine gültige E-Mail eingeben.";
+                     err.classList.remove('hidden');
+                 } else {
+                     err.innerText = "Fehler: " + (error.message || error.code);
+                     err.classList.remove('hidden');
+                 }
+            })
+            .finally(() => {
+                btn.innerText = "Registrierung anfordern";
+                btn.disabled = false;
+            });
+        }
+
+        function resetPassword() {
+            const e = el('loginEmail').value.trim();
+            const err = el('loginError');
+            const info = el('loginInfo');
+
+            err.classList.add('hidden');
+            info.classList.add('hidden');
+
+            if (!e) {
+                err.innerText = "Bitte E-Mail oben eingeben.";
+                err.classList.remove('hidden');
+                return;
+            }
+
+            auth.sendPasswordResetEmail(e)
+                .then(() => {
+                    info.innerText = "E-Mail zum Zurücksetzen wurde gesendet.";
+                    info.classList.remove('hidden');
+                })
+                .catch((error) => {
+                    err.innerText = "Fehler: " + (error.message || error.code);
+                    err.classList.remove('hidden');
+                });
         }
 
         
@@ -496,8 +767,11 @@
         
         (function init() {
             
-            detectAndSetLanguage();
-
+            try {
+                detectAndSetLanguage();
+            } catch (e) {
+                console.log("Translation logic skipped (local preview mode)");
+            }
             
             const h = window.location.hash.replace('#', '') || 'home';
             if (document.getElementById(h)) navigateTo(h); else navigateTo('home');
