@@ -7,10 +7,10 @@
     <title data-i18n="meta_title">Deutsch mit Jonas</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&amp;family=Merriweather:ital,wght@0,300;0,700;1,300&amp;display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700;800&amp;family=Merriweather:ital,wght@0,300;0,400;1,300&amp;display=swap" rel="stylesheet">
 
     
     <link href="https://calendar.google.com/calendar/scheduling-button-script.css" rel="stylesheet">
@@ -30,14 +30,20 @@
                     },
                     colors: {
                         brand: {
-                            yellow: '#FCD34D',
-                            dark: '#1F2937',
+                            yellow: '#FCD34D', 
+                            gold: '#F59E0B',   
+                            dark: '#111827',   
+                            light: '#F9FAFB',  
                         },
                         de: {
                             black: '#1a1a1a',
                             red: '#DD0000',
                             gold: '#FFCC00',
                         }
+                    },
+                    boxShadow: {
+                        'soft': '0 10px 40px -10px rgba(0,0,0,0.08)',
+                        'glow': '0 0 20px rgba(252, 211, 77, 0.5)',
                     }
                 }
             }
@@ -45,38 +51,68 @@
     </script>
 
     <style>
+         
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #ccc; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #999; }
+
         .flag-border-bottom {
             border-bottom: 3px solid transparent;
             border-image: linear-gradient(to right, #1a1a1a 33%, #DD0000 33%, #DD0000 66%, #FFCC00 66%) 1;
         }
-        .page-section { display: none; opacity: 0; transition: opacity 0.3s ease-in-out; }
+        .page-section { display: none; opacity: 0; transition: opacity 0.4s ease-in-out; }
         .page-section.active { display: block; opacity: 1; }
-        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000; justify-content: center; align-items: center; backdrop-filter: blur(5px); }
+        
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(17, 24, 39, 0.7); z-index: 1000; justify-content: center; align-items: center; backdrop-filter: blur(8px); }
         .modal-overlay.flex { display: flex; }
-        .auth-tab { cursor: pointer; padding-bottom: 8px; border-bottom: 2px solid transparent; color: #6b7280; font-weight: 600; }
+        
+        .auth-tab { cursor: pointer; padding-bottom: 12px; border-bottom: 2px solid #E5E7EB; color: #6B7280; font-weight: 600; transition: all 0.3s; }
         .auth-tab.active { border-color: #FCD34D; color: #111827; }
+
+         
+        .hover-underline-animation {
+            display: inline-block;
+            position: relative;
+        }
+        .hover-underline-animation::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            transform: scaleX(0);
+            height: 2px;
+            bottom: -2px;
+            left: 0;
+            background-color: #FCD34D;
+            transform-origin: bottom right;
+            transition: transform 0.25s ease-out;
+        }
+        .hover-underline-animation:hover::after {
+            transform: scaleX(1);
+            transform-origin: bottom left;
+        }
     </style>
 </head>
 
-<body class="font-sans text-gray-700 bg-white antialiased flex flex-col min-h-screen">
+<body class="font-sans text-gray-700 bg-slate-50 antialiased flex flex-col min-h-screen selection:bg-brand-yellow selection:text-brand-dark">
 
     
-    <div id="top-bar" class="fixed top-0 w-full bg-gray-900 text-gray-400 text-xs py-2 px-4 border-b border-gray-800 z-[60]">
+    <div id="top-bar" class="fixed top-0 w-full bg-brand-dark text-gray-400 text-xs py-2 px-4 border-b border-gray-800 z-[60]">
         <div class="max-w-7xl mx-auto flex justify-between items-center">
-            <button id="topbar-auth-btn" onclick="openLoginModal()" class="hover:text-white transition flex items-center gap-2 font-bold uppercase tracking-wider">
-                <i class="fas fa-lock"></i> <span data-i18n="btn_login">Login</span>
+            <button id="topbar-auth-btn" onclick="openLoginModal()" class="hover:text-white transition flex items-center gap-2 font-bold uppercase tracking-wider group">
+                <i class="fas fa-lock group-hover:text-brand-yellow transition"></i> <span data-i18n="btn_login">Login</span>
             </button>
-            <div class="hidden sm:block"><span data-i18n="topbar_text">Technisches Deutsch & Konversation</span></div>
+            <div class="hidden sm:block opacity-80"><span data-i18n="topbar_text">Technisches Deutsch & Konversation</span></div>
             
             
             <div class="relative ml-4" id="lang-selector">
-                <button onclick="toggleLangMenu()" class="flex items-center gap-2 text-gray-400 hover:text-white transition font-medium focus:outline-none py-1">
-                    <span id="current-flag" class="text-lg">🇩🇪</span>
+                <button onclick="toggleLangMenu()" class="flex items-center gap-2 text-gray-300 hover:text-white transition font-medium focus:outline-none py-1 group">
+                    <span id="current-flag" class="text-lg grayscale group-hover:grayscale-0 transition duration-300">🇩🇪</span>
                     <span id="current-lang" class="uppercase text-xs font-bold tracking-wider">DE</span>
-                    <i class="fas fa-chevron-down text-[10px] opacity-70"></i>
+                    <i class="fas fa-chevron-down text-[10px] opacity-70 group-hover:text-brand-yellow"></i>
                 </button>
                 
-                <div id="lang-menu" class="hidden absolute right-0 mt-2 w-28 bg-white rounded-lg shadow-xl py-1 z-50 border border-gray-100 overflow-hidden">
+                <div id="lang-menu" class="hidden absolute right-0 mt-2 w-32 bg-white rounded-lg shadow-xl py-2 z-50 border border-gray-100 overflow-hidden ring-1 ring-black ring-opacity-5 transform origin-top-right transition-all">
                     
                 </div>
             </div>
@@ -84,49 +120,50 @@
     </div>
 
     
-    <nav class="fixed top-8 w-full z-50 bg-white/95 backdrop-blur-md shadow-sm" id="navbar">
+    <nav class="fixed top-8 w-full z-50 bg-white/90 backdrop-blur-lg shadow-sm transition-all duration-300" id="navbar">
+        
         <div class="h-1 w-full bg-gradient-to-r from-de-black via-de-red to-de-gold"></div>
 
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-20 items-center">
                 
-                <div class="flex-shrink-0 flex items-center cursor-pointer" onclick="navigateTo('home')">
-                    <div class="flex items-center gap-2 group">
-                        <div class="w-10 h-10 bg-brand-yellow rounded-full overflow-hidden shadow-sm group-hover:scale-110 transition">
+                <div class="flex-shrink-0 flex items-center cursor-pointer group" onclick="navigateTo('home')">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-brand-yellow rounded-full overflow-hidden shadow-md group-hover:shadow-glow group-hover:scale-105 transition duration-300 border-2 border-white">
                             <img src="https://lh3.googleusercontent.com/pw/AP1GczM7-zXkCQ96aQnVFjYihA_3nm45bEkDm_hkfgQKUP9vhhaVHFs6RBZi6DIS57R8NOwUE8wN-PEJqc_-UqOEKilmrGOHaekSTdgU5D27NxUw8g3dl3tWcSoQRY_n1Eg7SGNimvfREpaV4znXhZtnTQB56A=w905-h905-s-no-gm" alt="Jonas" class="w-full h-full object-cover">
                         </div>
-                        <span class="text-xl font-bold text-gray-900 tracking-tight group-hover:text-gray-600 transition" data-i18n="nav_brand">Deutsch mit Jonas</span>
+                        <span class="text-xl font-bold text-gray-900 tracking-tight" data-i18n="nav_brand">Deutsch mit Jonas</span>
                     </div>
                 </div>
 
                 
                 <div class="hidden md:flex space-x-8 items-center">
-                    <button onclick="navigateTo('home')" class="nav-link text-gray-600 hover:text-black font-medium transition text-sm uppercase tracking-wide" data-i18n="nav_home">Start</button>
-                    <button onclick="navigateTo('konversation')" class="nav-link text-gray-600 hover:text-black font-medium transition text-sm uppercase tracking-wide" data-i18n="nav_konv">Konversation</button>
-                    <button onclick="navigateTo('business')" class="nav-link text-gray-600 hover:text-black font-medium transition text-sm uppercase tracking-wide" data-i18n="nav_business">Business</button>
-                    <button onclick="navigateTo('preise')" class="nav-link text-brand-dark font-bold transition text-sm uppercase tracking-wide border-b-2 border-transparent hover:border-brand-yellow" data-i18n="nav_prices">Preise</button>
-                    <button onclick="navigateTo('about')" class="nav-link text-gray-600 hover:text-black font-medium transition text-sm uppercase tracking-wide" data-i18n="nav_about">Über</button>
-                    <button onclick="scrollToContact()" class="bg-gray-900 text-white px-6 py-2.5 rounded-full font-bold hover:bg-gray-800 transition shadow-md hover:shadow-lg transform hover:-translate-y-0.5" data-i18n="nav_contact">Kontakt</button>
+                    <button onclick="navigateTo('home')" class="hover-underline-animation text-gray-600 hover:text-gray-900 font-medium transition text-sm uppercase tracking-wide py-2" data-i18n="nav_home">Start</button>
+                    <button onclick="navigateTo('konversation')" class="hover-underline-animation text-gray-600 hover:text-gray-900 font-medium transition text-sm uppercase tracking-wide py-2" data-i18n="nav_konv">Konversation</button>
+                    <button onclick="navigateTo('business')" class="hover-underline-animation text-gray-600 hover:text-gray-900 font-medium transition text-sm uppercase tracking-wide py-2" data-i18n="nav_business">Business</button>
+                    <button onclick="navigateTo('preise')" class="text-brand-dark font-bold transition text-sm uppercase tracking-wide border-2 border-brand-yellow/50 hover:border-brand-yellow px-3 py-1 rounded hover:bg-brand-yellow/10" data-i18n="nav_prices">Preise</button>
+                    <button onclick="navigateTo('about')" class="hover-underline-animation text-gray-600 hover:text-gray-900 font-medium transition text-sm uppercase tracking-wide py-2" data-i18n="nav_about">Über</button>
+                    <button onclick="scrollToContact()" class="bg-brand-dark text-white px-6 py-2.5 rounded-full font-bold hover:bg-gray-800 transition shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 active:translate-y-0 active:shadow-md" data-i18n="nav_contact">Kontakt</button>
                 </div>
 
                 
                 <div class="md:hidden flex items-center">
-                    <button id="mobile-menu-btn" class="text-gray-900 p-2"><i class="fas fa-bars text-2xl"></i></button>
+                    <button id="mobile-menu-btn" class="text-gray-900 p-2 hover:bg-gray-100 rounded-lg transition"><i class="fas fa-bars text-2xl"></i></button>
                 </div>
             </div>
         </div>
 
         
-        <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-100 absolute w-full shadow-xl">
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-100 absolute w-full shadow-2xl">
             <div class="px-4 pt-2 pb-6 space-y-2">
-                <button onclick="navigateTo('home'); toggleMobileMenu()" class="block w-full text-left px-3 py-3 font-medium text-gray-700" data-i18n="nav_home">Start</button>
-                <button onclick="navigateTo('konversation'); toggleMobileMenu()" class="block w-full text-left px-3 py-3 font-medium text-gray-700" data-i18n="nav_konv">Konv</button>
-                <button onclick="navigateTo('business'); toggleMobileMenu()" class="block w-full text-left px-3 py-3 font-medium text-gray-700" data-i18n="nav_business">Biz</button>
-                <button onclick="navigateTo('preise'); toggleMobileMenu()" class="block w-full text-left px-3 py-3 font-bold text-yellow-600 bg-yellow-50 rounded" data-i18n="nav_prices">Preise</button>
-                <button onclick="navigateTo('about'); toggleMobileMenu()" class="block w-full text-left px-3 py-3 font-medium text-gray-700" data-i18n="nav_about">About</button>
+                <button onclick="navigateTo('home'); toggleMobileMenu()" class="block w-full text-left px-3 py-3 font-medium text-gray-700 hover:bg-gray-50 rounded" data-i18n="nav_home">Start</button>
+                <button onclick="navigateTo('konversation'); toggleMobileMenu()" class="block w-full text-left px-3 py-3 font-medium text-gray-700 hover:bg-gray-50 rounded" data-i18n="nav_konv">Konv</button>
+                <button onclick="navigateTo('business'); toggleMobileMenu()" class="block w-full text-left px-3 py-3 font-medium text-gray-700 hover:bg-gray-50 rounded" data-i18n="nav_business">Biz</button>
+                <button onclick="navigateTo('preise'); toggleMobileMenu()" class="block w-full text-left px-3 py-3 font-bold text-yellow-800 bg-yellow-50 rounded border-l-4 border-brand-yellow" data-i18n="nav_prices">Preise</button>
+                <button onclick="navigateTo('about'); toggleMobileMenu()" class="block w-full text-left px-3 py-3 font-medium text-gray-700 hover:bg-gray-50 rounded" data-i18n="nav_about">About</button>
                 <a href="/members.html" class="block w-full text-left px-3 py-3 font-bold text-blue-700 border-t border-gray-100 mt-2 pt-4"><i class="fas fa-user-lock mr-2"></i> <span data-i18n="nav_dashboard">Dashboard</span></a>
-                <button onclick="scrollToContact(); toggleMobileMenu()" class="block w-full text-left px-3 py-3 font-bold text-white bg-gray-900 mt-4 rounded" data-i18n="nav_contact">Kontakt</button>
-                <button onclick="openLoginModal(); toggleMobileMenu()" class="block w-full text-left px-3 py-3 font-bold text-blue-600 border-t border-gray-100 mt-2 pt-4"><i class="fas fa-lock mr-2"></i> <span data-i18n="btn_login">Login</span></button>
+                <button onclick="scrollToContact(); toggleMobileMenu()" class="block w-full text-left px-3 py-3 font-bold text-white bg-brand-dark mt-4 rounded shadow-md" data-i18n="nav_contact">Kontakt</button>
+                <button onclick="openLoginModal(); toggleMobileMenu()" class="block w-full text-left px-3 py-3 font-bold text-gray-600 border-t border-gray-100 mt-2 pt-4 hover:bg-gray-50"><i class="fas fa-lock mr-2"></i> <span data-i18n="btn_login">Login</span></button>
             </div>
         </div>
     </nav>
@@ -135,107 +172,130 @@
 
     
     <main id="home" class="page-section active pt-32 flex-grow">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-12">
-            <div class="grid lg:grid-cols-2 gap-12 items-center">
-                <div class="order-2 lg:order-1 text-center lg:text-left">
-                    <a href="https://preply.com/de/nachhilfelehrer/5032538" target="_blank" class="inline-flex items-center gap-3 bg-white border border-gray-200 rounded-full pl-4 pr-5 py-2 shadow-sm mb-6">
-                        <img src="https://preply.com/download-cms-assets/f23efc/ygli5cawa8_Preply_Logo_Pink_SVG.svg" class="h-6 w-auto">
-                        <div class="flex flex-col items-start leading-none">
-                            <span class="text-[10px] text-gray-500 font-bold uppercase tracking-wider" data-i18n="hero_badge">Tutor</span>
-                            <span class="text-sm font-bold text-gray-800 flex items-center gap-1"><span data-i18n="hero_rating">4.8</span> <i class="fas fa-star text-yellow-400 text-xs"></i></span>
+        <div class="relative overflow-hidden">
+            
+            <div class="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 bg-brand-yellow/10 rounded-full blur-3xl -z-10"></div>
+            <div class="absolute bottom-0 left-0 -ml-20 -mb-20 w-72 h-72 bg-blue-500/5 rounded-full blur-3xl -z-10"></div>
+
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-20">
+                <div class="grid lg:grid-cols-2 gap-16 items-center">
+                    <div class="order-2 lg:order-1 text-center lg:text-left">
+                        <a href="https://preply.com/de/nachhilfelehrer/5032538" target="_blank" class="inline-flex items-center gap-3 bg-white border border-gray-100 rounded-full pl-4 pr-5 py-2 shadow-sm hover:shadow-md transition mb-8 group">
+                            <img src="https://preply.com/download-cms-assets/f23efc/ygli5cawa8_Preply_Logo_Pink_SVG.svg" class="h-5 w-auto grayscale group-hover:grayscale-0 transition">
+                            <div class="flex flex-col items-start leading-none">
+                                <span class="text-[10px] text-gray-400 font-bold uppercase tracking-wider" data-i18n="hero_badge">Tutor</span>
+                                <span class="text-sm font-bold text-gray-800 flex items-center gap-1"><span data-i18n="hero_rating">4.8</span> <i class="fas fa-star text-brand-yellow text-xs"></i></span>
+                            </div>
+                        </a>
+                        <h1 class="text-5xl lg:text-7xl font-bold text-brand-dark leading-[1.1] mb-8 tracking-tight">
+                            <span data-i18n="hero_line1">Deutsch lernen</span><br>
+                            <span class="relative inline-block z-10">
+                                <span data-i18n="hero_highlight" class="relative z-10">Highlight</span>
+                                <span class="absolute bottom-3 left-0 w-full h-4 bg-brand-yellow -z-10 rounded-sm transform -rotate-1 opacity-80"></span>
+                            </span><br>
+                            <span data-i18n="hero_line2">und Herz</span>
+                        </h1>
+                        <p class="text-xl md:text-2xl text-gray-600 mb-10 leading-relaxed max-w-lg mx-auto lg:mx-0 font-light" data-i18n="hero_subtext">Intro...</p>
+                        <div class="flex flex-col sm:flex-row gap-5 justify-center lg:justify-start">
+                            <button onclick="navigateTo('preise')" class="px-8 py-4 bg-brand-dark text-white text-lg font-bold rounded-xl shadow-lg hover:bg-gray-800 hover:shadow-xl transition transform hover:-translate-y-1 active:translate-y-0" data-i18n="btn_hero_1">Termin</button>
+                            <button onclick="navigateTo('business')" class="px-8 py-4 bg-white border-2 border-gray-100 text-gray-700 text-lg font-bold rounded-xl hover:border-brand-yellow hover:text-brand-dark transition shadow-sm hover:shadow-md" data-i18n="btn_hero_2">Technik</button>
                         </div>
-                    </a>
-                    <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight mb-6">
-                        <span data-i18n="hero_line1">Deutsch lernen</span><br>
-                        <span class="relative inline-block text-gray-900">
-                            <span data-i18n="hero_highlight">Highlight</span>
-                            <span class="absolute bottom-2 left-0 w-full h-3 bg-brand-yellow/50 -z-10 rounded-sm"></span>
-                        </span><br>
-                        <span data-i18n="hero_line2">und Herz</span>
-                    </h1>
-                    <p class="text-xl text-gray-600 mb-8 leading-relaxed" data-i18n="hero_subtext">Intro...</p>
-                    <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                        <button onclick="navigateTo('preise')" class="px-8 py-4 bg-gray-900 text-white font-bold rounded-lg shadow-lg hover:bg-black transition" data-i18n="btn_hero_1">Termin</button>
-                        <button onclick="navigateTo('business')" class="px-8 py-4 bg-white border-2 border-gray-200 text-gray-700 font-bold rounded-lg hover:border-brand-yellow hover:bg-yellow-50 transition" data-i18n="btn_hero_2">Technik</button>
                     </div>
-                </div>
-                <div class="order-1 lg:order-2 flex justify-center relative">
-                    <div class="relative w-80 h-80 md:w-96 md:h-96 rounded-full overflow-hidden border-8 border-white shadow-2xl">
-                        <img src="https://lh3.googleusercontent.com/pw/AP1GczM7-zXkCQ96aQnVFjYihA_3nm45bEkDm_hkfgQKUP9vhhaVHFs6RBZi6DIS57R8NOwUE8wN-PEJqc_-UqOEKilmrGOHaekSTdgU5D27NxUw8g3dl3tWcSoQRY_n1Eg7SGNimvfREpaV4znXhZtnTQB56A=w905-h905-s-no-gm" class="w-full h-full object-cover">
+                    <div class="order-1 lg:order-2 flex justify-center relative">
+                        <div class="relative w-80 h-80 md:w-[450px] md:h-[450px]">
+                            
+                            <div class="absolute inset-0 bg-brand-yellow rounded-full mix-blend-multiply filter blur-2xl opacity-30 animate-pulse"></div>
+                            <div class="relative w-full h-full rounded-full overflow-hidden border-8 border-white shadow-soft">
+                                <img src="https://lh3.googleusercontent.com/pw/AP1GczM7-zXkCQ96aQnVFjYihA_3nm45bEkDm_hkfgQKUP9vhhaVHFs6RBZi6DIS57R8NOwUE8wN-PEJqc_-UqOEKilmrGOHaekSTdgU5D27NxUw8g3dl3tWcSoQRY_n1Eg7SGNimvfREpaV4znXhZtnTQB56A=w905-h905-s-no-gm" class="w-full h-full object-cover hover:scale-105 transition duration-700 ease-in-out">
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <section class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
-            <div class="bg-gray-50 rounded-2xl p-4 md:p-8 border border-gray-100 shadow-sm text-center">
-                <h2 class="text-2xl font-bold mb-6 text-gray-800" data-i18n="video_headline">Wer ich bin</h2>
-                <div class="aspect-video w-full rounded-xl overflow-hidden shadow-lg border border-gray-200">
+        <section class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-24">
+            <div class="bg-white rounded-3xl p-6 md:p-12 border border-gray-100 shadow-soft text-center relative overflow-hidden group">
+                <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-brand-yellow to-transparent opacity-0 group-hover:opacity-100 transition duration-500"></div>
+                <h2 class="text-3xl font-bold mb-8 text-brand-dark" data-i18n="video_headline">Wer ich bin</h2>
+                <div class="aspect-video w-full rounded-2xl overflow-hidden shadow-lg bg-gray-100">
                     <iframe id="video-iframe" class="w-full h-full" src="" frameborder="0" allowfullscreen></iframe>
                 </div>
-                <p class="mt-4 text-sm text-gray-500" data-i18n="video_subtext">Klick Play</p>
+                <p class="mt-6 text-sm text-gray-400 font-medium tracking-wide uppercase" data-i18n="video_subtext">Klick Play</p>
             </div>
         </section>
 
-        <section class="bg-white py-20 border-t border-gray-50">
+        <section class="bg-brand-light py-24 border-t border-gray-200/50">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="text-center max-w-2xl mx-auto mb-16">
-                    <h2 class="text-3xl font-bold mb-4" data-i18n="teaser_headline">Unterstützung</h2>
-                    <div class="h-1 w-20 mx-auto bg-brand-yellow rounded"></div>
+                <div class="text-center max-w-3xl mx-auto mb-20">
+                    <h2 class="text-4xl font-bold mb-6 text-brand-dark" data-i18n="teaser_headline">Unterstützung</h2>
+                    <div class="h-1.5 w-24 mx-auto bg-brand-yellow rounded-full"></div>
                 </div>
-                <div class="grid md:grid-cols-2 gap-8">
-                    <div class="bg-yellow-50/50 p-8 rounded-2xl shadow-sm hover:shadow-xl transition cursor-pointer border border-yellow-100 group" onclick="navigateTo('konversation')">
-                        <div class="w-14 h-14 bg-yellow-100 rounded-xl flex items-center justify-center text-yellow-600 text-2xl mb-6"><i class="fas fa-comment-dots"></i></div>
-                        <h3 class="text-2xl font-bold mb-3" data-i18n="teaser_card1_title">Konv</h3>
-                        <p class="text-gray-600 mb-6" data-i18n="teaser_card1_text">Text...</p>
-                        <span class="text-yellow-600 font-bold group-hover:underline"><span data-i18n="teaser_card1_link">Mehr</span> <i class="fas fa-arrow-right ml-1"></i></span>
+                <div class="grid md:grid-cols-2 gap-10">
+                    
+                    <div class="bg-white p-10 rounded-3xl shadow-sm hover:shadow-2xl transition-all duration-300 cursor-pointer border border-gray-100 group hover:-translate-y-2 relative overflow-hidden" onclick="navigateTo('konversation')">
+                        <div class="absolute top-0 right-0 w-32 h-32 bg-yellow-50 rounded-full -mr-10 -mt-10 transition-transform group-hover:scale-150 duration-500"></div>
+                        <div class="relative z-10">
+                            <div class="w-16 h-16 bg-yellow-100 rounded-2xl flex items-center justify-center text-yellow-600 text-3xl mb-8 group-hover:rotate-6 transition duration-300"><i class="fas fa-comment-dots"></i></div>
+                            <h3 class="text-3xl font-bold mb-4 text-brand-dark" data-i18n="teaser_card1_title">Konv</h3>
+                            <p class="text-gray-600 mb-8 text-lg leading-relaxed" data-i18n="teaser_card1_text">Text...</p>
+                            <span class="text-brand-dark font-bold group-hover:text-brand-yellow transition flex items-center gap-2"><span data-i18n="teaser_card1_link">Mehr</span> <i class="fas fa-arrow-right"></i></span>
+                        </div>
                     </div>
-                    <div class="bg-gray-50 p-8 rounded-2xl shadow-sm hover:shadow-xl transition cursor-pointer border border-gray-100 group" onclick="navigateTo('business')">
-                        <div class="w-14 h-14 bg-gray-200 rounded-xl flex items-center justify-center text-gray-700 text-2xl mb-6"><i class="fas fa-microchip"></i></div>
-                        <h3 class="text-2xl font-bold mb-3" data-i18n="teaser_card2_title">Biz</h3>
-                        <p class="text-gray-600 mb-6" data-i18n="teaser_card2_text">Text...</p>
-                        <span class="text-gray-900 font-bold group-hover:underline"><span data-i18n="teaser_card2_link">Mehr</span> <i class="fas fa-arrow-right ml-1"></i></span>
+                    
+                    <div class="bg-brand-dark p-10 rounded-3xl shadow-sm hover:shadow-2xl transition-all duration-300 cursor-pointer border border-gray-800 group hover:-translate-y-2 relative overflow-hidden" onclick="navigateTo('business')">
+                        <div class="absolute top-0 right-0 w-32 h-32 bg-gray-800 rounded-full -mr-10 -mt-10 transition-transform group-hover:scale-150 duration-500"></div>
+                        <div class="relative z-10">
+                            <div class="w-16 h-16 bg-gray-800 rounded-2xl flex items-center justify-center text-brand-yellow text-3xl mb-8 group-hover:rotate-6 transition duration-300"><i class="fas fa-microchip"></i></div>
+                            <h3 class="text-3xl font-bold mb-4 text-white" data-i18n="teaser_card2_title">Biz</h3>
+                            <p class="text-gray-400 mb-8 text-lg leading-relaxed" data-i18n="teaser_card2_text">Text...</p>
+                            <span class="text-white font-bold group-hover:text-brand-yellow transition flex items-center gap-2"><span data-i18n="teaser_card2_link">Mehr</span> <i class="fas fa-arrow-right"></i></span>
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
 
         
-        <section class="bg-gray-900 text-white py-20 relative overflow-hidden">
+        <section class="bg-brand-dark text-white py-24 relative overflow-hidden">
+            <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-5"></div>
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-                <div class="text-center mb-16">
-                    <h2 class="text-3xl md:text-4xl font-bold" data-i18n="testi_headline">Was Schüler sagen</h2>
-                    <p class="text-gray-400 mt-4 max-w-2xl mx-auto" data-i18n="testi_subtext">Reviews...</p>
+                <div class="text-center mb-20">
+                    <h2 class="text-4xl md:text-5xl font-bold mb-4" data-i18n="testi_headline">Was Schüler sagen</h2>
+                    <p class="text-gray-400 mt-4 max-w-2xl mx-auto text-lg" data-i18n="testi_subtext">Reviews...</p>
                 </div>
-                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <div class="bg-gray-800 p-6 rounded-xl border border-gray-700">
-                        <div class="flex text-yellow-400 mb-4 text-sm"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
-                        <p class="text-gray-300 text-sm mb-6 leading-relaxed">"<span data-i18n="review_1_text">...</span>"</p>
-                        <div class="flex items-center gap-3 border-t border-gray-700 pt-4">
-                            <div class="w-8 h-8 bg-pink-600 rounded-full flex items-center justify-center text-xs font-bold" data-i18n="review_1_initial">W</div>
-                            <div><p class="font-bold text-sm" data-i18n="review_1_name">Name</p><p class="text-xs text-gray-500" data-i18n="review_1_date">Date</p></div>
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    
+                    <div class="bg-gray-800/50 backdrop-blur-sm p-8 rounded-2xl border border-gray-700 hover:border-gray-600 transition hover:-translate-y-1">
+                        <div class="flex text-brand-yellow mb-6 text-sm gap-1"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                        <p class="text-gray-300 text-lg mb-8 leading-relaxed italic">"<span data-i18n="review_1_text">...</span>"</p>
+                        <div class="flex items-center gap-4 border-t border-gray-700 pt-6">
+                            <div class="w-10 h-10 bg-pink-600 rounded-full flex items-center justify-center text-sm font-bold shadow-lg" data-i18n="review_1_initial">W</div>
+                            <div><p class="font-bold text-white" data-i18n="review_1_name">Name</p><p class="text-xs text-gray-500 uppercase tracking-wide" data-i18n="review_1_date">Date</p></div>
                         </div>
                     </div>
-                    <div class="bg-gray-800 p-6 rounded-xl border border-gray-700">
-                        <div class="flex text-yellow-400 mb-4 text-sm"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
-                        <p class="text-gray-300 text-sm mb-6 leading-relaxed">"<span data-i18n="review_2_text">...</span>"</p>
-                        <div class="flex items-center gap-3 border-t border-gray-700 pt-4">
-                            <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-xs font-bold" data-i18n="review_2_initial">C</div>
-                            <div><p class="font-bold text-sm" data-i18n="review_2_name">Name</p><p class="text-xs text-gray-500" data-i18n="review_2_date">Date</p></div>
+                    
+                    <div class="bg-gray-800/50 backdrop-blur-sm p-8 rounded-2xl border border-gray-700 hover:border-gray-600 transition hover:-translate-y-1">
+                        <div class="flex text-brand-yellow mb-6 text-sm gap-1"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                        <p class="text-gray-300 text-lg mb-8 leading-relaxed italic">"<span data-i18n="review_2_text">...</span>"</p>
+                        <div class="flex items-center gap-4 border-t border-gray-700 pt-6">
+                            <div class="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center text-sm font-bold shadow-lg" data-i18n="review_2_initial">C</div>
+                            <div><p class="font-bold text-white" data-i18n="review_2_name">Name</p><p class="text-xs text-gray-500 uppercase tracking-wide" data-i18n="review_2_date">Date</p></div>
                         </div>
                     </div>
-                     <div class="bg-gray-800 p-6 rounded-xl border border-gray-700">
-                        <div class="flex text-yellow-400 mb-4 text-sm"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
-                        <p class="text-gray-300 text-sm mb-6 leading-relaxed">"<span data-i18n="review_3_text">...</span>"</p>
-                        <div class="flex items-center gap-3 border-t border-gray-700 pt-4">
-                            <div class="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center text-xs font-bold" data-i18n="review_3_initial">O</div>
-                            <div><p class="font-bold text-sm" data-i18n="review_3_name">Name</p><p class="text-xs text-gray-500" data-i18n="review_3_date">Date</p></div>
+                     
+                     <div class="bg-gray-800/50 backdrop-blur-sm p-8 rounded-2xl border border-gray-700 hover:border-gray-600 transition hover:-translate-y-1">
+                        <div class="flex text-brand-yellow mb-6 text-sm gap-1"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                        <p class="text-gray-300 text-lg mb-8 leading-relaxed italic">"<span data-i18n="review_3_text">...</span>"</p>
+                        <div class="flex items-center gap-4 border-t border-gray-700 pt-6">
+                            <div class="w-10 h-10 bg-purple-600 rounded-full flex items-center justify-center text-sm font-bold shadow-lg" data-i18n="review_3_initial">O</div>
+                            <div><p class="font-bold text-white" data-i18n="review_3_name">Name</p><p class="text-xs text-gray-500 uppercase tracking-wide" data-i18n="review_3_date">Date</p></div>
                         </div>
                     </div>
                 </div>
-                <div class="mt-12 text-center">
-                    <a href="#" target="_blank" class="inline-flex items-center text-gray-400 hover:text-white transition font-medium">
-                        <span data-i18n="testi_link_text">Alle lesen</span> <i class="fas fa-external-link-alt ml-2 text-xs"></i>
+                <div class="mt-16 text-center">
+                    <a href="#" target="_blank" class="inline-flex items-center text-gray-400 hover:text-white transition font-bold border-b-2 border-transparent hover:border-brand-yellow pb-1">
+                        <span data-i18n="testi_link_text">Alle Bewertungen lesen</span> <i class="fas fa-external-link-alt ml-2 text-sm"></i>
                     </a>
                 </div>
             </div>
@@ -244,26 +304,29 @@
 
     
     <main id="konversation" class="page-section pt-32 flex-grow">
-        <div class="bg-yellow-50 py-16">
-            <div class="max-w-7xl mx-auto px-4 text-center">
-                <span class="bg-white text-yellow-600 py-1 px-3 rounded-full text-xs font-bold uppercase tracking-wider shadow-sm mb-4 inline-block" data-i18n="konv_badge">Alltag</span>
-                <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4" data-i18n="konv_headline">Headline</h1>
-                <p class="text-xl text-gray-600 max-w-2xl mx-auto" data-i18n="konv_subline">Subline</p>
+        <div class="bg-yellow-50 py-24 relative overflow-hidden">
+             <div class="absolute -left-20 top-20 w-64 h-64 bg-yellow-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30"></div>
+            <div class="max-w-7xl mx-auto px-4 text-center relative z-10">
+                <span class="bg-white text-yellow-700 py-1.5 px-4 rounded-full text-xs font-bold uppercase tracking-wider shadow-sm mb-6 inline-block" data-i18n="konv_badge">Alltag & Leben</span>
+                <h1 class="text-5xl md:text-6xl font-bold text-gray-900 mb-6" data-i18n="konv_headline">Headline</h1>
+                <p class="text-2xl text-gray-600 max-w-3xl mx-auto font-light" data-i18n="konv_subline">Subline</p>
             </div>
         </div>
-        <div class="max-w-4xl mx-auto px-4 py-16">
-            <div class="prose prose-lg text-gray-600 mx-auto">
-                <p data-i18n="konv_intro">Intro</p>
-                <h3 class="text-gray-900 font-bold text-2xl mt-10 mb-4" data-i18n="konv_approach_head">Approach</h3>
-                <p data-i18n="konv_approach_text">Text</p>
-                <ul class="space-y-5 list-none pl-0 mt-6">
-                    <li class="flex items-start"><i class="fas fa-check text-yellow-500 mt-1.5 mr-3"></i><div data-i18n="konv_list_1">Point 1</div></li>
-                    <li class="flex items-start"><i class="fas fa-check text-yellow-500 mt-1.5 mr-3"></i><div data-i18n="konv_list_2">Point 2</div></li>
-                    <li class="flex items-start"><i class="fas fa-check text-yellow-500 mt-1.5 mr-3"></i><div data-i18n="konv_list_3">Point 3</div></li>
-                    <li class="flex items-start"><i class="fas fa-check text-yellow-500 mt-1.5 mr-3"></i><div data-i18n="konv_list_4">Point 4</div></li>
+        <div class="max-w-4xl mx-auto px-4 py-20">
+            <div class="prose prose-lg prose-yellow mx-auto text-gray-600">
+                <div class="text-xl leading-relaxed mb-12" data-i18n="konv_intro">Intro</div>
+                
+                <h3 class="text-brand-dark font-bold text-3xl mt-16 mb-8 border-l-4 border-brand-yellow pl-4" data-i18n="konv_approach_head">Approach</h3>
+                <div class="text-lg leading-relaxed" data-i18n="konv_approach_text">Text</div>
+                
+                <ul class="space-y-6 list-none pl-0 mt-10 bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
+                    <li class="flex items-start"><i class="fas fa-check-circle text-brand-yellow text-xl mt-1 mr-4"></i><div data-i18n="konv_list_1">Point 1</div></li>
+                    <li class="flex items-start"><i class="fas fa-check-circle text-brand-yellow text-xl mt-1 mr-4"></i><div data-i18n="konv_list_2">Point 2</div></li>
+                    <li class="flex items-start"><i class="fas fa-check-circle text-brand-yellow text-xl mt-1 mr-4"></i><div data-i18n="konv_list_3">Point 3</div></li>
+                    <li class="flex items-start"><i class="fas fa-check-circle text-brand-yellow text-xl mt-1 mr-4"></i><div data-i18n="konv_list_4">Point 4</div></li>
                 </ul>
-                <div class="mt-12 text-center">
-                    <button onclick="navigateTo('preise')" class="bg-brand-yellow text-gray-900 px-8 py-3 rounded-lg font-bold hover:bg-yellow-300 transition shadow" data-i18n="btn_prices_booking">Preise</button>
+                <div class="mt-16 text-center">
+                    <button onclick="navigateTo('preise')" class="bg-brand-dark text-white px-10 py-4 rounded-xl font-bold hover:bg-gray-800 transition shadow-lg hover:shadow-xl transform hover:-translate-y-1" data-i18n="btn_prices_booking">Preise & Termine</button>
                 </div>
             </div>
         </div>
@@ -271,36 +334,55 @@
 
     
     <main id="business" class="page-section pt-32 flex-grow">
-        <div class="bg-gray-900 text-white py-16 relative overflow-hidden">
-            <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(#ffffff 1px, transparent 1px); background-size: 20px 20px;"></div>
+        <div class="bg-brand-dark text-white py-24 relative overflow-hidden">
+            <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(#ffffff 1px, transparent 1px); background-size: 30px 30px;"></div>
             <div class="max-w-7xl mx-auto px-4 text-center relative z-10">
-                <span class="bg-gray-800 text-gray-300 border border-gray-700 py-1 px-3 rounded-full text-xs font-bold uppercase tracking-wider mb-4 inline-block" data-i18n="biz_badge">Fachkräfte</span>
-                <h1 class="text-4xl md:text-5xl font-bold mb-6" data-i18n="biz_headline">Ingenieure</h1>
-                <p class="text-xl text-gray-400 max-w-2xl mx-auto" data-i18n="biz_subtext">Subtext</p>
+                <span class="bg-gray-800 text-gray-300 border border-gray-700 py-1.5 px-4 rounded-full text-xs font-bold uppercase tracking-wider mb-6 inline-block" data-i18n="biz_badge">Für Fachkräfte</span>
+                <h1 class="text-5xl md:text-6xl font-bold mb-8" data-i18n="biz_headline">Ingenieure</h1>
+                <p class="text-2xl text-gray-400 max-w-3xl mx-auto font-light" data-i18n="biz_subtext">Subtext</p>
             </div>
         </div>
-        <div class="max-w-7xl mx-auto px-4 py-16">
-            <div class="grid lg:grid-cols-2 gap-16 items-start">
+        <div class="max-w-7xl mx-auto px-4 py-24">
+            <div class="grid lg:grid-cols-2 gap-20 items-start">
                 <div>
-                    <p class="text-sm font-bold text-gray-900/70 uppercase tracking-wide mb-3" data-i18n="biz_intro_sub">Sub</p>
-                    <h2 class="text-3xl font-bold text-gray-900 mb-6" data-i18n="biz_intro_head">Head</h2>
-                    <div class="space-y-4 mb-10 text-lg text-gray-600" data-i18n="biz_intro_text">Text</div>
-                    <h3 class="text-xl font-bold text-gray-900 mb-4" data-i18n="biz_whyme_head">Why</h3>
-                    <div class="space-y-6">
-                        <div class="flex gap-4"><div class="flex-shrink-0 w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center text-gray-900 font-bold text-xl">10</div><div><h4 class="font-bold text-gray-900" data-i18n="biz_point_1_head">Head</h4><p class="text-sm text-gray-600" data-i18n="biz_point_1_text">Text</p></div></div>
-                        <div class="flex gap-4"><div class="flex-shrink-0 w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center text-gray-900 font-bold text-xl"><i class="fas fa-graduation-cap"></i></div><div><h4 class="font-bold text-gray-900" data-i18n="biz_point_2_head">Head</h4><p class="text-sm text-gray-600" data-i18n="biz_point_2_text">Text</p></div></div>
-                        <div class="flex gap-4"><div class="flex-shrink-0 w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center text-gray-900 font-bold text-xl"><i class="fas fa-clipboard-check"></i></div><div><h4 class="font-bold text-gray-900" data-i18n="biz_point_3_head">Head</h4><p class="text-sm text-gray-600" data-i18n="biz_point_3_text">Text</p></div></div>
+                    <p class="text-sm font-bold text-brand-yellow uppercase tracking-widest mb-4" data-i18n="biz_intro_sub">Sub</p>
+                    <h2 class="text-4xl font-bold text-gray-900 mb-8 leading-tight" data-i18n="biz_intro_head">Head</h2>
+                    <div class="space-y-6 mb-12 text-lg text-gray-600 leading-relaxed" data-i18n="biz_intro_text">Text</div>
+                    
+                    <h3 class="text-2xl font-bold text-gray-900 mb-8" data-i18n="biz_whyme_head">Why</h3>
+                    <div class="space-y-8">
+                        <div class="flex gap-6 group">
+                            <div class="flex-shrink-0 w-16 h-16 bg-brand-dark text-white rounded-2xl flex items-center justify-center font-bold text-2xl shadow-lg group-hover:bg-brand-yellow group-hover:text-brand-dark transition duration-300">10</div>
+                            <div><h4 class="font-bold text-gray-900 text-lg mb-1" data-i18n="biz_point_1_head">Head</h4><p class="text-gray-600" data-i18n="biz_point_1_text">Text</p></div>
+                        </div>
+                        <div class="flex gap-6 group">
+                            <div class="flex-shrink-0 w-16 h-16 bg-white border-2 border-gray-100 rounded-2xl flex items-center justify-center text-gray-900 font-bold text-2xl shadow-sm group-hover:border-brand-yellow transition duration-300"><i class="fas fa-graduation-cap"></i></div>
+                            <div><h4 class="font-bold text-gray-900 text-lg mb-1" data-i18n="biz_point_2_head">Head</h4><p class="text-gray-600" data-i18n="biz_point_2_text">Text</p></div>
+                        </div>
+                        <div class="flex gap-6 group">
+                            <div class="flex-shrink-0 w-16 h-16 bg-white border-2 border-gray-100 rounded-2xl flex items-center justify-center text-gray-900 font-bold text-2xl shadow-sm group-hover:border-brand-yellow transition duration-300"><i class="fas fa-clipboard-check"></i></div>
+                            <div><h4 class="font-bold text-gray-900 text-lg mb-1" data-i18n="biz_point_3_head">Head</h4><p class="text-gray-600" data-i18n="biz_point_3_text">Text</p></div>
+                        </div>
                     </div>
                 </div>
-                <div class="bg-white p-8 rounded-2xl shadow-xl border border-gray-100">
-                    <h3 class="text-2xl font-bold text-gray-900 mb-6" data-i18n="biz_box_head">Training</h3>
-                    <div class="space-y-4">
-                        <div class="bg-gray-50 p-4 rounded-lg border-l-4 border-gray-900"><h5 class="font-bold" data-i18n="biz_box_1_head">1</h5><p class="text-sm text-gray-600" data-i18n="biz_box_1_text">T</p></div>
-                        <div class="bg-gray-50 p-4 rounded-lg border-l-4 border-gray-900"><h5 class="font-bold" data-i18n="biz_box_2_head">2</h5><p class="text-sm text-gray-600" data-i18n="biz_box_2_text">T</p></div>
-                        <div class="bg-gray-50 p-4 rounded-lg border-l-4 border-gray-900"><h5 class="font-bold" data-i18n="biz_box_3_head">3</h5><p class="text-sm text-gray-600" data-i18n="biz_box_3_text">T</p></div>
+                <div class="bg-gray-50 p-10 rounded-3xl shadow-xl border border-gray-100 sticky top-32">
+                    <h3 class="text-3xl font-bold text-gray-900 mb-8" data-i18n="biz_box_head">Training</h3>
+                    <div class="space-y-6">
+                        <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm flex gap-4 hover:shadow-md transition">
+                            <div class="text-brand-yellow text-lg font-bold">01</div>
+                            <div><h5 class="font-bold text-gray-900 mb-1" data-i18n="biz_box_1_head">1</h5><p class="text-sm text-gray-600" data-i18n="biz_box_1_text">T</p></div>
+                        </div>
+                         <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm flex gap-4 hover:shadow-md transition">
+                            <div class="text-brand-yellow text-lg font-bold">02</div>
+                            <div><h5 class="font-bold text-gray-900 mb-1" data-i18n="biz_box_2_head">2</h5><p class="text-sm text-gray-600" data-i18n="biz_box_2_text">T</p></div>
+                        </div>
+                         <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm flex gap-4 hover:shadow-md transition">
+                            <div class="text-brand-yellow text-lg font-bold">03</div>
+                            <div><h5 class="font-bold text-gray-900 mb-1" data-i18n="biz_box_3_head">3</h5><p class="text-sm text-gray-600" data-i18n="biz_box_3_text">T</p></div>
+                        </div>
                     </div>
-                    <div class="mt-8 pt-6 border-t border-gray-100 text-center">
-                        <button onclick="navigateTo('preise')" class="w-full bg-gray-900 text-white py-3 rounded-lg font-bold hover:bg-black transition" data-i18n="biz_btn_prices">Preise</button>
+                    <div class="mt-10 pt-8 border-t border-gray-200 text-center">
+                        <button onclick="navigateTo('preise')" class="w-full bg-brand-dark text-white py-4 rounded-xl font-bold hover:bg-gray-800 transition shadow-lg" data-i18n="biz_btn_prices">Preise ansehen</button>
                     </div>
                 </div>
             </div>
@@ -309,18 +391,20 @@
 
     
     <main id="preise" class="page-section pt-32 flex-grow">
-        <div class="bg-gray-900 text-white py-16">
+        <div class="bg-brand-dark text-white py-24">
             <div class="max-w-7xl mx-auto px-4 text-center">
-                <span class="bg-brand-yellow text-gray-900 py-1 px-3 rounded-full text-xs font-bold uppercase tracking-wider shadow-sm mb-4 inline-block" data-i18n="price_badge">Invest</span>
-                <h1 class="text-4xl font-bold mb-6" data-i18n="price_headline">Pakete</h1>
-                <p class="text-xl text-gray-300 max-w-2xl mx-auto" data-i18n="price_subtext">Subtext</p>
+                <span class="bg-brand-yellow text-gray-900 py-1.5 px-4 rounded-full text-xs font-bold uppercase tracking-wider shadow-sm mb-6 inline-block" data-i18n="price_badge">Investition</span>
+                <h1 class="text-5xl font-bold mb-6" data-i18n="price_headline">Pakete</h1>
+                <p class="text-xl text-gray-300 max-w-2xl mx-auto font-light" data-i18n="price_subtext">Subtext</p>
             </div>
         </div>
-        <div class="max-w-7xl mx-auto px-4 py-16">
-            <div class="bg-yellow-50 rounded-2xl p-8 border border-yellow-100 shadow-md text-center max-w-4xl mx-auto mb-16">
-                <h2 class="text-2xl font-bold text-gray-900 mb-4" data-i18n="cal_headline">Bereit?</h2>
-                <p class="text-gray-600 mb-8" data-i18n="cal_text">Wähle Termin</p>
-                <div class="flex justify-center">
+        <div class="max-w-7xl mx-auto px-4 py-20">
+            
+             <div class="bg-white rounded-3xl p-10 border border-gray-100 shadow-soft text-center max-w-4xl mx-auto mb-20 relative overflow-hidden">
+                 <div class="absolute top-0 left-0 w-2 h-full bg-brand-yellow"></div>
+                <h2 class="text-3xl font-bold text-gray-900 mb-4" data-i18n="cal_headline">Bereit?</h2>
+                <p class="text-gray-600 mb-10 max-w-lg mx-auto" data-i18n="cal_text">Wähle Termin</p>
+                <div class="flex justify-center scale-110">
                     <script src="https://calendar.google.com/calendar/scheduling-button-script.js" async></script>
                     <script>
                     (function() {
@@ -328,37 +412,48 @@
                         window.addEventListener('load', function() {
                             calendar.schedulingButton.load({
                                 url: 'https://calendar.google.com/calendar/appointments/schedules/AcZssZ1_fZHZqgiGrYrvgdrr7NVBEofebZ_6G2V7WeN9Km3qdyUlj3UGnWuz05W8esbCq_-z1YVPpf5U?gv=true',
-                                color: '#039BE5', label: 'Termin', target,
+                                color: '#039BE5', label: 'Termin buchen', target,
                             });
                         });
                     })();
                     </script>
                 </div>
-                <p class="text-xs text-gray-500 mt-4" data-i18n="cal_note">Klick Button</p>
+                <p class="text-xs text-gray-400 mt-6 font-medium uppercase tracking-wide" data-i18n="cal_note">Klick Button</p>
             </div>
-            <div class="grid md:grid-cols-3 gap-8">
+
+            <div class="grid md:grid-cols-3 gap-8 lg:gap-12 items-start">
                 
-                <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-8 flex flex-col hover:border-brand-yellow transition">
-                    <h3 class="text-xl font-bold text-gray-900 mb-2" data-i18n="price_card1_title">Probe</h3>
-                    <p class="text-gray-500 mb-6 text-sm" data-i18n="price_card1_desc">Intro</p>
-                    <div class="text-3xl font-bold text-gray-900 mb-6" data-i18n="price_card1_price">20</div>
-                    <ul class="space-y-3 mb-8 text-sm text-gray-600 flex-grow" data-i18n="price_card1_list"><li>List</li></ul>
+                <div class="bg-white rounded-3xl shadow-sm border border-gray-100 p-8 flex flex-col hover:border-brand-yellow hover:shadow-xl transition-all duration-300">
+                    <div class="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center text-gray-500 mb-6"><i class="fas fa-hand-shake"></i></div>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-3" data-i18n="price_card1_title">Probe</h3>
+                    <p class="text-gray-500 mb-8 text-sm leading-relaxed" data-i18n="price_card1_desc">Intro</p>
+                    <div class="text-4xl font-bold text-gray-900 mb-8 tracking-tight" data-i18n="price_card1_price">20</div>
+                    <ul class="space-y-4 mb-8 text-sm text-gray-600 flex-grow" data-i18n="price_card1_list"><li>List</li></ul>
+                    <button class="w-full py-3 rounded-xl border-2 border-gray-200 font-bold hover:border-gray-900 hover:bg-gray-900 hover:text-white transition" onclick="document.querySelector('.calendar-scheduling-button').click()">Buchen</button>
                 </div>
+
                 
-                <div class="bg-gray-900 rounded-2xl shadow-xl border-2 border-brand-yellow p-8 flex flex-col transform md:-translate-y-4 relative">
-                    <div class="absolute top-0 right-0 bg-brand-yellow text-gray-900 text-xs font-bold px-3 py-1 rounded-bl-lg rounded-tr-lg" data-i18n="price_card2_badge">TOP</div>
-                    <h3 class="text-xl font-bold text-white mb-2" data-i18n="price_card2_title">Individuell</h3>
-                    <p class="text-gray-400 mb-6 text-sm" data-i18n="price_card2_desc">Desc</p>
-                    <div class="text-3xl font-bold text-brand-yellow mb-2" data-i18n="price_card2_price">40</div>
-                    <p class="text-xs text-gray-400 mb-6" data-i18n="price_card2_subprice">Abo</p>
-                    <ul class="space-y-3 mb-8 text-sm text-gray-300 flex-grow" data-i18n="price_card2_list"><li>List</li></ul>
+                <div class="bg-brand-dark rounded-3xl shadow-2xl border-4 border-brand-yellow p-8 flex flex-col transform md:-translate-y-6 relative overflow-hidden group">
+                     <div class="absolute -right-10 -top-10 w-40 h-40 bg-brand-yellow rounded-full opacity-10 blur-3xl group-hover:opacity-20 transition"></div>
+                    <div class="absolute top-0 inset-x-0 bg-brand-yellow text-brand-dark text-xs font-bold uppercase tracking-widest text-center py-1.5" data-i18n="price_card2_badge">Empfohlen</div>
+                    
+                    <div class="mt-4 w-12 h-12 bg-brand-yellow rounded-full flex items-center justify-center text-brand-dark mb-6"><i class="fas fa-star"></i></div>
+                    <h3 class="text-2xl font-bold text-white mb-3" data-i18n="price_card2_title">Individuell</h3>
+                    <p class="text-gray-400 mb-8 text-sm leading-relaxed" data-i18n="price_card2_desc">Desc</p>
+                    <div class="text-5xl font-bold text-brand-yellow mb-2 tracking-tight" data-i18n="price_card2_price">40</div>
+                    <p class="text-xs text-gray-400 mb-8 font-medium" data-i18n="price_card2_subprice">Abo</p>
+                    <ul class="space-y-4 mb-8 text-sm text-gray-300 flex-grow" data-i18n="price_card2_list"><li>List</li></ul>
+                    <button class="w-full py-4 rounded-xl bg-brand-yellow text-brand-dark font-bold hover:bg-white transition shadow-glow" onclick="document.querySelector('.calendar-scheduling-button').click()">Jetzt starten</button>
                 </div>
+
                 
-                <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-8 flex flex-col hover:border-brand-yellow transition">
-                    <h3 class="text-xl font-bold text-gray-900 mb-2" data-i18n="price_card3_title">Bewerbung</h3>
-                    <p class="text-gray-500 mb-6 text-sm" data-i18n="price_card3_desc">Desc</p>
-                    <div class="text-3xl font-bold text-gray-900 mb-6" data-i18n="price_card3_price">45</div>
-                    <ul class="space-y-3 mb-8 text-sm text-gray-600 flex-grow" data-i18n="price_card3_list"><li>List</li></ul>
+                <div class="bg-white rounded-3xl shadow-sm border border-gray-100 p-8 flex flex-col hover:border-brand-yellow hover:shadow-xl transition-all duration-300">
+                    <div class="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center text-gray-500 mb-6"><i class="fas fa-briefcase"></i></div>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-3" data-i18n="price_card3_title">Bewerbung</h3>
+                    <p class="text-gray-500 mb-8 text-sm leading-relaxed" data-i18n="price_card3_desc">Desc</p>
+                    <div class="text-4xl font-bold text-gray-900 mb-8 tracking-tight" data-i18n="price_card3_price">45</div>
+                    <ul class="space-y-4 mb-8 text-sm text-gray-600 flex-grow" data-i18n="price_card3_list"><li>List</li></ul>
+                    <button class="w-full py-3 rounded-xl border-2 border-gray-200 font-bold hover:border-gray-900 hover:bg-gray-900 hover:text-white transition" onclick="document.querySelector('.calendar-scheduling-button').click()">Buchen</button>
                 </div>
             </div>
         </div>
@@ -366,55 +461,63 @@
 
     
     <main id="about" class="page-section pt-32 flex-grow">
-        <div class="max-w-4xl mx-auto px-4 py-16">
-            <h1 class="text-4xl font-bold text-gray-900 mb-8 text-center" data-i18n="about_headline">Headline</h1>
-            <div class="bg-white p-8 rounded-2xl shadow-lg border border-gray-100 mb-12 flex flex-col md:flex-row gap-8 items-start">
-                <img src="https://lh3.googleusercontent.com/pw/AP1GczM7-zXkCQ96aQnVFjYihA_3nm45bEkDm_hkfgQKUP9vhhaVHFs6RBZi6DIS57R8NOwUE8wN-PEJqc_-UqOEKilmrGOHaekSTdgU5D27NxUw8g3dl3tWcSoQRY_n1Eg7SGNimvfREpaV4znXhZtnTQB56A=w905-h905-s-no-gm" class="w-32 h-32 rounded-full object-cover border-4 border-yellow-100 flex-shrink-0 mx-auto md:mx-0">
-                <div data-i18n="about_text_html"><p>Text...</p></div>
+        <div class="max-w-5xl mx-auto px-4 py-24">
+            <h1 class="text-5xl font-bold text-gray-900 mb-16 text-center" data-i18n="about_headline">Headline</h1>
+            <div class="bg-white p-10 rounded-3xl shadow-soft border border-gray-100 mb-16 flex flex-col md:flex-row gap-12 items-start">
+                <div class="flex-shrink-0 mx-auto md:mx-0 relative">
+                     <div class="absolute inset-0 bg-brand-yellow rounded-2xl rotate-6 opacity-20"></div>
+                    <img src="https://lh3.googleusercontent.com/pw/AP1GczM7-zXkCQ96aQnVFjYihA_3nm45bEkDm_hkfgQKUP9vhhaVHFs6RBZi6DIS57R8NOwUE8wN-PEJqc_-UqOEKilmrGOHaekSTdgU5D27NxUw8g3dl3tWcSoQRY_n1Eg7SGNimvfREpaV4znXhZtnTQB56A=w905-h905-s-no-gm" class="w-48 h-48 rounded-2xl object-cover border-4 border-white shadow-lg relative z-10">
+                </div>
+                <div class="prose prose-lg text-gray-600" data-i18n="about_text_html"><p>Text...</p></div>
             </div>
-            <div class="grid md:grid-cols-3 gap-6 text-center">
-                <div class="p-6 bg-gray-50 rounded-xl"><i class="fas fa-globe-americas text-3xl text-brand-yellow mb-3"></i><h4 class="font-bold" data-i18n="about_grid1_head">H1</h4><p class="text-sm text-gray-500" data-i18n="about_grid1_text">T1</p></div>
-                <div class="p-6 bg-gray-50 rounded-xl"><i class="fas fa-hiking text-3xl text-brand-yellow mb-3"></i><h4 class="font-bold" data-i18n="about_grid2_head">H2</h4><p class="text-sm text-gray-500" data-i18n="about_grid2_text">T2</p></div>
-                <div class="p-6 bg-gray-50 rounded-xl"><i class="fas fa-hands-helping text-3xl text-brand-yellow mb-3"></i><h4 class="font-bold" data-i18n="about_grid3_head">H3</h4><p class="text-sm text-gray-500" data-i18n="about_grid3_text">T3</p></div>
+            <div class="grid md:grid-cols-3 gap-8 text-center">
+                <div class="p-8 bg-white rounded-3xl shadow-sm border border-gray-100 hover:shadow-md transition"><i class="fas fa-globe-americas text-4xl text-brand-yellow mb-4"></i><h4 class="font-bold text-xl mb-2" data-i18n="about_grid1_head">H1</h4><p class="text-sm text-gray-500" data-i18n="about_grid1_text">T1</p></div>
+                <div class="p-8 bg-white rounded-3xl shadow-sm border border-gray-100 hover:shadow-md transition"><i class="fas fa-hiking text-4xl text-brand-yellow mb-4"></i><h4 class="font-bold text-xl mb-2" data-i18n="about_grid2_head">H2</h4><p class="text-sm text-gray-500" data-i18n="about_grid2_text">T2</p></div>
+                <div class="p-8 bg-white rounded-3xl shadow-sm border border-gray-100 hover:shadow-md transition"><i class="fas fa-hands-helping text-4xl text-brand-yellow mb-4"></i><h4 class="font-bold text-xl mb-2" data-i18n="about_grid3_head">H3</h4><p class="text-sm text-gray-500" data-i18n="about_grid3_text">T3</p></div>
             </div>
         </div>
     </main>
 
     
-    <footer id="contact-section" class="bg-gray-900 text-gray-300 py-16 mt-auto">
+    <footer id="contact-section" class="bg-brand-dark text-gray-300 py-24 mt-auto border-t border-gray-800">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid md:grid-cols-2 gap-12">
+            <div class="grid md:grid-cols-2 gap-20">
                 <div>
-                    <h2 class="text-3xl font-bold text-white mb-6" data-i18n="contact_headline">Kontakt</h2>
-                    <p class="mb-8 text-gray-400" data-i18n="contact_text">Text</p>
-                    <div class="flex items-center gap-4 mb-6"><div class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center text-brand-yellow"><i class="fas fa-envelope"></i></div><span data-i18n="contact_email">Email</span></div>
-                    <div class="mt-8">
-                        <p class="text-sm text-gray-500 mb-2" data-i18n="contact_direct_sub">Direkt</p>
-                        <p class="text-white mb-4" data-i18n="contact_direct_text">Kalender</p>
-                        <button onclick="navigateTo('preise')" class="text-brand-yellow border border-brand-yellow px-4 py-2 rounded hover:bg-brand-yellow hover:text-gray-900 transition text-sm font-bold" data-i18n="contact_direct_btn">Button</button>
+                    <h2 class="text-4xl font-bold text-white mb-8" data-i18n="contact_headline">Kontakt</h2>
+                    <p class="mb-10 text-gray-400 text-lg leading-relaxed" data-i18n="contact_text">Text</p>
+                    <div class="flex items-center gap-6 mb-8 group cursor-pointer">
+                        <div class="w-14 h-14 bg-gray-800 rounded-2xl flex items-center justify-center text-brand-yellow text-xl group-hover:bg-brand-yellow group-hover:text-brand-dark transition"><i class="fas fa-envelope"></i></div>
+                        <span class="text-xl font-medium group-hover:text-white transition" data-i18n="contact_email">Email</span>
+                    </div>
+                    <div class="mt-12 p-8 bg-gray-800/50 rounded-2xl border border-gray-700">
+                        <p class="text-sm text-gray-400 mb-2 uppercase tracking-wider font-bold" data-i18n="contact_direct_sub">Direkt buchen?</p>
+                        <p class="text-white mb-6 text-lg" data-i18n="contact_direct_text">Kalender</p>
+                        <button onclick="navigateTo('preise')" class="text-brand-yellow border-2 border-brand-yellow px-6 py-2.5 rounded-lg hover:bg-brand-yellow hover:text-brand-dark transition text-sm font-bold" data-i18n="contact_direct_btn">Button</button>
                     </div>
                 </div>
-                <form id="contactForm" onsubmit="handleFormSubmit(event)" class="bg-white rounded-xl p-8 text-gray-800 shadow-2xl">
-                    <h3 class="font-bold text-xl mb-4" data-i18n="form_headline">Nachricht</h3>
-                    <div class="mb-4"><label class="block text-sm font-bold mb-2" data-i18n="form_label_name">Name</label><input type="text" class="w-full bg-gray-50 border border-gray-300 rounded p-3 focus:outline-none focus:border-brand-yellow" required></div>
-                    <div class="mb-4"><label class="block text-sm font-bold mb-2" data-i18n="form_label_email">Email</label><input type="email" class="w-full bg-gray-50 border border-gray-300 rounded p-3 focus:outline-none focus:border-brand-yellow" required></div>
-                    <div class="mb-4">
-                        <label class="block text-sm font-bold mb-2" data-i18n="form_label_interest">Interesse</label>
-                        <select class="w-full bg-gray-50 border border-gray-300 rounded p-3 focus:outline-none focus:border-brand-yellow">
+                <form id="contactForm" onsubmit="handleFormSubmit(event)" class="bg-white rounded-3xl p-10 text-gray-800 shadow-2xl">
+                    <h3 class="font-bold text-2xl mb-8 text-brand-dark" data-i18n="form_headline">Nachricht</h3>
+                    <div class="grid md:grid-cols-2 gap-6 mb-6">
+                        <div><label class="block text-xs font-bold uppercase text-gray-500 mb-2 tracking-wider" data-i18n="form_label_name">Name</label><input type="text" class="w-full bg-gray-50 border border-gray-200 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-brand-yellow focus:border-transparent transition" required></div>
+                        <div><label class="block text-xs font-bold uppercase text-gray-500 mb-2 tracking-wider" data-i18n="form_label_email">Email</label><input type="email" class="w-full bg-gray-50 border border-gray-200 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-brand-yellow focus:border-transparent transition" required></div>
+                    </div>
+                    <div class="mb-6">
+                        <label class="block text-xs font-bold uppercase text-gray-500 mb-2 tracking-wider" data-i18n="form_label_interest">Interesse</label>
+                        <select class="w-full bg-gray-50 border border-gray-200 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-brand-yellow focus:border-transparent transition appearance-none">
                             <option data-i18n="form_opt_general">Allgemein</option>
                             <option data-i18n="form_opt_konv">Konv</option>
                             <option data-i18n="form_opt_business">Biz</option>
                         </select>
                     </div>
-                    <div class="mb-6"><label class="block text-sm font-bold mb-2" data-i18n="form_label_msg">Nachricht</label><textarea class="w-full bg-gray-50 border border-gray-300 rounded p-3 focus:outline-none focus:border-brand-yellow" rows="3"></textarea></div>
-                    <button type="submit" class="w-full bg-gray-900 text-white font-bold py-3 rounded hover:bg-black transition" data-i18n="form_btn_send">Senden</button>
+                    <div class="mb-8"><label class="block text-xs font-bold uppercase text-gray-500 mb-2 tracking-wider" data-i18n="form_label_msg">Nachricht</label><textarea class="w-full bg-gray-50 border border-gray-200 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-brand-yellow focus:border-transparent transition" rows="4"></textarea></div>
+                    <button type="submit" class="w-full bg-brand-dark text-white font-bold py-4 rounded-xl hover:bg-black transition shadow-lg" data-i18n="form_btn_send">Senden</button>
                 </form>
             </div>
-            <div class="border-t border-gray-800 mt-16 pt-8 text-center text-sm text-gray-500 flex flex-col md:flex-row justify-between items-center">
+            <div class="border-t border-gray-800 mt-20 pt-10 text-center text-sm text-gray-500 flex flex-col md:flex-row justify-between items-center">
                 <p data-i18n="footer_copy">© 2026</p>
-                <div class="flex gap-4 mt-4 md:mt-0">
-                    <a href="/impressum.html" class="hover:text-white" data-i18n="footer_impressum">Impressum</a>
-                    <a href="/datenschutz.html" class="hover:text-white" data-i18n="footer_privacy">Datenschutz</a>
+                <div class="flex gap-8 mt-6 md:mt-0 font-medium">
+                    <a href="/impressum.html" class="hover:text-white transition" data-i18n="footer_impressum">Impressum</a>
+                    <a href="/datenschutz.html" class="hover:text-white transition" data-i18n="footer_privacy">Datenschutz</a>
                 </div>
             </div>
         </div>
@@ -422,64 +525,60 @@
 
     
     <div id="loginModal" class="modal-overlay">
-        <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-sm w-full mx-4 relative">
-            <button onclick="closeLoginModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
-                <i class="fas fa-times text-xl"></i>
+        <div class="bg-white rounded-3xl shadow-2xl p-10 max-w-sm w-full mx-4 relative transform transition-all scale-100">
+            <button onclick="closeLoginModal()" class="absolute top-5 right-5 text-gray-400 hover:text-gray-900 transition bg-gray-100 rounded-full w-8 h-8 flex items-center justify-center">
+                <i class="fas fa-times"></i>
             </button>
 
-            <div class="flex items-center gap-3 mb-6">
-                <div class="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center text-yellow-700">
+            <div class="flex items-center gap-4 mb-8">
+                <div class="w-12 h-12 bg-yellow-100 rounded-2xl flex items-center justify-center text-yellow-700 text-xl shadow-sm">
                     <i class="fas fa-user-lock"></i>
                 </div>
                 <div class="leading-tight">
-                    <p class="text-xs text-gray-500">Schülerbereich</p>
-                    <h3 id="authHeadline" class="text-xl font-bold text-gray-900">Einloggen</h3>
+                    <p class="text-xs text-gray-500 font-bold uppercase tracking-wider mb-1">Schülerbereich</p>
+                    <h3 id="authHeadline" class="text-2xl font-bold text-gray-900">Einloggen</h3>
                 </div>
             </div>
 
-            <div class="flex gap-6 mb-6 border-b border-gray-200">
+            <div class="flex gap-8 mb-8 border-b border-gray-100">
                 <div onclick="switchAuthMode('login')" id="tabLogin" class="auth-tab active">Einloggen</div>
                 <div onclick="switchAuthMode('register')" id="tabRegister" class="auth-tab">Registrieren</div>
             </div>
 
-            <div class="space-y-4">
+            <div class="space-y-5">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">E-Mail</label>
-                    <input type="email" id="loginEmail" autocomplete="email" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-yellow focus:border-transparent outline-none transition" placeholder="deine@email.com">
+                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">E-Mail</label>
+                    <input type="email" id="loginEmail" autocomplete="email" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-brand-yellow focus:border-transparent outline-none transition" placeholder="deine@email.com">
                 </div>
 
                 <div id="nameWrap" class="hidden">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Name (optional)</label>
-                    <input type="text" id="registerName" autocomplete="name" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-yellow focus:border-transparent outline-none transition" placeholder="Vorname">
+                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Name</label>
+                    <input type="text" id="registerName" autocomplete="name" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-brand-yellow focus:border-transparent outline-none transition" placeholder="Dein Name">
                 </div>
 
                 <div id="passWrap">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Passwort</label>
-                    <input type="password" id="loginPass" autocomplete="current-password" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-yellow focus:border-transparent outline-none transition" placeholder="••••••••">
+                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Passwort</label>
+                    <input type="password" id="loginPass" autocomplete="current-password" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-brand-yellow focus:border-transparent outline-none transition" placeholder="••••••••">
                 </div>
 
-                <p id="registerHint" class="text-xs text-gray-500 hidden">
-                    Du bekommst danach eine E-Mail, um dein Passwort festzulegen.
+                <p id="registerHint" class="text-xs text-gray-500 hidden bg-blue-50 p-3 rounded-lg border border-blue-100 text-center">
+                    Du bekommst eine E-Mail, um dein Passwort festzulegen.
                 </p>
 
-                <button onclick="performLogin()" id="loginBtn" class="w-full bg-brand-yellow text-gray-900 font-bold py-3 rounded-lg hover:bg-yellow-400 transition shadow-sm">
+                <button onclick="performLogin()" id="loginBtn" class="w-full bg-brand-yellow text-brand-dark font-bold py-3.5 rounded-xl hover:bg-yellow-400 transition shadow-lg transform active:scale-95">
                     Jetzt Einloggen
                 </button>
 
-                <button onclick="performRegister()" id="registerBtn" class="w-full bg-gray-900 text-white font-bold py-3 rounded-lg hover:bg-black transition shadow-sm hidden">
-                    Registrierung anfordern
+                <button onclick="performRegister()" id="registerBtn" class="w-full bg-brand-dark text-white font-bold py-3.5 rounded-xl hover:bg-gray-800 transition shadow-lg transform active:scale-95 hidden">
+                    Konto erstellen
                 </button>
 
-                <p id="loginError" class="text-red-500 text-sm text-center hidden"></p>
-                <p id="loginInfo" class="text-gray-600 text-sm text-center hidden"></p>
+                <p id="loginError" class="text-red-500 text-sm text-center hidden font-medium bg-red-50 p-2 rounded"></p>
+                <p id="loginInfo" class="text-blue-600 text-sm text-center hidden font-medium bg-blue-50 p-2 rounded"></p>
 
-                <div id="forgotWrap" class="flex justify-between items-center mt-2 text-xs">
-                    <a href="#" onclick="resetPassword(); return false;" class="text-gray-500 hover:text-gray-800 underline">Passwort vergessen?</a>
-                    <button type="button" onclick="switchAuthMode('register')" class="text-gray-500 hover:text-gray-800 underline">Neu hier?</button>
-                </div>
-
-                <div class="text-center pt-1">
-                    <a href="/members.html" class="text-xs text-blue-600 hover:text-blue-800 underline">Direkt zum Dashboard</a>
+                <div id="forgotWrap" class="flex justify-between items-center mt-4 text-xs font-medium">
+                    <a href="#" onclick="resetPassword(); return false;" class="text-gray-500 hover:text-brand-dark">Passwort vergessen?</a>
+                    <button type="button" onclick="switchAuthMode('register')" class="text-gray-500 hover:text-brand-dark">Neu hier?</button>
                 </div>
             </div>
         </div>
@@ -491,7 +590,7 @@
         
         
         
-        const translations = {"DE":{"meta_title":"Deutsch mit Jonas - Technisches Deutsch & Konversation","btn_login":"Schüler Login","topbar_text":"Technisches Deutsch & Konversation","nav_brand":"Deutsch mit Jonas","nav_home":"Start","nav_konv":"Konversation","nav_business":"Business & Technik","nav_prices":"Preise","nav_about":"Über Jonas","nav_dashboard":"Dashboard","nav_contact":"Kontakt","hero_badge":"Verifizierter Tutor","hero_rating":4.8,"hero_line1":"Deutsch lernen mit","hero_highlight":"technischem Verstand","hero_line2":"und Herz.","hero_subtext":"Ich helfe Ingenieuren, Technikern und Fachkräften, sicher im deutschen Jobmarkt aufzutreten. Nahbar, individuell und mit 10 Jahren Industrie-Erfahrung.","btn_hero_1":"Termin buchen","btn_hero_2":"Für Techniker","video_headline":"Kurz vorgestellt: Wer ich bin","youtube_id":"fHV_RicUkXo","video_subtext":"Klick auf Play für einen persönlichen Eindruck","teaser_headline":"Wobei kann ich dich unterstützen?","teaser_card1_title":"Konversationstraining","teaser_card1_text":"Flüssig sprechen, Angst verlieren und Smalltalk meistern. Für Alltag und Leben.","teaser_card1_link":"Mehr erfahren","teaser_card2_title":"Business & Technik","teaser_card2_text":"Spezialisiert auf Ingenieure. PCBs, Prozesse, Meetings und technische Dokumentation.","teaser_card2_link":"Zu meinem Spezialgebiet","testi_headline":"Was meine Schüler sagen","testi_subtext":"Aus über 24 verifizierten Bewertungen auf Preply.","review_1_text":"Dank seiner Unterstützung habe ich auch einen Job gefunden, bei dem ich Deutsch sprechen muss – das hätte ich vorher nicht für möglich gehalten.","review_1_name":"Wiktoria","review_1_date":"Juli 2025","review_1_initial":"W","review_2_text":"Jonas versucht, dich so viel wie möglich sprechen zu lassen, was das Lernen der Sprache einfacher macht.","review_2_name":"Christian","review_2_date":"Oktober 2025","review_2_initial":"C","review_3_text":"Perfekt auf meine Bedürfnisse abgestimmt. Die Tatsache, dass er mehrere Sprachen spricht, war sehr nützlich.","review_3_name":"Öykü","review_3_date":"2025-09-01T05:00:00.000Z","review_3_initial":"Ö","testi_link_text":"Alle Bewertungen lesen","konv_badge":"Alltag & Leben","konv_headline":"Konversationstraining: Dein Upgrade für das echte Leben","konv_subline":"Schluss mit der Sprachblockade. Fang an zu leben.","konv_intro":"Du kennst die Grammatikregeln, aber dein Kopf wird leer, sobald dich jemand auf der Straße anspricht? Das ist völlig normal.","konv_approach_head":"Mein Ansatz: Real Life Communication","konv_approach_text":"Vergiss veraltete Dialoge aus dem Lehrbuch. Wir trainieren für die Momente, die wirklich zählen.","konv_list_1":"<strong>80% Redeanteil für dich:</strong> Sprache ist ein Muskel. Bei mir bist du die Hauptperson.","konv_list_2":"<strong>Der „Kultur-Code“:</strong> Ich bringe dir nicht nur Vokabeln bei, sondern das „Wie“. Warum sind Deutsche so direkt?","konv_list_3":"<strong>Storytelling:</strong> Wir üben, wie du Erlebnisse spannend erzählst.","konv_list_4":"<strong>Fehler sind deine Freunde:</strong> Wir korrigieren sanft und gezielt.","btn_prices_booking":"Preise & Buchung","biz_badge":"Für Fachkräfte","biz_headline":"Deutsch für Ingenieure & Techniker","biz_subtext":"Ich spreche deine Sprache. Von der Fertigung bis zum Test-Engineering.","biz_intro_sub":"Kein Schuldeutsch. Sondern Deutsch für den Job.","biz_intro_head":"Vom Schichtbetrieb in den Unterricht","biz_intro_text":"<p>Viele Deutschlehrer kennen die Technik nur aus Büchern. Ich komme aus der Praxis.</p><p>Ich war 10 Jahre in der Industrie – mit Schichtarbeit, Zeitdruck, Störungen.</p><p><strong>Genau das trainieren wir:</strong> Deutsch, das du im Betrieb jeden Tag brauchst.</p>","biz_whyme_head":"Warum mit mir","biz_point_1_head":"10 Jahre Industrie-Erfahrung","biz_point_1_text":"Ich kenne die Situationen in Produktion und Instandhaltung.","biz_point_2_head":"Staatlich geprüfter Techniker","biz_point_2_text":"Ich verstehe Schaltpläne und Technik.","biz_point_3_head":"Qualität & Prozesse","biz_point_3_text":"Wir üben Deutsch für Fehler, Rückfragen und Berichte.","biz_box_head":"Das Training","biz_box_1_head":"1) Technische Kommunikation","biz_box_1_text":"Prozesse erklären, Fehler beschreiben, Maßnahmen erklären.","biz_box_2_head":"2) Meetings & Abstimmung","biz_box_2_text":"Nachfragen, kurz zusammenfassen, höflich widersprechen.","biz_box_3_head":"3) Bewerbung & Präsentation","biz_box_3_text":"Vorstellungsgespräche für technische Jobs üben.","biz_btn_prices":"Termine & Preise ansehen","price_badge":"Investiere in dich","price_headline":"Pakete & Termine","price_subtext":"Transparente Preise. Keine versteckten Kosten. Buche deinen Termin direkt.","cal_headline":"Bereit loszulegen?","cal_text":"Wähle deinen passenden Termin direkt im Kalender aus. Ich freue mich auf dich!","cal_note":"Klick auf den Button, um den Kalender zu öffnen.","price_card1_title":"Probeunterricht","price_card1_desc":"Kurzes Kennenlernen, klare Zielsetzung – und direkt ins Sprechen kommen.","price_card1_price":"€20 <span class=\"text-base font-normal text-gray-500\">/ 20 Min</span>","price_card1_list":"<li>Erstes Kennenlernen</li><li>Zielsetzung</li><li>Spaß</li><li>Ab A2+</li>","price_card2_badge":"BESTSELLER","price_card2_title":"Individuell","price_card2_desc":"Direkte Korrektur, Material & Lernplan – damit du spürbar sicherer wirst.","price_card2_price":"€40 <span class=\"text-base font-normal text-gray-400\">/ 45 Min</span>","price_card2_subprice":"Ab 8× pro Monat: <strong>€37</strong> / 45 Min","price_card2_list":"<li>Direkte Korrektur</li><li>Hausaufgaben</li><li>Lernmaterial</li><li>Persönlicher Plan</li>","price_card3_title":"Bewerbung","price_card3_desc":"Unterlagen optimieren, Interview üben und professionell auftreten.","price_card3_price":"€45 <span class=\"text-base font-normal text-gray-500\">/ 45 Min</span>","price_card3_list":"<li>Lebenslauf-Check</li><li>Anschreiben-Check</li><li>Interviewtraining</li><li>Ab B1+</li>","about_headline":"Vom Maschinenbau zum Sprachlehrer","about_text_html":"<p>Hi, ich bin Jonas. Aktuell lebe ich aus dem Koffer und reise durch <strong>Lateinamerika</strong>.</p><p>Ich weiß genau, wie es sich anfühlt, in einem fremden Land zu sein und die Sprache noch nicht perfekt zu beherrschen.</p><p>Ich bin kein klassischer Lehrer, der nur Theorie kennt. Ich bin ein Praktiker.</p>","about_grid1_head":"Digital Nomad","about_grid1_text":"Ich unterrichte remote und bringe internationale Perspektiven mit.","about_grid2_head":"Resilienz","about_grid2_text":"Durch Reisen und Pilgern habe ich gelernt, auch bei Schwierigkeiten dranzubleiben.","about_grid3_head":"Empathie","about_grid3_text":"Geduld ist meine Stärke. Ich schaffe einen sicheren Raum für dich.","contact_headline":"Kontakt aufnehmen","contact_text":"Hast du Fragen vor der Buchung? Schreib mir einfach.","contact_email":"info@deutschmitjonas.de","contact_direct_sub":"Direkt buchen?","contact_direct_text":"Nutze den Google Kalender im \"Preise\"-Bereich.","contact_direct_btn":"Zum Buchungskalender","contact_member_sub":"Schon Schüler?","contact_member_btn":"Zum Dashboard","form_headline":"Nachricht schreiben","form_label_name":"Name","form_label_email":"Email","form_label_interest":"Interesse","form_opt_general":"Allgemeine Frage","form_opt_konv":"Konversationstraining","form_opt_business":"Business / Technisches Deutsch","form_label_msg":"Nachricht","form_btn_send":"Absenden","footer_copy":"© 2026 Deutsch mit Jonas. Alle Rechte vorbehalten.","footer_impressum":"Impressum","footer_privacy":"Datenschutz"},"EN":{"meta_title":"German with Jonas - Technical German & Conversation","btn_login":"Student Login","topbar_text":"Technical German & Conversation","nav_brand":"German with Jonas","nav_home":"Home","nav_konv":"Conversation","nav_business":"Business & Tech","nav_prices":"Prices","nav_about":"About Jonas","nav_dashboard":"Dashboard","nav_contact":"Contact","hero_badge":"Verified Tutor","hero_rating":4.8,"hero_line1":"Learn German with","hero_highlight":"technical understanding","hero_line2":"and heart.","hero_subtext":"I help engineers, technicians, and specialists to appear confident in the German job market. Approachable, individual, and with 10 years of industry experience.","btn_hero_1":"Book Appointment","btn_hero_2":"For Technicians","video_headline":"A quick introduction: Who I am","youtube_id":"fHV_RicUkXo","video_subtext":"Click play for a personal impression","teaser_headline":"How can I support you?","teaser_card1_title":"Conversation Training","teaser_card1_text":"Speak fluently, lose fear, and master small talk. For everyday life and living.","teaser_card1_link":"Learn more","teaser_card2_title":"Business & Tech","teaser_card2_text":"Specialized for engineers. PCBs, processes, meetings, and technical documentation.","teaser_card2_link":"To my specialty","testi_headline":"What my students say","testi_subtext":"From over 24 verified reviews on Preply.","review_1_text":"Thanks to his support, I found a job where I have to speak German – I wouldn't have thought that possible before.","review_1_name":"Wiktoria","review_1_date":"2025-07-01T05:00:00.000Z","review_1_initial":"W","review_2_text":"Jonas tries to let you speak as much as possible, which makes learning the language easier.","review_2_name":"Christian","review_2_date":"2025-10-01T05:00:00.000Z","review_2_initial":"C","review_3_text":"Perfectly tailored to my needs. The fact that he speaks several languages was very useful.","review_3_name":"Öykü","review_3_date":"2025-09-01T05:00:00.000Z","review_3_initial":"Ö","testi_link_text":"Read all reviews","konv_badge":"Everyday Life","konv_headline":"Conversation Training: Your Upgrade for Real Life","konv_subline":"End the language blockade. Start living.","konv_intro":"You know the grammar rules, but your mind goes blank as soon as someone speaks to you on the street? That is completely normal.","konv_approach_head":"My Approach: Real Life Communication","konv_approach_text":"Forget outdated dialogues from textbooks. We train for the moments that really count.","konv_list_1":"<strong>80% Speaking time for you:</strong> Language is a muscle. With me, you are the main character.","konv_list_2":"<strong>The \"Culture Code\":</strong> I don't just teach vocabulary, but the \"How\". Why are Germans so direct?","konv_list_3":"<strong>Storytelling:</strong> We practice how to tell experiences excitedly.","konv_list_4":"<strong>Mistakes are your friends:</strong> We correct gently and specifically.","btn_prices_booking":"Prices & Booking","biz_badge":"For Specialists","biz_headline":"German for Engineers & Technicians","biz_subtext":"I speak your language. From manufacturing to test engineering.","biz_intro_sub":"Not school German. But German for the job.","biz_intro_head":"From shift work to teaching","biz_intro_text":"<p>Many German teachers only know technology from books. I come from practice.</p><p>I spent 10 years in the industry – with shift work, time pressure, malfunctions.</p><p><strong>This is exactly what we train:</strong> German that you need every day in operations.</p>","biz_whyme_head":"Why with me","biz_point_1_head":"10 years industry experience","biz_point_1_text":"I know the situations in production and maintenance.","biz_point_2_head":"State-certified Technician","biz_point_2_text":"I understand circuit diagrams and technology.","biz_point_3_head":"Quality & Processes","biz_point_3_text":"We practice German for errors, queries, and reports.","biz_box_head":"The Training","biz_box_1_head":"1) Technical Communication","biz_box_1_text":"Explaining processes, describing errors, explaining measures.","biz_box_2_head":"2) Meetings & Coordination","biz_box_2_text":"Asking questions, summarizing briefly, disagreeing politely.","biz_box_3_head":"3) Application & Presentation","biz_box_3_text":"Practicing interviews for technical jobs.","biz_btn_prices":"View Dates & Prices","price_badge":"Invest in yourself","price_headline":"Packages & Dates","price_subtext":"Transparent prices. No hidden costs. Book your appointment directly.","cal_headline":"Ready to start?","cal_text":"Choose your suitable appointment directly in the calendar. I look forward to seeing you!","cal_note":"Click the button to open the calendar.","price_card1_title":"Trial Lesson","price_card1_desc":"Short introduction, clear goal setting – and get straight into speaking.","price_card1_price":"€20 <span class=\"text-base font-normal text-gray-500\">/ 20 Min</span>","price_card1_list":"<li>First meeting</li><li>Goal setting</li><li>Fun</li><li>From A2+</li>","price_card2_badge":"BESTSELLER","price_card2_title":"Individual","price_card2_desc":"Direct correction, material & study plan – so you become noticeably more confident.","price_card2_price":"€40 <span class=\"text-base font-normal text-gray-400\">/ 45 Min</span>","price_card2_subprice":"From 8× per month: <strong>€37</strong> / 45 Min","price_card2_list":"<li>Direct correction</li><li>Homework</li><li>Learning material</li><li>Personal plan</li>","price_card3_title":"Application","price_card3_desc":"Optimize documents, practice interview, and appear professional.","price_card3_price":"€45 <span class=\"text-base font-normal text-gray-500\">/ 45 Min</span>","price_card3_list":"<li>CV Check</li><li>Cover Letter Check</li><li>Interview Training</li><li>From B1+</li>","about_headline":"From Mechanical Engineering to Language Teacher","about_text_html":"<p>Hi, I am Jonas. Currently, I am living out of a suitcase and traveling through <strong>Latin America</strong>.</p><p>I know exactly how it feels to be in a foreign country and not yet master the language perfectly.</p><p>I am not a classic teacher who only knows theory. I am a practitioner.</p>","about_grid1_head":"Digital Nomad","about_grid1_text":"I teach remotely and bring international perspectives.","about_grid2_head":"Resilience","about_grid2_text":"Through traveling and pilgrimage, I learned to stick with it even in difficulties.","about_grid3_head":"Empathy","about_grid3_text":"Patience is my strength. I create a safe space for you.","contact_headline":"Get in touch","contact_text":"Do you have questions before booking? Just write to me.","contact_email":"info@deutschmitjonas.de","contact_direct_sub":"Book directly?","contact_direct_text":"Use the Google Calendar in the \"Prices\" section.","contact_direct_btn":"To Booking Calendar","contact_member_sub":"Already a student?","contact_member_btn":"To Dashboard","form_headline":"Write a message","form_label_name":"Name","form_label_email":"Email","form_label_interest":"Interest","form_opt_general":"General Question","form_opt_konv":"Conversation Training","form_opt_business":"Business / Technical German","form_label_msg":"Message","form_btn_send":"Send","footer_copy":"© 2026 Deutsch mit Jonas. All rights reserved.","footer_impressum":"Imprint","footer_privacy":"Privacy"},"ES":{"meta_title":"Alemán con Jonas - Alemán técnico y conversación","btn_login":"Inicio de sesión de estudiantes","topbar_text":"Alemán técnico y conversación","nav_brand":"Alemán con Jonas","nav_home":"comenzar","nav_konv":"conversación","nav_business":"Negocios y tecnología","nav_prices":"Precios","nav_about":"Acerca de Jonas","nav_dashboard":"Panel","nav_contact":"contacto","hero_badge":"Tutor verificado","hero_rating":"4.8","hero_line1":"Aprende alemán con","hero_highlight":"comprensión técnica","hero_line2":"y corazón.","hero_subtext":"Ayudo a ingenieros, técnicos y trabajadores cualificados a desenvolverse con confianza en el mercado laboral alemán. Soy accesible, me adapto a mis necesidades y tengo 10 años de experiencia en el sector.","btn_hero_1":"Reservar una cita","btn_hero_2":"Para técnicos","video_headline":"Breve introducción: Quién soy","youtube_id":"fHV_RicUkXo","video_subtext":"Haga clic en Reproducir para obtener una impresión personal.","teaser_headline":"¿Le puedo ayudar en algo?","teaser_card1_title":"Entrenamiento de conversación","teaser_card1_text":"Habla con fluidez, supera la ansiedad y domina la conversación informal. Para la vida diaria.","teaser_card1_link":"Más información","teaser_card2_title":"Negocios y tecnología","teaser_card2_text":"Especializado en ingenieros. PCBs, procesos, reuniones y documentación técnica.","teaser_card2_link":"Mi área de especialización","testi_headline":"Lo que dicen mis alumnos","testi_subtext":"Basado en más de 24 reseñas verificadas en Preply.","review_1_text":"Gracias a su apoyo también encontré un trabajo en el que tengo que hablar alemán, algo que antes no habría creído posible.","review_1_name":"Victoria","review_1_date":"Julio de 2025","review_1_initial":"O","review_2_text":"Jonas intenta que hables lo máximo posible, lo que hace que aprender el idioma sea más fácil.","review_2_name":"cristiano","review_2_date":"Octubre de 2025","review_2_initial":"do","review_3_text":"Se adaptó perfectamente a mis necesidades. El hecho de que hablara varios idiomas fue muy útil.","review_3_name":"Öykü","review_3_date":"Septiembre de 2025","review_3_initial":"O","testi_link_text":"Leer todas las reseñas","konv_badge":"Vida cotidiana y vida","konv_headline":"Entrenamiento de conversación: tu actualización para la vida real","konv_subline":"Deja de estar bloqueado. Empieza a vivir.","konv_intro":"¿Conoces las reglas gramaticales, pero te quedas en blanco en cuanto alguien te habla en la calle? Es perfectamente normal.","konv_approach_head":"Mi enfoque: Comunicación en la vida real","konv_approach_text":"Olvídate de los diálogos obsoletos de los libros de texto. Nos preparamos para los momentos que realmente importan.","konv_list_1":"El 80% del tiempo de conversación es para ti: el lenguaje es un músculo. Para mí, tú eres el protagonista.","konv_list_2":"El \"código cultural\": No solo te enseño vocabulario, sino también el \"cómo\". ¿Por qué son tan directos los alemanes?","konv_list_3":"Narración de historias: practicamos cómo contar historias emocionantes sobre tus experiencias.","konv_list_4":"Los errores son tus amigos: los corregimos con delicadeza y precisión.","btn_prices_booking":"Precios y reservas","biz_badge":"Para profesionales","biz_headline":"Alemán para ingenieros y técnicos","biz_subtext":"Hablo tu idioma. Desde la fabricación hasta la ingeniería de pruebas.","biz_intro_sub":"No alemán escolar. Sino alemán para el trabajo.","biz_intro_head":"Del trabajo por turnos a la docencia","biz_intro_text":"Muchos profesores de alemán solo conocen la técnica por los libros. Yo vengo de la experiencia práctica. Pasé 10 años en la industria, con trabajo por turnos, presión del tiempo e interrupciones. Eso es exactamente lo que enseñamos: el alemán que necesitas a diario en el trabajo.","biz_whyme_head":"¿Por qué conmigo?","biz_point_1_head":"10 años de experiencia en la industria","biz_point_1_text":"Estoy familiarizado con las situaciones de producción y mantenimiento.","biz_point_2_head":"Técnico certificado por el estado","biz_point_2_text":"Entiendo los diagramas de circuitos y la tecnología.","biz_point_3_head":"Calidad y Procesos","biz_point_3_text":"Practicamos alemán para errores, preguntas e informes.","biz_box_head":"El entrenamiento","biz_box_1_head":"1) Comunicación técnica","biz_box_1_text":"Explicar procesos, describir errores, explicar medidas.","biz_box_2_head":"2) Reuniones y coordinación","biz_box_2_text":"Haga preguntas, resuma brevemente y discrepe cortésmente.","biz_box_3_head":"3) Aplicación y presentación","biz_box_3_text":"Practica entrevistas de trabajo para trabajos técnicos.","biz_btn_prices":"Ver fechas y precios","price_badge":"Invierte en ti mismo","price_headline":"Paquetes y fechas","price_subtext":"Precios transparentes. Sin costes ocultos. Reserva tu cita directamente.","cal_headline":"¿Listo para comenzar?","cal_text":"Elige tu fecha preferida directamente desde el calendario. ¡Te espero!","cal_note":"Haga clic en el botón para abrir el calendario.","price_card1_title":"Lección de prueba","price_card1_desc":"Una breve introducción, un objetivo claro y luego directamente a la conversación.","price_card1_price":"20 € <span class=\"text-base font-normal text-gray-500\">/ 20 min</span>","price_card1_list":"<li>Primera introducción</li><li>Objetivo</li><li>Diversión</li><li>Desde A2+</li>","price_card2_badge":"MEJOR VENDIDO","price_card2_title":"Individualmente","price_card2_desc":"Retroalimentación directa, materiales y plan de aprendizaje: para que usted pueda ganar notablemente más confianza.","price_card2_price":"40 € <span class=\"text-base font-normal text-gray-400\">/ 45 min</span>","price_card2_subprice":"A partir de 8 veces al mes: 37€ / 45 min","price_card2_list":"<li>Corrección directa</li><li>Tarea</li><li>Materiales de aprendizaje</li><li>Plan personal</li>","price_card3_title":"Solicitud","price_card3_desc":"Optimice documentos, practique entrevistas y preséntese profesionalmente.","price_card3_price":"45 € <span class=\"text-base font-normal text-gray-500\">/ 45 min</span>","price_card3_list":"<li>Comprobación de CV</li><li>Comprobación de carta de presentación</li><li>Formación para entrevistas</li><li>A partir de B1+</li>","about_headline":"De ingeniero mecánico a profesor de idiomas","about_text_html":"Hola, soy Jonas. Actualmente estoy viviendo con una maleta y viajando por Latinoamérica. Sé exactamente lo que se siente estar en un país extranjero y aún no dominar el idioma. No soy el típico profesor que solo sabe teoría. Soy una persona práctica.","about_grid1_head":"Nómada digital","about_grid1_text":"Doy clases a distancia y aporto perspectivas internacionales.","about_grid2_head":"Resiliencia","about_grid2_text":"A través de viajes y peregrinaciones, he aprendido a perseverar incluso frente a las dificultades.","about_grid3_head":"empatía","about_grid3_text":"La paciencia es mi fuerza. Crearé un espacio seguro para ti.","contact_headline":"hacer contacto","contact_text":"¿Tienes alguna pregunta antes de reservar? Escríbeme.","contact_email":"info@deutschmitjonas.de","contact_direct_sub":"¿Reservar directamente?","contact_direct_text":"Utilice el Calendario de Google en la sección “Precios”.","contact_direct_btn":"Ir al calendario de reservas","contact_member_sub":"¿Ya eres estudiante?","contact_member_btn":"Ir al panel de control","form_headline":"Escribe un mensaje","form_label_name":"nombre","form_label_email":"Correo electrónico","form_label_interest":"interés","form_opt_general":"Pregunta general","form_opt_konv":"Entrenamiento de conversación","form_opt_business":"Alemán comercial/técnico","form_label_msg":"Noticias","form_btn_send":"Entregar","footer_copy":"© 2026 Deutsch con Jonas. Reservados todos los derechos.","footer_impressum":"imprimir","footer_privacy":"Protección de datos"}}; 
+        const translations = {"DE":{"meta_title":"Deutsch mit Jonas - Technisches Deutsch & Konversation","btn_login":"Schüler Login","topbar_text":"Technisches Deutsch & Konversation","nav_brand":"Deutsch mit Jonas","nav_home":"Start","nav_konv":"Konversation","nav_business":"Business & Technik","nav_prices":"Preise","nav_about":"Über Jonas","nav_dashboard":"Dashboard","nav_contact":"Kontakt","hero_badge":"Verifizierter Tutor","hero_rating":4.8,"hero_line1":"Deutsch lernen mit","hero_highlight":"technischem Verstand","hero_line2":"und Herz.","hero_subtext":"Ich helfe Ingenieuren, Technikern und Fachkräften, sicher im deutschen Jobmarkt aufzutreten. Nahbar, individuell und mit 10 Jahren Industrie-Erfahrung.","btn_hero_1":"Termin buchen","btn_hero_2":"Für Techniker","video_headline":"Kurz vorgestellt: Wer ich bin","youtube_id":"fHV_RicUkXo","video_subtext":"Klick auf Play für einen persönlichen Eindruck","teaser_headline":"Wobei kann ich dich unterstützen?","teaser_card1_title":"Konversationstraining","teaser_card1_text":"Flüssig sprechen, Angst verlieren und Smalltalk meistern. Für Alltag und Leben.","teaser_card1_link":"Mehr erfahren","teaser_card2_title":"Business & Technik","teaser_card2_text":"Spezialisiert auf Ingenieure. PCBs, Prozesse, Meetings und technische Dokumentation.","teaser_card2_link":"Zu meinem Spezialgebiet","testi_headline":"Was meine Schüler sagen","testi_subtext":"Aus über 24 verifizierten Bewertungen auf Preply.","review_1_text":"Dank seiner Unterstützung habe ich auch einen Job gefunden, bei dem ich Deutsch sprechen muss – das hätte ich vorher nicht für möglich gehalten.","review_1_name":"Wiktoria","review_1_date":"Juli 2025","review_1_initial":"W","review_2_text":"Jonas versucht, dich so viel wie möglich sprechen zu lassen, was das Lernen der Sprache einfacher macht.","review_2_name":"Christian","review_2_date":"Oktober 2025","review_2_initial":"C","review_3_text":"Perfekt auf meine Bedürfnisse abgestimmt. Die Tatsache, dass er mehrere Sprachen spricht, war sehr nützlich.","review_3_name":"Öykü","review_3_date":"2025-09-01T05:00:00.000Z","review_3_initial":"Ö","testi_link_text":"Alle Bewertungen lesen","konv_badge":"Alltag & Leben","konv_headline":"Konversationstraining: Dein Upgrade für das echte Leben","konv_subline":"Schluss mit der Sprachblockade. Fang an zu leben.","konv_intro":"Du kennst die Grammatikregeln, aber dein Kopf wird leer, sobald dich jemand auf der Straße anspricht? Das ist völlig normal.","konv_approach_head":"Mein Ansatz: Real Life Communication","konv_approach_text":"Vergiss veraltete Dialoge aus dem Lehrbuch. Wir trainieren für die Momente, die wirklich zählen.","konv_list_1":"<strong>80% Redeanteil für dich:</strong> Sprache ist ein Muskel. Bei mir bist du die Hauptperson.","konv_list_2":"<strong>Der „Kultur-Code“:</strong> Ich bringe dir nicht nur Vokabeln bei, sondern das „Wie“. Warum sind Deutsche so direkt?","konv_list_3":"<strong>Storytelling:</strong> Wir üben, wie du Erlebnisse spannend erzählst.","konv_list_4":"<strong>Fehler sind deine Freunde:</strong> Wir korrigieren sanft und gezielt.","btn_prices_booking":"Preise & Buchung","biz_badge":"Für Fachkräfte","biz_headline":"Deutsch für Ingenieure & Techniker","biz_subtext":"Ich spreche deine Sprache. Von der Fertigung bis zum Test-Engineering.","biz_intro_sub":"Kein Schuldeutsch. Sondern Deutsch für den Job.","biz_intro_head":"Vom Schichtbetrieb in den Unterricht","biz_intro_text":"<p>Viele Deutschlehrer kennen die Technik nur aus Büchern. Ich komme aus der Praxis.</p><p>Ich war 10 Jahre in der Industrie – mit Schichtarbeit, Zeitdruck, Störungen.</p><p><strong>Genau das trainieren wir:</strong> Deutsch, das du im Betrieb jeden Tag brauchst.</p>","biz_whyme_head":"Warum mit mir","biz_point_1_head":"10 Jahre Industrie-Erfahrung","biz_point_1_text":"Ich kenne die Situationen in Produktion und Instandhaltung.","biz_point_2_head":"Staatlich geprüfter Techniker","biz_point_2_text":"Ich verstehe Schaltpläne und Technik.","biz_point_3_head":"Qualität & Prozesse","biz_point_3_text":"Wir üben Deutsch für Fehler, Rückfragen und Berichte.","biz_box_head":"Das Training","biz_box_1_head":"1) Technische Kommunikation","biz_box_1_text":"Prozesse erklären, Fehler beschreiben, Maßnahmen erklären.","biz_box_2_head":"2) Meetings & Abstimmung","biz_box_2_text":"Nachfragen, kurz zusammenfassen, höflich widersprechen.","biz_box_3_head":"3) Bewerbung & Präsentation","biz_box_3_text":"Vorstellungsgespräche für technische Jobs üben.","biz_btn_prices":"Termine & Preise ansehen","price_badge":"Investiere in dich","price_headline":"Pakete & Termine","price_subtext":"Transparente Preise. Keine versteckten Kosten. Buche deinen Termin direkt.","cal_headline":"Bereit loszulegen?","cal_text":"Wähle deinen passenden Termin direkt im Kalender aus. Ich freue mich auf dich!","cal_note":"Klick auf den Button, um den Kalender zu öffnen.","price_card1_title":"Probeunterricht","price_card1_desc":"Kurzes Kennenlernen, klare Zielsetzung – und direkt ins Sprechen kommen.","price_card1_price":"€20 <span class=\"text-base font-normal text-gray-500\">/ 20 Min</span>","price_card1_list":"<li>Erstes Kennenlernen</li><li>Zielsetzung</li><li>Spaß</li><li>Ab A2+</li>","price_card2_badge":"BESTSELLER","price_card2_title":"Individuell","price_card2_desc":"Direkte Korrektur, Material & Lernplan – damit du spürbar sicherer wirst.","price_card2_price":"€40 <span class=\"text-base font-normal text-gray-400\">/ 45 Min</span>","price_card2_subprice":"Ab 8× pro Monat: <strong>€37</strong> / 45 Min","price_card2_list":"<li>Direkte Korrektur</li><li>Hausaufgaben</li><li>Lernmaterial</li><li>Persönlicher Plan</li>","price_card3_title":"Bewerbung","price_card3_desc":"Unterlagen optimieren, Interview üben und professionell auftreten.","price_card3_price":"€45 <span class=\"text-base font-normal text-gray-500\">/ 45 Min</span>","price_card3_list":"<li>Lebenslauf-Check</li><li>Anschreiben-Check</li><li>Interviewtraining</li><li>Ab B1+</li>","about_headline":"Vom Maschinenbau zum Sprachlehrer","about_text_html":"<p>Hi, ich bin Jonas. Aktuell lebe ich aus dem Koffer und reise durch <strong>Lateinamerika</strong>.</p><p>Ich weiß genau, wie es sich anfühlt, in einem fremden Land zu sein und die Sprache noch nicht perfekt zu beherrschen.</p><p>Ich bin kein klassischer Lehrer, der nur Theorie kennt. Ich bin ein Praktiker.</p>","about_grid1_head":"Digital Nomad","about_grid1_text":"Ich unterrichte remote und bringe internationale Perspektiven mit.","about_grid2_head":"Resilienz","about_grid2_text":"Durch Reisen und Pilgern habe ich gelernt, auch bei Schwierigkeiten dranzubleiben.","about_grid3_head":"Empathie","about_grid3_text":"Geduld ist meine Stärke. Ich schaffe einen sicheren Raum für dich.","contact_headline":"Kontakt aufnehmen","contact_text":"Hast du Fragen vor der Buchung? Schreib mir einfach.","contact_email":"info@deutschmitjonas.de","contact_direct_sub":"Direkt buchen?","contact_direct_text":"Nutze den Google Kalender im \"Preise\"-Bereich.","contact_direct_btn":"Zum Buchungskalender","contact_member_sub":"Schon Schüler?","contact_member_btn":"Zum Dashboard","form_headline":"Nachricht schreiben","form_label_name":"Name","form_label_email":"Email","form_label_interest":"Interesse","form_opt_general":"Allgemeine Frage","form_opt_konv":"Konversationstraining","form_opt_business":"Business / Technisches Deutsch","form_label_msg":"Nachricht","form_btn_send":"Absenden","footer_copy":"© 2026 Deutsch mit Jonas. Alle Rechte vorbehalten.","footer_impressum":"Impressum","footer_privacy":"Datenschutz"},"EN":{"meta_title":"German with Jonas - Technical German & Conversation","btn_login":"Student Login","topbar_text":"Technical German & Conversation","nav_brand":"German with Jonas","nav_home":"Home","nav_konv":"Conversation","nav_business":"Business & Tech","nav_prices":"Prices","nav_about":"About Jonas","nav_dashboard":"Dashboard","nav_contact":"Contact","hero_badge":"Verified Tutor","hero_rating":4.8,"hero_line1":"Learn German with","hero_highlight":"technical understanding","hero_line2":"and heart.","hero_subtext":"I help engineers, technicians, and specialists to appear confident in the German job market. Approachable, individual, and with 10 years of industry experience.","btn_hero_1":"Book Appointment","btn_hero_2":"For Technicians","video_headline":"A quick introduction: Who I am","youtube_id":"fHV_RicUkXo","video_subtext":"Click play for a personal impression","teaser_headline":"How can I support you?","teaser_card1_title":"Conversation Training","teaser_card1_text":"Speak fluently, lose fear, and master small talk. For everyday life and living.","teaser_card1_link":"Learn more","teaser_card2_title":"Business & Tech","teaser_card2_text":"Specialized for engineers. PCBs, processes, meetings, and technical documentation.","teaser_card2_link":"To my specialty","testi_headline":"What my students say","testi_subtext":"From over 24 verified reviews on Preply.","review_1_text":"Thanks to his support, I found a job where I have to speak German – I wouldn't have thought that possible before.","review_1_name":"Wiktoria","review_1_date":"2025-07-01T05:00:00.000Z","review_1_initial":"W","review_2_text":"Jonas tries to let you speak as much as possible, which makes learning the language easier.","review_2_name":"Christian","review_2_date":"2025-10-01T05:00:00.000Z","review_2_initial":"C","review_3_text":"Perfectly tailored to my needs. The fact that he speaks several languages was very useful.","review_3_name":"Öykü","review_3_date":"2025-09-01T05:00:00.000Z","review_3_initial":"Ö","testi_link_text":"Read all reviews","konv_badge":"Everyday Life","konv_headline":"Conversation Training: Your Upgrade for Real Life","konv_subline":"End the language blockade. Start living.","konv_intro":"You know the grammar rules, but your mind goes blank as soon as someone speaks to you on the street? That is completely normal.","konv_approach_head":"My Approach: Real Life Communication","konv_approach_text":"Forget outdated dialogues from textbooks. We train for the moments that really count.","konv_list_1":"<strong>80% Speaking time for you:</strong> Language is a muscle. With me, you are the main character.","konv_list_2":"<strong>The \"Culture Code\":</strong> I don't just teach vocabulary, but the \"How\". Why are Germans so direct?","konv_list_3":"<strong>Storytelling:</strong> We practice how to tell experiences excitedly.","konv_list_4":"<strong>Mistakes are your friends:</strong> We correct gently and specifically.","btn_prices_booking":"Prices & Booking","biz_badge":"For Specialists","biz_headline":"German for Engineers & Technicians","biz_subtext":"I speak your language. From manufacturing to test engineering.","biz_intro_sub":"Not school German. But German for the job.","biz_intro_head":"From shift work to teaching","biz_intro_text":"<p>Many German teachers only know technology from books. I come from practice.</p><p>I spent 10 years in the industry – with shift work, time pressure, malfunctions.</p><p><strong>This is exactly what we train:</strong> German that you need every day in operations.</p>","biz_whyme_head":"Why with me","biz_point_1_head":"10 years industry experience","biz_point_1_text":"I know the situations in production and maintenance.","biz_point_2_head":"State-certified Technician","biz_point_2_text":"I understand circuit diagrams and technology.","biz_point_3_head":"Quality & Processes","biz_point_3_text":"We practice German for errors, queries, and reports.","biz_box_head":"The Training","biz_box_1_head":"1) Technical Communication","biz_box_1_text":"Explaining processes, describing errors, explaining measures.","biz_box_2_head":"2) Meetings & Coordination","biz_box_2_text":"Asking questions, summarizing briefly, disagreeing politely.","biz_box_3_head":"3) Application & Presentation","biz_box_3_text":"Practicing interviews for technical jobs.","biz_btn_prices":"View Dates & Prices","price_badge":"Invest in yourself","price_headline":"Packages & Dates","price_subtext":"Transparent prices. No hidden costs. Book your appointment directly.","cal_headline":"Ready to start?","cal_text":"Choose your suitable appointment directly in the calendar. I look forward to seeing you!","cal_note":"Click the button to open the calendar.","price_card1_title":"Trial Lesson","price_card1_desc":"Short introduction, clear goal setting – and get straight into speaking.","price_card1_price":"€20 <span class=\"text-base font-normal text-gray-500\">/ 20 Min</span>","price_card1_list":"<li>First meeting</li><li>Goal setting</li><li>Fun</li><li>From A2+</li>","price_card2_badge":"BESTSELLER","price_card2_title":"Individual","price_card2_desc":"Direct correction, material & study plan – so you become noticeably more confident.","price_card2_price":"€40 <span class=\"text-base font-normal text-gray-400\">/ 45 Min</span>","price_card2_subprice":"From 8× per month: <strong>€37</strong> / 45 Min","price_card2_list":"<li>Direct correction</li><li>Homework</li><li>Learning material</li><li>Personal plan</li>","price_card3_title":"Application","price_card3_desc":"Optimize documents, practice interview, and appear professional.","price_card3_price":"€45 <span class=\"text-base font-normal text-gray-500\">/ 45 Min</span>","price_card3_list":"<li>CV Check</li><li>Cover Letter Check</li><li>Interview Training</li><li>From B1+</li>","about_headline":"From Mechanical Engineering to Language Teacher","about_text_html":"<p>Hi, I am Jonas. Currently, I am living out of a suitcase and traveling through <strong>Latin America</strong>.</p><p>I know exactly how it feels to be in a foreign country and not yet master the language perfectly.</p><p>I am not a classic teacher who only knows theory. I am a practitioner.</p>","about_grid1_head":"Digital Nomad","about_grid1_text":"I teach remotely and bring international perspectives.","about_grid2_head":"Resilience","about_grid2_text":"Through traveling and pilgrimage, I learned to stick with it even in difficulties.","about_grid3_head":"Empathy","about_grid3_text":"Patience is my strength. I create a safe space for you.","contact_headline":"Get in touch","contact_text":"Do you have questions before booking? Just write to me.","contact_email":"info@deutschmitjonas.de","contact_direct_sub":"Book directly?","contact_direct_text":"Use the Google Calendar in the \"Prices\" section.","contact_direct_btn":"To Booking Calendar","contact_member_sub":"Already a student?","contact_member_btn":"To Dashboard","form_headline":"Write a message","form_label_name":"Name","form_label_email":"Email","form_label_interest":"Interest","form_opt_general":"General Question","form_opt_konv":"Conversation Training","form_opt_business":"Business / Technical German","form_label_msg":"Message","form_btn_send":"Send","footer_copy":"© 2026 Deutsch mit Jonas. All rights reserved.","footer_impressum":"Imprint","footer_privacy":"Privacy"},"ES":{"meta_title":"Alemán con Jonas - Alemán técnico y conversación","btn_login":"Inicio de sesión de estudiantes","topbar_text":"Alemán técnico y conversación","nav_brand":"Alemán con Jonas","nav_home":"comenzar","nav_konv":"conversación","nav_business":"Negocios y tecnología","nav_prices":"Precios","nav_about":"Acerca de Jonas","nav_dashboard":"Panel","nav_contact":"contacto","hero_badge":"Tutor verificado","hero_rating":"4.8","hero_line1":"Aprende alemán con","hero_highlight":"comprensión técnica","hero_line2":"y corazón.","hero_subtext":"Ayudo a ingenieros, técnicos y trabajadores cualificados a desenvolverse con confianza en el mercado laboral alemán. Soy accesible, me adapto a mis necesidades y tengo 10 años de experiencia en el sector.","btn_hero_1":"Reservar una cita","btn_hero_2":"Para técnicos","video_headline":"Breve introducción: Quién soy","youtube_id":"fHV_RicUkXo","video_subtext":"Haga clic en Reproducir para obtener una impresión personal.","teaser_headline":"¿Le puedo ayudar en algo?","teaser_card1_title":"Entrenamiento de conversación","teaser_card1_text":"Habla con fluidez, supera la ansiedad y domina la conversación informal. Para la vida diaria.","teaser_card1_link":"Más información","teaser_card2_title":"Negocios y tecnología","teaser_card2_text":"Especializado en ingenieros. PCBs, procesos, reuniones y documentación técnica.","teaser_card2_link":"Mi área de especialización","testi_headline":"Lo que dicen mis alumnos","testi_subtext":"Basado en más de 24 reseñas verificadas en Preply.","review_1_text":"Gracias a su apoyo también encontré un trabajo en el que tengo que hablar alemán, algo que antes no habría creído posible.","review_1_name":"Victoria","review_1_date":"Julio de 2025","review_1_initial":"W","review_2_text":"Jonas intenta que hables lo máximo posible, lo que hace que aprender el idioma sea más fácil.","review_2_name":"cristiano","review_2_date":"Octubre de 2025","review_2_initial":"C","review_3_text":"Se adaptó perfectamente a mis necesidades. El hecho de que hablara varios idiomas fue muy útil.","review_3_name":"Öykü","review_3_date":"Septiembre de 2025","review_3_initial":"Ö","testi_link_text":"Leer todas las reseñas","konv_badge":"Vida cotidiana y vida","konv_headline":"Entrenamiento de conversación: tu actualización para la vida real","konv_subline":"Deja de estar bloqueado. Empieza a vivir.","konv_intro":"¿Conoces las reglas gramaticales, pero te quedas en blanco en cuanto alguien te habla en la calle? Es perfectamente normal.","konv_approach_head":"Mi enfoque: Comunicación en la vida real","konv_approach_text":"Olvídate de los diálogos obsoletos de los libros de texto. Nos preparamos para los momentos que realmente importan.","konv_list_1":"El 80% del tiempo de conversación es para ti: el lenguaje es un músculo. Para mí, tú eres el protagonista.","konv_list_2":"El \"código cultural\": No solo te enseño vocabulario, sino también el \"cómo\". ¿Por qué son tan directos los alemanes?","konv_list_3":"Narración de historias: practicamos cómo contar historias emocionantes sobre tus experiencias.","konv_list_4":"Los errores son tus amigos: los corregimos con delicadeza y precisión.","btn_prices_booking":"Precios y reservas","biz_badge":"Para profesionales","biz_headline":"Alemán para ingenieros y técnicos","biz_subtext":"Hablo tu idioma. Desde la fabricación hasta la ingeniería de pruebas.","biz_intro_sub":"No alemán escolar. Sino alemán para el trabajo.","biz_intro_head":"Del trabajo por turnos a la docencia","biz_intro_text":"Muchos profesores de alemán solo conocen la técnica por los libros. Yo vengo de la experiencia práctica. Pasé 10 años en la industria, con trabajo por turnos, presión del tiempo e interrupciones. Eso es exactamente lo que enseñamos: el alemán que necesitas a diario en el trabajo.","biz_whyme_head":"¿Por qué conmigo?","biz_point_1_head":"10 años de experiencia en la industria","biz_point_1_text":"Estoy familiarizado con las situaciones de producción y mantenimiento.","biz_point_2_head":"Técnico certificado por el estado","biz_point_2_text":"Entiendo los diagramas de circuitos y la tecnología.","biz_point_3_head":"Calidad y Procesos","biz_point_3_text":"Practicamos alemán para errores, preguntas e informes.","biz_box_head":"El entrenamiento","biz_box_1_head":"1) Comunicación técnica","biz_box_1_text":"Explicar procesos, describir errores, explicar medidas.","biz_box_2_head":"2) Reuniones y coordinación","biz_box_2_text":"Haga preguntas, resuma brevemente y discrepe cortésmente.","biz_box_3_head":"3) Aplicación y presentación","biz_box_3_text":"Practica entrevistas de trabajo para trabajos técnicos.","biz_btn_prices":"Ver fechas y precios","price_badge":"Invierte en ti mismo","price_headline":"Paquetes y fechas","price_subtext":"Precios transparentes. Sin costes ocultos. Reserva tu cita directamente.","cal_headline":"¿Listo para comenzar?","cal_text":"Elige tu fecha preferida directamente desde el calendario. ¡Te espero!","cal_note":"Haga clic en el botón para abrir el calendario.","price_card1_title":"Lección de prueba","price_card1_desc":"Una breve introducción, un objetivo claro y luego directamente a la conversación.","price_card1_price":"20 € <span class=\"text-base font-normal text-gray-500\">/ 20 min</span>","price_card1_list":"<li>Primera introducción</li><li>Objetivo</li><li>Diversión</li><li>Desde A2+</li>","price_card2_badge":"MEJOR VENDIDO","price_card2_title":"Individualmente","price_card2_desc":"Retroalimentación directa, materiales y plan de aprendizaje: para que usted pueda ganar notablemente más confianza.","price_card2_price":"40 € <span class=\"text-base font-normal text-gray-400\">/ 45 min</span>","price_card2_subprice":"A partir de 8 veces al mes: 37€ / 45 min","price_card2_list":"<li>Corrección directa</li><li>Tarea</li><li>Materiales de aprendizaje</li><li>Plan personal</li>","price_card3_title":"Solicitud","price_card3_desc":"Optimice documentos, practique entrevistas y preséntese profesionalmente.","price_card3_price":"45 € <span class=\"text-base font-normal text-gray-500\">/ 45 min</span>","price_card3_list":"<li>Comprobación de CV</li><li>Comprobación de carta de presentación</li><li>Formación para entrevistas</li><li>A partir de B1+</li>","about_headline":"De ingeniero mecánico a profesor de idiomas","about_text_html":"Hola, soy Jonas. Actualmente estoy viviendo con una maleta y viajando por Latinoamérica. Sé exactamente lo que se siente estar en un país extranjero y aún no dominar el idioma. No soy el típico profesor que solo sabe teoría. Soy una persona práctica.","about_grid1_head":"Nómada digital","about_grid1_text":"Doy clases a distancia y aporto perspectivas internacionales.","about_grid2_head":"Resiliencia","about_grid2_text":"A través de viajes y peregrinaciones, he aprendido a perseverar incluso frente a las dificultades.","about_grid3_head":"empatía","about_grid3_text":"La paciencia es mi fuerza. Crearé un espacio seguro para ti.","contact_headline":"hacer contacto","contact_text":"¿Tienes alguna pregunta antes de reservar? Escríbeme.","contact_email":"info@deutschmitjonas.de","contact_direct_sub":"¿Reservar directamente?","contact_direct_text":"Utilice el Calendario de Google en la sección “Precios”.","contact_direct_btn":"Ir al calendario de reservas","contact_member_sub":"¿Ya eres estudiante?","contact_member_btn":"Ir al panel de control","form_headline":"Escribe un mensaje","form_label_name":"nombre","form_label_email":"Correo electrónico","form_label_interest":"interés","form_opt_general":"Pregunta general","form_opt_konv":"Entrenamiento de conversación","form_opt_business":"Alemán comercial/técnico","form_label_msg":"Noticias","form_btn_send":"Entregar","footer_copy":"© 2026 Deutsch con Jonas. Reservados todos los derechos.","footer_impressum":"imprimir","footer_privacy":"Protección de datos"}}; 
 
         
         function getFlag(lang) {
@@ -504,7 +603,15 @@
         }
 
         function toggleLangMenu() {
-            document.getElementById('lang-menu').classList.toggle('hidden');
+            const menu = document.getElementById('lang-menu');
+            if (menu.classList.contains('hidden')) {
+                menu.classList.remove('hidden');
+                setTimeout(() => { menu.classList.add('opacity-100', 'scale-100'); menu.classList.remove('opacity-0', 'scale-95'); }, 10);
+            } else {
+                menu.classList.add('opacity-0', 'scale-95');
+                menu.classList.remove('opacity-100', 'scale-100');
+                setTimeout(() => menu.classList.add('hidden'), 200);
+            }
         }
 
         
@@ -514,13 +621,16 @@
             menu.innerHTML = '';
             
             
+            menu.classList.add('transition-all', 'duration-200', 'ease-out', 'transform', 'opacity-0', 'scale-95');
+
+            
             const keys = Object.keys(translations);
             
             keys.forEach(lang => {
                 const btn = document.createElement('button');
-                btn.className = "w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-brand-yellow flex items-center gap-3 transition";
+                btn.className = "w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-brand-yellow flex items-center gap-3 transition border-b border-gray-50 last:border-0";
                 btn.onclick = () => { setLanguage(lang); toggleLangMenu(); };
-                btn.innerHTML = `<span class="text-lg">${getFlag(lang)}</span> <span class="font-bold">${lang}</span>`;
+                btn.innerHTML = `<span class="text-xl filter drop-shadow-sm">${getFlag(lang)}</span> <span class="font-bold text-xs tracking-wider">${lang}</span>`;
                 menu.appendChild(btn);
             });
         }
@@ -560,7 +670,7 @@
         function navigateTo(pageId) {
             document.querySelectorAll('main.page-section').forEach(p => { 
                 p.classList.remove('active'); 
-                setTimeout(() => { if (!p.classList.contains('active')) p.style.display = 'none'; }, 300); 
+                setTimeout(() => { if (!p.classList.contains('active')) p.style.display = 'none'; }, 400); 
             });
             const s = document.getElementById(pageId); 
             if (!s) return; 
@@ -576,14 +686,28 @@
         });
 
         document.getElementById('mobile-menu-btn').addEventListener('click', () => {
-            document.getElementById('mobile-menu').classList.toggle('hidden');
+            const menu = document.getElementById('mobile-menu');
+            if(menu.classList.contains('hidden')) {
+                menu.classList.remove('hidden');
+                
+                menu.style.opacity = '0';
+                menu.style.transform = 'translateY(-10px)';
+                setTimeout(() => {
+                     menu.style.transition = 'all 0.3s ease';
+                     menu.style.opacity = '1';
+                     menu.style.transform = 'translateY(0)';
+                }, 10);
+            } else {
+                menu.classList.add('hidden');
+            }
         });
 
         
         window.addEventListener('click', (e) => {
             const sel = document.getElementById('lang-selector');
-            if (sel && !sel.contains(e.target)) {
-                document.getElementById('lang-menu').classList.add('hidden');
+            const menu = document.getElementById('lang-menu');
+            if (sel && !sel.contains(e.target) && !menu.classList.contains('hidden')) {
+               toggleLangMenu();
             }
         });
 
@@ -593,7 +717,7 @@
 
         function handleFormSubmit(e) { 
             e.preventDefault(); 
-            document.getElementById('contactForm').innerHTML = `<div class="text-center py-10"><h3 class="text-2xl font-bold">Danke!</h3><p>Nachricht gesendet.</p></div>`; 
+            document.getElementById('contactForm').innerHTML = `<div class="text-center py-20"><div class="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl"><i class="fas fa-check"></i></div><h3 class="text-2xl font-bold text-gray-900 mb-2">Danke!</h3><p class="text-gray-500">Deine Nachricht wurde gesendet.</p></div>`; 
         }
 
         // ----------------------------------------------------
@@ -612,10 +736,10 @@
             if (!btn) return;
             
             if (user) {
-                btn.innerHTML = `<i class="fas fa-user-lock"></i> Dashboard`;
+                btn.innerHTML = `<i class="fas fa-user-lock text-brand-yellow"></i> Dashboard`;
                 btn.onclick = () => { window.location.href = MEMBERS_URL; };
             } else {
-                btn.innerHTML = `<i class="fas fa-lock"></i> Login`;
+                btn.innerHTML = `<i class="fas fa-lock group-hover:text-brand-yellow transition"></i> Login`;
                 btn.onclick = () => openLoginModal();
             }
         });
@@ -623,6 +747,14 @@
         
         function openLoginModal() {
             el('loginModal').classList.add('flex');
+            
+            const modalBox = el('loginModal').children[0];
+            modalBox.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => {
+                 modalBox.classList.remove('scale-95', 'opacity-0');
+                 modalBox.classList.add('scale-100', 'opacity-100');
+            }, 50);
+
             switchAuthMode('login');
             el('loginInfo').classList.add('hidden');
             el('loginError').classList.add('hidden');
@@ -694,7 +826,7 @@
                 return;
             }
 
-            btn.innerText = "Lade...";
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Lade...';
             btn.disabled = true;
 
             auth.signInWithEmailAndPassword(e, p)
@@ -740,7 +872,7 @@
                 return;
             }
 
-            btn.innerText = "Sende E-Mail...";
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sende E-Mail...';
             btn.disabled = true;
 
             const sendReset = () => auth.sendPasswordResetEmail(e);
@@ -751,7 +883,7 @@
                 const exists = Array.isArray(methods) && methods.length > 0;
                 if (exists) {
                      return sendReset().then(() => {
-                        info.innerText = "Wenn ein Konto existiert, wurde eine E-Mail zum Passwort-Setzen gesendet.";
+                        info.innerText = "Konto existiert bereits. E-Mail zum Passwort-Setzen wurde gesendet.";
                         info.classList.remove('hidden');
                         switchAuthMode('login');
                      });
@@ -764,7 +896,7 @@
                             }
                             await sendReset();
                             await auth.signOut();
-                            info.innerText = "Bitte E-Mail prüfen und ein Passwort festlegen. Danach kannst du dich einloggen.";
+                            info.innerText = "Bitte E-Mail prüfen und Passwort festlegen.";
                             info.classList.remove('hidden');
                             switchAuthMode('login');
                         });
@@ -773,12 +905,12 @@
             .catch(error => {
                  if (error.code === 'auth/email-already-in-use') {
                      sendReset().then(() => {
-                        info.innerText = "E-Mail ist schon registriert. Wir haben dir einen Link zum Passwort-Setzen geschickt.";
+                        info.innerText = "Konto existiert bereits. E-Mail zum Passwort-Setzen wurde gesendet.";
                         info.classList.remove('hidden');
                         switchAuthMode('login');
                      });
                  } else if (error.code === 'auth/invalid-email') {
-                     err.innerText = "Bitte eine gültige E-Mail eingeben.";
+                     err.innerText = "Ungültige E-Mail-Adresse.";
                      err.classList.remove('hidden');
                  } else {
                      err.innerText = "Fehler: " + (error.message || error.code);
@@ -786,7 +918,7 @@
                  }
             })
             .finally(() => {
-                btn.innerText = "Registrierung anfordern";
+                btn.innerText = "Konto erstellen";
                 btn.disabled = false;
             });
         }
@@ -807,7 +939,7 @@
 
             auth.sendPasswordResetEmail(e)
                 .then(() => {
-                    info.innerText = "E-Mail zum Zurücksetzen wurde gesendet.";
+                    info.innerText = "E-Mail zum Zurücksetzen gesendet.";
                     info.classList.remove('hidden');
                 })
                 .catch((error) => {
