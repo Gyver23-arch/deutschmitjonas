@@ -66,20 +66,21 @@
   <header class="bg-white border-b border-gray-200 sticky top-0 z-50">
     <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
 
-      <!-- Avatar (statt J) -->
+      <!-- Avatar -->
       <a href="/" class="flex items-center gap-3 min-w-0">
         <img
           src="https://lh3.googleusercontent.com/pw/AP1GczM7-zXkCQ96aQnVFjYihA_3nm45bEkDm_hkfgQKUP9vhhaVHFs6RBZi6DIS57R8NOwUE8wN-PEJqc_-UqOEKilmrGOHaekSTdgU5D27NxUw8g3dl3tWcSoQRY_n1Eg7SGNimvfREpaV4znXhZtnTQB56A=w905-h905-s-no-gm"
           alt="Jonas"
           class="w-10 h-10 rounded-full object-cover border border-gray-200 shadow-sm flex-shrink-0"
         />
-        <span class="font-bold text-gray-900 truncate">Mitgliederbereich</span>
+        <span id="hdrTitle" class="font-bold text-gray-900 truncate">Mitgliederbereich</span>
       </a>
 
       <!-- Actions -->
       <div class="flex items-center gap-2 sm:gap-3 flex-shrink-0">
         <span class="hidden md:inline text-xs text-gray-500">
-          Eingeloggt als <span id="user-email-display" class="font-semibold text-gray-700">...</span>
+          <span id="loggedInAs">Eingeloggt als</span>
+          <span id="user-email-display" class="font-semibold text-gray-700">...</span>
         </span>
 
         <button
@@ -88,7 +89,7 @@
           type="button"
         >
           <i class="fas fa-calendar-check text-brand-yellow"></i>
-          <span>Unterricht verwalten</span>
+          <span id="btnBookingText">Unterricht verwalten</span>
         </button>
 
         <button
@@ -97,19 +98,19 @@
           type="button"
         >
           <i class="fas fa-sign-out-alt"></i>
-          <span class="hidden sm:inline">Abmelden</span>
+          <span id="btnLogoutText" class="hidden sm:inline">Abmelden</span>
         </button>
       </div>
     </div>
   </header>
 
-  <!-- Dashboard (ohne sichtbare Box) -->
+  <!-- Dashboard -->
   <main class="flex-grow">
     <div class="max-w-7xl mx-auto px-0 sm:px-4">
       <div class="relative bg-transparent">
         <div id="dashboardLoader" class="absolute inset-0 flex flex-col items-center justify-center text-gray-400 bg-gray-50/80 backdrop-blur-sm">
           <i class="fas fa-circle-notch fa-spin text-4xl text-brand-yellow mb-4"></i>
-          <span>Dashboard wird geladen…</span>
+          <span id="dashLoadingText">Dashboard wird geladen…</span>
         </div>
 
         <iframe
@@ -127,20 +128,20 @@
   <div id="bookingModal" class="modal-overlay">
     <div class="iframe-container flex flex-col">
       <div class="bg-gray-100 px-4 py-3 border-b border-gray-200 flex justify-between items-center">
-        <span class="font-bold text-gray-700 text-sm">Unterricht verwalten</span>
+        <span id="modalTitle" class="font-bold text-gray-700 text-sm">Unterricht verwalten</span>
         <button
           id="closeBookingBtn"
           class="bg-white text-gray-600 hover:text-red-500 hover:bg-red-50 px-3 py-1 rounded-md text-sm font-bold border border-gray-200 transition"
           type="button"
         >
-          Schließen
+          <span id="modalCloseText">Schließen</span>
         </button>
       </div>
 
       <div class="flex-grow relative bg-white">
         <div id="loader" class="absolute inset-0 flex flex-col items-center justify-center text-gray-400">
           <i class="fas fa-circle-notch fa-spin text-4xl text-brand-yellow mb-4"></i>
-          <span>Verbinde mit Kalender...</span>
+          <span id="modalLoadingText">Verbinde mit Kalender...</span>
         </div>
         <iframe id="gasFrame" src="" class="w-full h-full border-0"></iframe>
       </div>
@@ -148,6 +149,85 @@
   </div>
 
   <script>
+    // ==========================
+    // i18n (de, en, es, tr)
+    // ==========================
+    const I18N = {
+      de: {
+        title: "Deutsch mit Jonas – Mitgliederbereich",
+        header: "Mitgliederbereich",
+        loggedInAs: "Eingeloggt als",
+        manageLessons: "Unterricht verwalten",
+        logout: "Abmelden",
+        dashLoading: "Dashboard wird geladen…",
+        modalTitle: "Unterricht verwalten",
+        close: "Schließen",
+        modalLoading: "Verbinde mit Kalender..."
+      },
+      en: {
+        title: "Deutsch mit Jonas – Member Area",
+        header: "Member Area",
+        loggedInAs: "Signed in as",
+        manageLessons: "Manage lessons",
+        logout: "Sign out",
+        dashLoading: "Loading dashboard…",
+        modalTitle: "Manage lessons",
+        close: "Close",
+        modalLoading: "Connecting to calendar..."
+      },
+      es: {
+        title: "Deutsch mit Jonas – Área de miembros",
+        header: "Área de miembros",
+        loggedInAs: "Conectado como",
+        manageLessons: "Gestionar clases",
+        logout: "Cerrar sesión",
+        dashLoading: "Cargando panel…",
+        modalTitle: "Gestionar clases",
+        close: "Cerrar",
+        modalLoading: "Conectando con el calendario..."
+      },
+      tr: {
+        title: "Deutsch mit Jonas – Üyelik Alanı",
+        header: "Üyelik Alanı",
+        loggedInAs: "Giriş yapan",
+        manageLessons: "Dersleri yönet",
+        logout: "Çıkış yap",
+        dashLoading: "Panel yükleniyor…",
+        modalTitle: "Dersleri yönet",
+        close: "Kapat",
+        modalLoading: "Takvime bağlanıyor..."
+      }
+    };
+
+    const SUPPORTED = ["de","en","es","tr"];
+
+    function detectLang(){
+      const raw = (navigator.languages && navigator.languages.length ? navigator.languages[0] : (navigator.language || "de")) || "de";
+      const base = String(raw).toLowerCase().split("-")[0];
+      return SUPPORTED.includes(base) ? base : "de";
+    }
+
+    const LANG = detectLang();
+    const t = (k) => (I18N[LANG] && I18N[LANG][k]) ? I18N[LANG][k] : (I18N.de[k] || k);
+
+    const el = (id) => document.getElementById(id);
+
+    function applyI18n(){
+      document.documentElement.lang = LANG;
+      document.title = t("title");
+
+      if (el("hdrTitle")) el("hdrTitle").textContent = t("header");
+      if (el("loggedInAs")) el("loggedInAs").textContent = t("loggedInAs");
+      if (el("btnBookingText")) el("btnBookingText").textContent = t("manageLessons");
+      if (el("btnLogoutText")) el("btnLogoutText").textContent = t("logout");
+      if (el("dashLoadingText")) el("dashLoadingText").textContent = t("dashLoading");
+      if (el("modalTitle")) el("modalTitle").textContent = t("modalTitle");
+      if (el("modalCloseText")) el("modalCloseText").textContent = t("close");
+      if (el("modalLoadingText")) el("modalLoadingText").textContent = t("modalLoading");
+    }
+
+    applyI18n();
+
     // ------------------------------------------------
     // 0) Safeguard: Entfernt doppelte Elemente
     // ------------------------------------------------
@@ -180,8 +260,6 @@
 
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
-
-    const el = (id) => document.getElementById(id);
 
     // -----------------------------
     // 2) #unterricht-verwalten Deep-Link
@@ -245,7 +323,6 @@
           pendingOpenBookingFromHash = true;
         }
       } else {
-        // wenn Hash nicht #buchen ist, Modal schließen (falls offen)
         if (el('bookingModal').classList.contains('flex')) {
           closeBookingTool({ clearHash: false });
         }
@@ -281,7 +358,6 @@
 
       dashFrame.src = dashUrl;
 
-      // Deep-Link: direkt mit geöffnetem Booking-iframe starten
       if (pendingOpenBookingFromHash || wantsBookingOpen()) {
         pendingOpenBookingFromHash = false;
         openBookingTool({ setHash: false });
@@ -292,9 +368,7 @@
     // 5) Buttons
     // -----------------------------
     el('open-booking-btn').addEventListener('click', () => {
-      // Hash setzen -> hashchange öffnet
       setBookingHash();
-      // Fallback: sofort öffnen (falls Browser hashchange nicht feuert)
       if (auth.currentUser) openBookingTool({ setHash: false });
     });
 
