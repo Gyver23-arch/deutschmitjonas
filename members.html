@@ -88,7 +88,7 @@
           type="button"
         >
           <i class="fas fa-calendar-check text-brand-yellow"></i>
-          <span>Unterricht buchen</span>
+          <span>Unterricht verwalten</span>
         </button>
 
         <button
@@ -127,7 +127,7 @@
   <div id="bookingModal" class="modal-overlay">
     <div class="iframe-container flex flex-col">
       <div class="bg-gray-100 px-4 py-3 border-b border-gray-200 flex justify-between items-center">
-        <span class="font-bold text-gray-700 text-sm">Buchungssystem</span>
+        <span class="font-bold text-gray-700 text-sm">Unterricht verwalten</span>
         <button
           id="closeBookingBtn"
           class="bg-white text-gray-600 hover:text-red-500 hover:bg-red-50 px-3 py-1 rounded-md text-sm font-bold border border-gray-200 transition"
@@ -184,9 +184,9 @@
     const el = (id) => document.getElementById(id);
 
     // -----------------------------
-    // 2) #buchen Deep-Link
+    // 2) #unterricht-verwalten Deep-Link
     // -----------------------------
-    const BOOKING_HASH = '#buchen';
+    const BOOKING_HASH = '#unterricht-verwalten';
     let pendingOpenBookingFromHash = false;
 
     function wantsBookingOpen() {
@@ -316,7 +316,7 @@
       if (e.key === 'Escape') closeBookingTool({ clearHash: true });
     });
 
-    // Initial sync (für direktes Laden mit #buchen)
+    // Initial sync (für direktes Laden mit #unterricht-verwalten)
     syncBookingWithHash();
   </script>
 </body>
