@@ -78,7 +78,6 @@
 
       <!-- Actions -->
       <div class="flex items-center gap-2 sm:gap-3 flex-shrink-0">
-        <!-- optional: E-Mail klein im Header (kannst du entfernen, wenn du sie gar nicht willst) -->
         <span class="hidden md:inline text-xs text-gray-500">
           Eingeloggt als <span id="user-email-display" class="font-semibold text-gray-700">...</span>
         </span>
@@ -86,6 +85,7 @@
         <button
           id="open-booking-btn"
           class="inline-flex items-center gap-2 bg-gray-900 text-white text-sm font-bold px-4 py-2 rounded-xl shadow hover:bg-black transition"
+          type="button"
         >
           <i class="fas fa-calendar-check text-brand-yellow"></i>
           <span>Unterricht buchen</span>
@@ -94,6 +94,7 @@
         <button
           id="logoutBtn"
           class="inline-flex items-center gap-2 text-sm font-bold text-gray-700 hover:text-red-600 px-3 py-2 rounded-xl hover:bg-red-50 transition"
+          type="button"
         >
           <i class="fas fa-sign-out-alt"></i>
           <span class="hidden sm:inline">Abmelden</span>
@@ -111,7 +112,6 @@
           <span>Dashboard wird geladen…</span>
         </div>
 
-        <!-- Höhe: Viewport minus Header (ca. 56px–64px). -->
         <iframe
           id="dashboardFrame"
           src=""
@@ -131,6 +131,7 @@
         <button
           id="closeBookingBtn"
           class="bg-white text-gray-600 hover:text-red-500 hover:bg-red-50 px-3 py-1 rounded-md text-sm font-bold border border-gray-200 transition"
+          type="button"
         >
           Schließen
         </button>
@@ -148,8 +149,7 @@
 
   <script>
     // ------------------------------------------------
-    // 0) Safeguard: Entfernt doppelte Elemente, falls
-    //    sie versehentlich 2x im HTML vorhanden sind.
+    // 0) Safeguard: Entfernt doppelte Elemente
     // ------------------------------------------------
     function removeDuplicates(selector) {
       const nodes = document.querySelectorAll(selector);
@@ -184,41 +184,34 @@
     const el = (id) => document.getElementById(id);
 
     // -----------------------------
-    // 2) Auth Gate + Dashboard laden
+    // 2) #buchen Deep-Link
     // -----------------------------
-    auth.onAuthStateChanged(user => {
-      if (!user) {
-        window.location.href = "/#home";
-        return;
+    const BOOKING_HASH = '#buchen';
+    let pendingOpenBookingFromHash = false;
+
+    function wantsBookingOpen() {
+      return (window.location.hash || '').toLowerCase() === BOOKING_HASH;
+    }
+
+    function setBookingHash() {
+      if (!wantsBookingOpen()) window.location.hash = BOOKING_HASH.replace('#', '');
+    }
+
+    function clearBookingHash() {
+      if (wantsBookingOpen()) {
+        history.replaceState(null, '', window.location.pathname + window.location.search);
       }
-
-      // E-Mail (falls du sie im Header anzeigen willst)
-      const emailNode = el('user-email-display');
-      if (emailNode) emailNode.innerText = user.email || '';
-
-      // Dashboard src setzen (mit Parametern; falls Dashboard sie ignoriert, ist es trotzdem ok)
-      const emailParam = encodeURIComponent(user.email || '');
-      const uidParam = encodeURIComponent(user.uid || '');
-      const dashUrl = `${GAS_DASHBOARD_URL}?u=${emailParam}&id=${uidParam}`;
-
-      const dashFrame = el('dashboardFrame');
-      const dashLoader = el('dashboardLoader');
-
-      dashLoader.style.display = 'flex';
-
-      dashFrame.onload = () => {
-        dashLoader.style.display = 'none';
-      };
-
-      dashFrame.src = dashUrl;
-    });
+    }
 
     // -----------------------------
     // 3) Booking Modal
     // -----------------------------
-    function openBookingTool() {
+    function openBookingTool(opts = {}) {
+      const { setHash = true } = opts;
       const user = auth.currentUser;
       if (!user) return;
+
+      if (setHash) setBookingHash();
 
       const modal = el('bookingModal');
       const loader = el('loader');
@@ -234,17 +227,83 @@
       frame.onload = () => { loader.style.display = 'none'; };
     }
 
-    function closeBookingTool() {
+    function closeBookingTool(opts = {}) {
+      const { clearHash = true } = opts;
+
       el('bookingModal').classList.remove('flex');
       el('gasFrame').src = "";
       el('loader').style.display = 'flex';
+
+      if (clearHash) clearBookingHash();
     }
 
-    el('open-booking-btn').addEventListener('click', openBookingTool);
-    el('closeBookingBtn').addEventListener('click', closeBookingTool);
+    function syncBookingWithHash() {
+      if (wantsBookingOpen()) {
+        if (auth.currentUser) {
+          openBookingTool({ setHash: false });
+        } else {
+          pendingOpenBookingFromHash = true;
+        }
+      } else {
+        // wenn Hash nicht #buchen ist, Modal schließen (falls offen)
+        if (el('bookingModal').classList.contains('flex')) {
+          closeBookingTool({ clearHash: false });
+        }
+      }
+    }
+
+    window.addEventListener('hashchange', syncBookingWithHash);
 
     // -----------------------------
-    // 4) Logout
+    // 4) Auth Gate + Dashboard laden
+    // -----------------------------
+    auth.onAuthStateChanged(user => {
+      if (!user) {
+        window.location.href = "/#home";
+        return;
+      }
+
+      const emailNode = el('user-email-display');
+      if (emailNode) emailNode.innerText = user.email || '';
+
+      const emailParam = encodeURIComponent(user.email || '');
+      const uidParam = encodeURIComponent(user.uid || '');
+      const dashUrl = `${GAS_DASHBOARD_URL}?u=${emailParam}&id=${uidParam}`;
+
+      const dashFrame = el('dashboardFrame');
+      const dashLoader = el('dashboardLoader');
+
+      dashLoader.style.display = 'flex';
+
+      dashFrame.onload = () => {
+        dashLoader.style.display = 'none';
+      };
+
+      dashFrame.src = dashUrl;
+
+      // Deep-Link: direkt mit geöffnetem Booking-iframe starten
+      if (pendingOpenBookingFromHash || wantsBookingOpen()) {
+        pendingOpenBookingFromHash = false;
+        openBookingTool({ setHash: false });
+      }
+    });
+
+    // -----------------------------
+    // 5) Buttons
+    // -----------------------------
+    el('open-booking-btn').addEventListener('click', () => {
+      // Hash setzen -> hashchange öffnet
+      setBookingHash();
+      // Fallback: sofort öffnen (falls Browser hashchange nicht feuert)
+      if (auth.currentUser) openBookingTool({ setHash: false });
+    });
+
+    el('closeBookingBtn').addEventListener('click', () => {
+      closeBookingTool({ clearHash: true });
+    });
+
+    // -----------------------------
+    // 6) Logout
     // -----------------------------
     el('logoutBtn').addEventListener('click', () => {
       auth.signOut().then(() => {
@@ -254,8 +313,11 @@
 
     // Close modal on ESC
     window.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') closeBookingTool();
+      if (e.key === 'Escape') closeBookingTool({ clearHash: true });
     });
+
+    // Initial sync (für direktes Laden mit #buchen)
+    syncBookingWithHash();
   </script>
 </body>
 </html>
